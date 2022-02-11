@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 const App = () => {
   return (
@@ -10,7 +10,7 @@ const App = () => {
 };
 
 const styles = StyleSheet.create({
-  view: {flex: 1, justifyContent: 'center', alignItems: 'center'},
+  view: { flex: 1, justifyContent: 'center', alignItems: 'center' },
 });
 
 export default App;
