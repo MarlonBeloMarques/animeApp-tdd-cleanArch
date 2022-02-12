@@ -31,6 +31,7 @@ module.exports = {
     '@typescript-eslint/member-delimiter-style': 0,
     '@typescript-eslint/no-empty-function': 0,
     '@typescript-eslint/no-explicit-any': 0,
+    '@typescript-eslint/no-namespace': 'off',
     'import/prefer-default-export': 0,
     'import/no-named-as-default': 0,
     'import/no-unresolved': 0,
