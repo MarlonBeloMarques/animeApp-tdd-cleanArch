@@ -1,17 +1,17 @@
 describe('Data: RemoteAuthentication', () => {
-  test('should authenticate with httpClient call correct url', () => {
+  test('should authenticate with OAuthClient call correct url', () => {
     const url = 'http://any-url.com';
-    const httpClientSpy = new HttpClientSpy();
-    const sut = new RemoteAuthentication(url, httpClientSpy);
+    const oAuthClientSpy = new OAuthClientSpy();
+    const sut = new RemoteAuthentication(url, oAuthClientSpy);
     sut.authenticate();
-    expect(httpClientSpy.url.length).not.toBe(0);
-    expect(httpClientSpy.url).toMatch(new RegExp(url));
+    expect(oAuthClientSpy.url.length).not.toBe(0);
+    expect(oAuthClientSpy.url).toMatch(new RegExp(url));
   });
 
-  test('should authenticate with the correct parameters of the httpClient call', () => {
+  test('should authenticate with the correct parameters of the OAuthClient call', () => {
     const url = 'http://any-url.com';
-    const httpClientSpy = new HttpClientSpy();
-    const sut = new RemoteAuthentication(url, httpClientSpy);
+    const oAuthClientSpy = new OAuthClientSpy();
+    const sut = new RemoteAuthentication(url, oAuthClientSpy);
     const params: Authentication.Params = {
       responseType: 'response_type=token',
       clientId: 'client_id=any_client_id',
@@ -19,18 +19,19 @@ describe('Data: RemoteAuthentication', () => {
     };
     sut.completeUrlWithParam(params);
     sut.authenticate();
-    expect(httpClientSpy.url.length).not.toBe(0);
-    expect(httpClientSpy.url).toMatch(new RegExp(params.responseType));
-    expect(httpClientSpy.url).toMatch(new RegExp(params.clientId));
-    expect(httpClientSpy.url).toMatch(new RegExp(params.redirectUri));
+    expect(oAuthClientSpy.url.length).not.toBe(0);
+    expect(oAuthClientSpy.url).toMatch(new RegExp(params.responseType));
+    expect(oAuthClientSpy.url).toMatch(new RegExp(params.clientId));
+    expect(oAuthClientSpy.url).toMatch(new RegExp(params.redirectUri));
   });
 
-  test('should authentication with httpClient call response with expected error', async () => {
-    const url = 'http://any-url.com';
-    const httpClientSpy = new HttpClientSpy();
-    const sut = new RemoteAuthentication(url, httpClientSpy);
+  test('should authentication with OAuthClient call response with expected error', async () => {
+    const url = '//any-url.com';
+    const oAuthClientSpy = new OAuthClientSpy();
+    const sut = new RemoteAuthentication(url, oAuthClientSpy);
     try {
       await sut.authenticate();
+      throw Error('an invalid url is expected');
     } catch (error) {
       expect(error).toEqual(new UnexpectedError());
     }
@@ -39,18 +40,20 @@ describe('Data: RemoteAuthentication', () => {
 
 class RemoteAuthentication implements Authentication {
   private url: string;
-  private httpClient: HttpGetClient;
+  private oAuthClient: OAuthClient;
 
-  constructor(url: string, httpClient: HttpGetClient) {
+  constructor(url: string, oAuthClient: OAuthClient) {
     this.url = url;
-    this.httpClient = httpClient;
+    this.oAuthClient = oAuthClient;
   }
 
-  async authenticate(): Promise<Authentication.Model> {
-    const { statusCode } = await this.httpClient.get({ url: this.url });
-    switch (statusCode) {
-      default:
-        throw new UnexpectedError();
+  authenticate(): void {
+    let url: URL;
+    try {
+      url = new URL(this.url);
+      this.oAuthClient.redirect({ url: url.toJSON() });
+    } catch (error) {
+      throw new UnexpectedError();
     }
   }
 
@@ -69,15 +72,11 @@ enum HttpStatusCode {
   notFound = 404,
   internalServerError = 500,
 }
-class HttpClientSpy implements HttpGetClient {
+class OAuthClientSpy implements OAuthClient {
   private _url!: string;
-  private response: HttpResponse<Authentication.Model> = {
-    statusCode: HttpStatusCode.internalServerError,
-  };
 
-  async get(data: HttpRequest): Promise<HttpResponse<Authentication.Model>> {
+  redirect(data: OAuthRequest) {
     this._url = data.url;
-    return this.response;
   }
 
   get url(): string {
@@ -86,11 +85,16 @@ class HttpClientSpy implements HttpGetClient {
 }
 
 interface Authentication {
-  authenticate(): Promise<Authentication.Model>;
+  authenticate(): void;
 }
 
-interface HttpGetClient {
-  get(data: HttpRequest): Promise<HttpResponse<Authentication.Model>>;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+interface HttpGetClient<R = any> {
+  get(data: HttpRequest): Promise<HttpResponse<R>>;
+}
+
+interface OAuthClient {
+  redirect(data: OAuthRequest): void;
 }
 
 namespace Authentication {
@@ -99,11 +103,11 @@ namespace Authentication {
     clientId: string;
     redirectUri: string;
   };
-
-  export type Model = {
-    token: string;
-  };
 }
+
+type OAuthRequest = {
+  url: string;
+};
 
 type HttpRequest = {
   url: string;
