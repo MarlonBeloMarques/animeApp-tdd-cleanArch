@@ -15,7 +15,7 @@ export class RemoteAuthentication implements Authentication {
     let url: URL;
     try {
       url = new URL(this.url);
-      this.oAuthClient.redirect({ url: url.toJSON() });
+      await this.oAuthClient.redirect({ url: url.toJSON() });
     } catch (error) {
       throw new UnexpectedError();
     }
