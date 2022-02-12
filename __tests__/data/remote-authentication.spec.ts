@@ -3,11 +3,7 @@ describe('Data: RemoteAuthentication', () => {
     const url = 'http://any-url.com';
     const httpClientSpy = new HttpClientSpy();
     const sut = new RemoteAuthentication(url, httpClientSpy);
-    const params: Authentication.Params = {
-      clientId: 'any_client_id',
-      redirectUri: 'any_redirect_uri',
-    };
-    sut.authenticate(params);
+    sut.authenticate();
     expect(httpClientSpy.url.length).not.toBe(0);
     expect(httpClientSpy.url).toMatch(new RegExp(url));
   });
@@ -17,25 +13,34 @@ describe('Data: RemoteAuthentication', () => {
     const httpClientSpy = new HttpClientSpy();
     const sut = new RemoteAuthentication(url, httpClientSpy);
     const params: Authentication.Params = {
-      clientId: 'any_client_id',
-      redirectUri: 'any_redirect_uri',
+      responseType: 'response_type=token',
+      clientId: 'client_id=any_client_id',
+      redirectUri: 'redirect_uri=any_redirect_uri',
     };
-    sut.authenticate(params);
+    sut.completeUrlWithParam(params);
+    sut.authenticate();
     expect(httpClientSpy.url.length).not.toBe(0);
+    expect(httpClientSpy.url).toMatch(new RegExp(params.responseType));
     expect(httpClientSpy.url).toMatch(new RegExp(params.clientId));
     expect(httpClientSpy.url).toMatch(new RegExp(params.redirectUri));
   });
 });
 
 class RemoteAuthentication implements Authentication {
-  constructor(
-    private readonly url: string,
-    private readonly httpClient: HttpGetClient,
-  ) {}
+  private url: string;
+  private httpClient: HttpGetClient;
 
-  authenticate(params: Authentication.Params): Authentication.Model {
-    const urlWithParam = `${this.url}?response_type=token&client_id=${params.clientId}&redirect_uri=${params.redirectUri}`;
-    return this.httpClient.get(urlWithParam);
+  constructor(url: string, httpClient: HttpGetClient) {
+    this.url = url;
+    this.httpClient = httpClient;
+  }
+
+  authenticate(): Authentication.Model {
+    return this.httpClient.get(this.url);
+  }
+
+  completeUrlWithParam(params: Authentication.Params): void {
+    this.url = `${this.url}?${params.responseType}&${params.clientId}&${params.redirectUri}`;
   }
 }
 
@@ -53,7 +58,7 @@ class HttpClientSpy implements HttpGetClient {
 }
 
 interface Authentication {
-  authenticate(params: Authentication.Params): Authentication.Model;
+  authenticate(): Authentication.Model;
 }
 
 interface HttpGetClient {
@@ -62,6 +67,7 @@ interface HttpGetClient {
 
 namespace Authentication {
   export type Params = {
+    responseType: string;
     clientId: string;
     redirectUri: string;
   };
