@@ -11,6 +11,20 @@ describe('Data: RemoteAuthentication', () => {
     expect(httpClientSpy.url.length).not.toBe(0);
     expect(httpClientSpy.url).toMatch(new RegExp(url));
   });
+
+  test('should authenticate with the correct parameters of the httpClient call', () => {
+    const url = 'http://any-url.com';
+    const httpClientSpy = new HttpClientSpy();
+    const sut = new RemoteAuthentication(url, httpClientSpy);
+    const params: Authentication.Params = {
+      clientId: 'any_client_id',
+      redirectUri: 'any_redirect_uri',
+    };
+    sut.authenticate(params);
+    expect(httpClientSpy.url.length).not.toBe(0);
+    expect(httpClientSpy.url).toMatch(new RegExp(params.clientId));
+    expect(httpClientSpy.url).toMatch(new RegExp(params.redirectUri));
+  });
 });
 
 class RemoteAuthentication implements Authentication {
@@ -20,7 +34,7 @@ class RemoteAuthentication implements Authentication {
   ) {}
 
   authenticate(params: Authentication.Params): Authentication.Model {
-    const urlWithParam = `${this.url}?response_type=token&client_id${params.clientId}&redirect_uri=${params.redirectUri}`;
+    const urlWithParam = `${this.url}?response_type=token&client_id=${params.clientId}&redirect_uri=${params.redirectUri}`;
     return this.httpClient.get(urlWithParam);
   }
 }
