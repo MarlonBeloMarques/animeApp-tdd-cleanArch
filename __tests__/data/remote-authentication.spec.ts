@@ -1,22 +1,15 @@
 describe('Data: RemoteAuthentication', () => {
   test('should authenticate with OAuthClient call correct url', () => {
     const url = 'http://any-url.com';
-    const oAuthClientSpy = new OAuthClientSpy();
-    const sut = new RemoteAuthentication(url, oAuthClientSpy);
+    const [sut, oAuthClientSpy] = makeSut(url);
     sut.authenticate();
     expect(oAuthClientSpy.url.length).not.toBe(0);
     expect(oAuthClientSpy.url).toMatch(new RegExp(url));
   });
 
   test('should authenticate with the correct parameters of the OAuthClient call', () => {
-    const url = 'http://any-url.com';
-    const oAuthClientSpy = new OAuthClientSpy();
-    const sut = new RemoteAuthentication(url, oAuthClientSpy);
-    const params: Authentication.Params = {
-      responseType: 'response_type=token',
-      clientId: 'client_id=any_client_id',
-      redirectUri: 'redirect_uri=any_redirect_uri',
-    };
+    const [sut, oAuthClientSpy] = makeSut('http://any-url.com');
+    const params = makeAuthenticationParams();
     sut.completeUrlWithParam(params);
     sut.authenticate();
     expect(oAuthClientSpy.url.length).not.toBe(0);
@@ -27,8 +20,7 @@ describe('Data: RemoteAuthentication', () => {
 
   test('should authentication with OAuthClient call response with expected error', async () => {
     const url = '//any-url.com';
-    const oAuthClientSpy = new OAuthClientSpy();
-    const sut = new RemoteAuthentication(url, oAuthClientSpy);
+    const [sut] = makeSut(url);
     try {
       await sut.authenticate();
       throw Error('an invalid url is expected');
@@ -37,6 +29,20 @@ describe('Data: RemoteAuthentication', () => {
     }
   });
 });
+
+const makeSut = (url: string): [RemoteAuthentication, OAuthClientSpy] => {
+  const oAuthClientSpy = new OAuthClientSpy();
+  const sut = new RemoteAuthentication(url, oAuthClientSpy);
+  return [sut, oAuthClientSpy];
+};
+
+const makeAuthenticationParams = (): Authentication.Params => {
+  return {
+    responseType: 'response_type=token',
+    clientId: 'client_id=any_client_id',
+    redirectUri: 'redirect_uri=any_redirect_uri',
+  };
+};
 
 class RemoteAuthentication implements Authentication {
   private url: string;
