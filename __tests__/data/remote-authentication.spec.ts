@@ -24,6 +24,17 @@ describe('Data: RemoteAuthentication', () => {
     expect(httpClientSpy.url).toMatch(new RegExp(params.clientId));
     expect(httpClientSpy.url).toMatch(new RegExp(params.redirectUri));
   });
+
+  test('should authentication with httpClient call response with expected error', async () => {
+    const url = 'http://any-url.com';
+    const httpClientSpy = new HttpClientSpy();
+    const sut = new RemoteAuthentication(url, httpClientSpy);
+    try {
+      await sut.authenticate();
+    } catch (error) {
+      expect(error).toEqual(new UnexpectedError());
+    }
+  });
 });
 
 class RemoteAuthentication implements Authentication {
@@ -35,8 +46,12 @@ class RemoteAuthentication implements Authentication {
     this.httpClient = httpClient;
   }
 
-  authenticate(): Authentication.Model {
-    return this.httpClient.get(this.url);
+  async authenticate(): Promise<Authentication.Model> {
+    const { statusCode } = await this.httpClient.get({ url: this.url });
+    switch (statusCode) {
+      default:
+        throw new UnexpectedError();
+    }
   }
 
   completeUrlWithParam(params: Authentication.Params): void {
@@ -44,12 +59,25 @@ class RemoteAuthentication implements Authentication {
   }
 }
 
+enum HttpStatusCode {
+  ok = 200,
+  created = 201,
+  noContent = 204,
+  badRequest = 400,
+  unauthorized = 401,
+  forbidden = 403,
+  notFound = 404,
+  internalServerError = 500,
+}
 class HttpClientSpy implements HttpGetClient {
   private _url!: string;
+  private response: HttpResponse<Authentication.Model> = {
+    statusCode: HttpStatusCode.internalServerError,
+  };
 
-  get(url: string): Authentication.Model {
-    this._url = url;
-    return { token: '' };
+  async get(data: HttpRequest): Promise<HttpResponse<Authentication.Model>> {
+    this._url = data.url;
+    return this.response;
   }
 
   get url(): string {
@@ -58,11 +86,11 @@ class HttpClientSpy implements HttpGetClient {
 }
 
 interface Authentication {
-  authenticate(): Authentication.Model;
+  authenticate(): Promise<Authentication.Model>;
 }
 
 interface HttpGetClient {
-  get(url: string): Authentication.Model;
+  get(data: HttpRequest): Promise<HttpResponse<Authentication.Model>>;
 }
 
 namespace Authentication {
@@ -75,4 +103,24 @@ namespace Authentication {
   export type Model = {
     token: string;
   };
+}
+
+type HttpRequest = {
+  url: string;
+  body?: any;
+  headers?: any;
+};
+
+type HttpResponse<T = any> = {
+  statusCode: HttpStatusCode;
+  body?: T;
+};
+
+class UnexpectedError extends Error {
+  constructor() {
+    super();
+    this.message =
+      'Unexpected error. Please check your internet and try again.';
+    this.name = 'UnexpectedError';
+  }
 }
