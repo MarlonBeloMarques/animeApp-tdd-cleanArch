@@ -3,7 +3,6 @@ module.exports = {
   verbose: true,
   setupFilesAfterEnv: ['@testing-library/jest-native/extend-expect'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-  collectCoverage: true,
   testRegex: '\\.spec\\.ts',
   collectCoverageFrom: [
     '<rootDir>/tests/**/*.{ts,tsx}',
