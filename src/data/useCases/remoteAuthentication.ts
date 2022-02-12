@@ -11,7 +11,7 @@ export class RemoteAuthentication implements Authentication {
     this.oAuthClient = oAuthClient;
   }
 
-  authenticate(): void {
+  async authenticate(): Promise<void> {
     let url: URL;
     try {
       url = new URL(this.url);

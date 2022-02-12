@@ -1,5 +1,5 @@
 export interface OAuthClient {
-  redirect(data: OAuthRequest): void;
+  redirect(data: OAuthRequest): Promise<void>;
 }
 
 export type OAuthRequest = {

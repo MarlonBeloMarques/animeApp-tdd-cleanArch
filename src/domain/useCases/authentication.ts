@@ -1,5 +1,5 @@
 export interface Authentication {
-  authenticate(): void;
+  authenticate(): Promise<void>;
 }
 
 export namespace Authentication {
