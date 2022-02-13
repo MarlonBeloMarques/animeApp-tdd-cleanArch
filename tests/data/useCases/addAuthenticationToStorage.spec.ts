@@ -6,13 +6,33 @@ describe('Data: AddAuthenticationToStorage', () => {
     sut.add(authentication);
     expect(authentication).toEqual(itemStorageSpy.item);
   });
+
+  test('should add with AddItemToStorage if it is a valid authentication', () => {
+    const itemStorageSpy = new ItemStorageSpy();
+    const sut = new AddAuthenticationToStorage(itemStorageSpy);
+    const authentication = '';
+    sut.add(authentication);
+    expect(itemStorageSpy.item).toBeUndefined();
+  });
 });
 
 class AddAuthenticationToStorage implements AddAuthentication {
   constructor(private readonly addItemToStorage: AddItemToStorage) {}
 
   async add(authentication: string): Promise<void> {
-    this.addItemToStorage.addItem(authentication);
+    if (this.authenticationIsValid(authentication)) {
+      this.addItemToStorage.addItem(authentication);
+    } else {
+      throw new AddAuthorizationError();
+    }
+  }
+
+  private authenticationIsValid(authentication: string): boolean {
+    if (authentication.length !== 0) {
+      return true;
+    }
+
+    return false;
   }
 }
 
@@ -34,4 +54,13 @@ interface AddItemToStorage {
 
 interface AddAuthentication {
   add(authentication: string): Promise<void>;
+}
+
+class AddAuthorizationError extends Error {
+  constructor() {
+    super();
+    this.message =
+      'Your authorization is not valid. Try to authenticate again.';
+    this.name = 'AddAuthorizationError';
+  }
 }
