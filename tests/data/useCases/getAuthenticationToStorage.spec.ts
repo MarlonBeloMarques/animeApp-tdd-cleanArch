@@ -4,7 +4,7 @@ describe('Data: GetAuthenticationToStorage', () => {
   test('should get with success authentication of storage', async () => {
     const itemStorageSpy = new ItemStorageSpy();
     const sut = new GetAuthenticationToStorage(itemStorageSpy);
-    itemStorageSpy.add('any_authentication');
+    itemStorageSpy.add('@storage_AuthenticationKey', 'any_authentication');
     const authentication = await sut.get();
     expect(authentication.length).not.toEqual(0);
   });

@@ -7,7 +7,8 @@ export class AddAuthenticationToStorage implements AddAuthentication {
 
   async add(authentication: string): Promise<void> {
     if (this.authenticationIsValid(authentication)) {
-      this.addItemToStorage.add(authentication);
+      const authenticationKey = '@storage_AuthenticationKey';
+      this.addItemToStorage.add(authenticationKey, authentication);
     } else {
       throw new AddAuthorizationError();
     }

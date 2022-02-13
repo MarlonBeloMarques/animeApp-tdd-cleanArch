@@ -3,8 +3,10 @@ import { GetItemToStorage } from '../useCases/getAuthenticationToStorage.spec';
 
 export class ItemStorageSpy implements AddItemToStorage, GetItemToStorage {
   private _item: any;
+  private _key!: string;
 
-  async add(item: any): Promise<void> {
+  async add(key: string, item: any): Promise<void> {
+    this._key = key;
     this._item = item;
   }
 
@@ -14,5 +16,9 @@ export class ItemStorageSpy implements AddItemToStorage, GetItemToStorage {
 
   get item(): any {
     return this._item;
+  }
+
+  get key(): string {
+    return this._key;
   }
 }

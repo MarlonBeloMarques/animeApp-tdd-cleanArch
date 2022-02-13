@@ -10,6 +10,13 @@ describe('Data: AddAuthenticationToStorage', () => {
     expect(authentication).toEqual(itemStorageSpy.item);
   });
 
+  test('should add with storage key with AddItemToStorage', () => {
+    const [sut, itemStorageSpy] = makeSut();
+    const authentication = 'any_authentication';
+    sut.add(authentication);
+    expect(itemStorageSpy.key.length).not.toEqual(0);
+  });
+
   test('not should add with AddItemStorage if it is not valid authentication', () => {
     const [sut, itemStorageSpy] = makeSut();
     sut.add('');
