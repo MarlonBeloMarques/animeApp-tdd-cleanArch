@@ -1,3 +1,7 @@
+import { AddAuthenticationToStorage } from '~/data/useCases';
+import { AddAuthorizationError } from '~/data/errors';
+import { ItemStorageSpy } from '../storage';
+
 describe('Data: AddAuthenticationToStorage', () => {
   test('should add with AddItemToStorage correct authentication', () => {
     const [sut, itemStorageSpy] = makeSut();
@@ -28,48 +32,3 @@ const makeSut = (): [AddAuthenticationToStorage, ItemStorageSpy] => {
   const sut = new AddAuthenticationToStorage(itemStorageSpy);
   return [sut, itemStorageSpy];
 };
-
-class AddAuthenticationToStorage implements AddAuthentication {
-  constructor(private readonly addItemToStorage: AddItemToStorage) {}
-
-  async add(authentication: string): Promise<void> {
-    if (this.authenticationIsValid(authentication)) {
-      this.addItemToStorage.addItem(authentication);
-    } else {
-      throw new AddAuthorizationError();
-    }
-  }
-
-  private authenticationIsValid(authentication: string): boolean {
-    return !!(authentication.length !== 0);
-  }
-}
-
-class ItemStorageSpy implements AddItemToStorage {
-  private _item: any;
-
-  async addItem(item: any): Promise<void> {
-    this._item = item;
-  }
-
-  get item(): any {
-    return this._item;
-  }
-}
-
-interface AddItemToStorage {
-  addItem(item: any): Promise<void>;
-}
-
-interface AddAuthentication {
-  add(authentication: string): Promise<void>;
-}
-
-class AddAuthorizationError extends Error {
-  constructor() {
-    super();
-    this.message =
-      'Your authorization is not valid. Try to authenticate again.';
-    this.name = 'AddAuthorizationError';
-  }
-}
