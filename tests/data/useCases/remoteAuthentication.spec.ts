@@ -23,7 +23,7 @@ describe('Data: RemoteAuthentication', () => {
     expect(oAuthClientSpy.url).toMatch(new RegExp(params.redirectUri));
   });
 
-  test('should authentication with OAuthClient call response with expected error', async () => {
+  test('should authenticate with OAuthClient call response with expected error', async () => {
     const url = '//any-url.com';
     const [sut] = makeSut(url);
     try {

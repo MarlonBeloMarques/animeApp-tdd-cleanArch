@@ -1,6 +1,10 @@
-import { HttpGetClient } from '../http';
-import { HttpRequest } from '../http/httpRequest';
-import { HttpResponse } from '../http/httpResponse';
+import { UnexpectedError } from '~/data/errors';
+import {
+  HttpGetClient,
+  HttpRequest,
+  HttpResponse,
+  HttpStatusCode,
+} from '~/data/http';
 
 describe('Data: RemoteAnimeList', () => {
   test('should list with httpGetClient call correct url', async () => {
@@ -22,6 +26,19 @@ describe('Data: RemoteAnimeList', () => {
       new RegExp(authorization),
     );
   });
+
+  test('should list with HttpGetClient call response with expected error', async () => {
+    const url = 'http://any-url.com';
+    const httpClientSpy = new HttpClientSpy();
+    const sut = new RemoteAnimeList(url, httpClientSpy);
+    try {
+      httpClientSpy.completeWithUnexpectedError();
+      await sut.list();
+      throw new Error('something unexpected occurred in your test');
+    } catch (error) {
+      expect(error).toEqual(new UnexpectedError());
+    }
+  });
 });
 
 class RemoteAnimeList implements AnimeList {
@@ -31,21 +48,35 @@ class RemoteAnimeList implements AnimeList {
   ) {}
 
   async list(authorization?: string): Promise<HttpResponse<Anime.Model>> {
-    return await this.httpClient.get({
+    const { statusCode, body } = await this.httpClient.get({
       url: this.url,
       headers: { Authorization: `Bearer ${authorization}` },
     });
+
+    switch (statusCode) {
+      case HttpStatusCode.ok:
+        return body!;
+      default:
+        throw new UnexpectedError();
+    }
   }
 }
 
 class HttpClientSpy implements HttpGetClient {
   private _url!: string;
   private _headers!: any;
+  private response: HttpResponse<Anime.Model> = {
+    statusCode: HttpStatusCode.ok,
+  };
 
-  get(data: HttpRequest): Promise<HttpResponse<Anime.Model>> {
+  async get(data: HttpRequest): Promise<HttpResponse<Anime.Model>> {
     this._url = data.url;
     this._headers = data.headers;
-    throw Error();
+    return this.response;
+  }
+
+  completeWithUnexpectedError() {
+    this.response = { statusCode: HttpStatusCode.internalServerError };
   }
 
   get url(): string {
