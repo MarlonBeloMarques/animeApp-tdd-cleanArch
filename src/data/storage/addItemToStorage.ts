@@ -1,3 +1,3 @@
 export interface AddItemToStorage {
-  addItem(item: any): Promise<void>;
+  add(item: any): Promise<void>;
 }
