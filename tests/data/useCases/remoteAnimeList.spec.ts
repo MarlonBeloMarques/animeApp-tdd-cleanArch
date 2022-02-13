@@ -41,19 +41,6 @@ describe('Data: RemoteAnimeList', () => {
     }
   });
 
-  test('should list with HttpGetClient call response with expected error', async () => {
-    const url = 'http://any-url.com';
-    const httpClientSpy = new HttpClientSpy();
-    const sut = new RemoteAnimeList(url, httpClientSpy);
-    try {
-      httpClientSpy.completeWithUnexpectedError();
-      await sut.list();
-      throw new Error('something unexpected occurred in your test');
-    } catch (error) {
-      expect(error).toEqual(new UnexpectedError());
-    }
-  });
-
   test('should list with HttpGetClient call response with anime content error', async () => {
     const url = 'http://any-url.com';
     const httpClientSpy = new HttpClientSpy();
