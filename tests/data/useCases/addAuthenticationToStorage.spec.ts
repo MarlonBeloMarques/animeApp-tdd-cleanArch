@@ -7,12 +7,24 @@ describe('Data: AddAuthenticationToStorage', () => {
     expect(authentication).toEqual(itemStorageSpy.item);
   });
 
-  test('should add with AddItemToStorage if it is a valid authentication', () => {
+  test('not should add with AddItemStorage if it is not valid authentication', () => {
     const itemStorageSpy = new ItemStorageSpy();
     const sut = new AddAuthenticationToStorage(itemStorageSpy);
     const authentication = '';
     sut.add(authentication);
     expect(itemStorageSpy.item).toBeUndefined();
+  });
+
+  test('should return exception with AddItemStorage if it is not valid authentication', async () => {
+    const itemStorageSpy = new ItemStorageSpy();
+    const sut = new AddAuthenticationToStorage(itemStorageSpy);
+    const authentication = '';
+    try {
+      await sut.add(authentication);
+      throw new Error('something unexpected occurred in your test');
+    } catch (error) {
+      expect(error).toEqual(new AddAuthorizationError());
+    }
   });
 });
 
@@ -28,11 +40,7 @@ class AddAuthenticationToStorage implements AddAuthentication {
   }
 
   private authenticationIsValid(authentication: string): boolean {
-    if (authentication.length !== 0) {
-      return true;
-    }
-
-    return false;
+    return !!(authentication.length !== 0);
   }
 }
 
