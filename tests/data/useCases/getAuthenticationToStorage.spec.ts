@@ -8,14 +8,36 @@ describe('Data: GetAuthenticationToStorage', () => {
     const authentication = await sut.get();
     expect(authentication.length).not.toEqual(0);
   });
+
+  test('should get an error when trying to get authentication from storage', async () => {
+    const itemStorageSpy = new ItemStorageSpy();
+    const sut = new GetAuthenticationToStorage(itemStorageSpy);
+    try {
+      await sut.get();
+      throw new Error('something unexpected occurred in your test');
+    } catch (error) {
+      expect(error).toEqual(new GetAuthorizationError());
+    }
+  });
 });
 
 class GetAuthenticationToStorage implements GetAuthentication {
+  private _authenticationKey = '@storage_AuthenticationKey';
   constructor(private readonly getItemToStorage: GetItemToStorage) {}
 
   async get(): Promise<string> {
-    const authenticationKey = '@storage_AuthenticationKey';
-    return this.getItemToStorage.get(authenticationKey);
+    const authentication = await this.getItemToStorage.get(
+      this._authenticationKey,
+    );
+    if (authentication) {
+      return authentication;
+    }
+
+    throw new GetAuthorizationError();
+  }
+
+  set authenticationKey(authenticationKey: string) {
+    this._authenticationKey = authenticationKey;
   }
 }
 
@@ -25,4 +47,13 @@ interface GetAuthentication {
 
 export interface GetItemToStorage {
   get(key: string): Promise<any>;
+}
+
+export class GetAuthorizationError extends Error {
+  constructor() {
+    super();
+    this.message =
+      'Your authorization was not found. Try authenticating again.';
+    this.name = 'GetAuthorizationError';
+  }
 }
