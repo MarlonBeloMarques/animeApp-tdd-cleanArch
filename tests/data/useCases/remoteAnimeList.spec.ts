@@ -1,4 +1,4 @@
-import { UnexpectedError } from '~/data/errors';
+import { AnimeContentError, UnexpectedError } from '~/data/errors';
 import {
   HttpGetClient,
   HttpRequest,
@@ -39,6 +39,32 @@ describe('Data: RemoteAnimeList', () => {
       expect(error).toEqual(new UnexpectedError());
     }
   });
+
+  test('should list with HttpGetClient call response with expected error', async () => {
+    const url = 'http://any-url.com';
+    const httpClientSpy = new HttpClientSpy();
+    const sut = new RemoteAnimeList(url, httpClientSpy);
+    try {
+      httpClientSpy.completeWithUnexpectedError();
+      await sut.list();
+      throw new Error('something unexpected occurred in your test');
+    } catch (error) {
+      expect(error).toEqual(new UnexpectedError());
+    }
+  });
+
+  test('should list with HttpGetClient call response with anime content error', async () => {
+    const url = 'http://any-url.com';
+    const httpClientSpy = new HttpClientSpy();
+    const sut = new RemoteAnimeList(url, httpClientSpy);
+    try {
+      httpClientSpy.completeWithError(HttpStatusCode.notFound);
+      await sut.list();
+      throw new Error('something unexpected occurred in your test');
+    } catch (error) {
+      expect(error).toEqual(new AnimeContentError());
+    }
+  });
 });
 
 class RemoteAnimeList implements AnimeList {
@@ -56,6 +82,10 @@ class RemoteAnimeList implements AnimeList {
     switch (statusCode) {
       case HttpStatusCode.ok:
         return body!;
+      case HttpStatusCode.notFound:
+        throw new AnimeContentError();
+      case HttpStatusCode.badRequest:
+        throw new AnimeContentError();
       default:
         throw new UnexpectedError();
     }
@@ -73,6 +103,12 @@ class HttpClientSpy implements HttpGetClient {
     this._url = data.url;
     this._headers = data.headers;
     return this.response;
+  }
+
+  completeWithError(
+    error: HttpStatusCode.badRequest | HttpStatusCode.notFound,
+  ) {
+    this.response = { statusCode: error };
   }
 
   completeWithUnexpectedError() {
