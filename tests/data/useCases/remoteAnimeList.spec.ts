@@ -1,3 +1,4 @@
+import faker from 'faker';
 import { AnimeContentError, UnexpectedError } from '~/data/errors';
 import {
   HttpGetClient,
@@ -65,6 +66,16 @@ describe('Data: RemoteAnimeList', () => {
       expect(error).toEqual(new AnimeContentError());
     }
   });
+
+  test('should list with HttpGetClient call response with success', async () => {
+    const url = 'http://any-url.com';
+    const httpClientSpy = new HttpClientSpy();
+    const sut = new RemoteAnimeList(url, httpClientSpy);
+    const data = makeAnimeModelList();
+    httpClientSpy.completeWithSuccessData(data);
+    const response = await sut.list();
+    expect(response).toEqual(data);
+  });
 });
 
 class RemoteAnimeList implements AnimeList {
@@ -73,7 +84,9 @@ class RemoteAnimeList implements AnimeList {
     private readonly httpClient: HttpGetClient,
   ) {}
 
-  async list(authorization?: string): Promise<HttpResponse<Anime.Model>> {
+  async list(
+    authorization?: string,
+  ): Promise<HttpResponse<Array<Anime.Model>>> {
     const { statusCode, body } = await this.httpClient.get({
       url: this.url,
       headers: { Authorization: `Bearer ${authorization}` },
@@ -95,14 +108,18 @@ class RemoteAnimeList implements AnimeList {
 class HttpClientSpy implements HttpGetClient {
   private _url!: string;
   private _headers!: any;
-  private response: HttpResponse<Anime.Model> = {
+  private response: HttpResponse<Array<Anime.Model>> = {
     statusCode: HttpStatusCode.ok,
   };
 
-  async get(data: HttpRequest): Promise<HttpResponse<Anime.Model>> {
+  async get(data: HttpRequest): Promise<HttpResponse<Array<Anime.Model>>> {
     this._url = data.url;
     this._headers = data.headers;
     return this.response;
+  }
+
+  completeWithSuccessData(data: Array<Anime.Model>) {
+    this.response = { statusCode: HttpStatusCode.ok, body: data };
   }
 
   completeWithError(
@@ -124,8 +141,31 @@ class HttpClientSpy implements HttpGetClient {
   }
 }
 
+const makeAnimeModelList = (): Array<Anime.Model> => {
+  const animeList: Array<Anime.Model> = [];
+  faker.locale = 'en';
+  for (let index = 0; index < 5; index++) {
+    animeList.push({
+      titles: {
+        en: faker.name.title(),
+      },
+      descriptions: {
+        en: faker.commerce.productDescription(),
+      },
+      start_date: faker.date.past().toISOString(),
+      episodes_count: faker.datatype.number(),
+      genres: ['Adventure', 'Action'],
+      id: faker.datatype.number(),
+      cover_image: faker.image.avatar(),
+      banner_image: faker.image.avatar(),
+    });
+  }
+
+  return animeList;
+};
+
 interface AnimeList {
-  list(authorization?: string): Promise<HttpResponse<Anime.Model>>;
+  list(authorization?: string): Promise<HttpResponse<Array<Anime.Model>>>;
 }
 
 namespace Anime {
