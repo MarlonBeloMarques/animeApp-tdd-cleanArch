@@ -1,32 +1,33 @@
 describe('Data: AddAuthenticationToStorage', () => {
   test('should add with AddItemToStorage correct authentication', () => {
-    const itemStorageSpy = new ItemStorageSpy();
-    const sut = new AddAuthenticationToStorage(itemStorageSpy);
+    const [sut, itemStorageSpy] = makeSut();
     const authentication = 'any_authentication';
     sut.add(authentication);
     expect(authentication).toEqual(itemStorageSpy.item);
   });
 
   test('not should add with AddItemStorage if it is not valid authentication', () => {
-    const itemStorageSpy = new ItemStorageSpy();
-    const sut = new AddAuthenticationToStorage(itemStorageSpy);
-    const authentication = '';
-    sut.add(authentication);
+    const [sut, itemStorageSpy] = makeSut();
+    sut.add('');
     expect(itemStorageSpy.item).toBeUndefined();
   });
 
   test('should return exception with AddItemStorage if it is not valid authentication', async () => {
-    const itemStorageSpy = new ItemStorageSpy();
-    const sut = new AddAuthenticationToStorage(itemStorageSpy);
-    const authentication = '';
+    const [sut] = makeSut();
     try {
-      await sut.add(authentication);
+      await sut.add('');
       throw new Error('something unexpected occurred in your test');
     } catch (error) {
       expect(error).toEqual(new AddAuthorizationError());
     }
   });
 });
+
+const makeSut = (): [AddAuthenticationToStorage, ItemStorageSpy] => {
+  const itemStorageSpy = new ItemStorageSpy();
+  const sut = new AddAuthenticationToStorage(itemStorageSpy);
+  return [sut, itemStorageSpy];
+};
 
 class AddAuthenticationToStorage implements AddAuthentication {
   constructor(private readonly addItemToStorage: AddItemToStorage) {}
