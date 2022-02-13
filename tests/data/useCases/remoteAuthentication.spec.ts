@@ -2,10 +2,11 @@ import { UnexpectedError } from '~/data/errors';
 import { Authentication } from '~/domain/useCases';
 import { RemoteAuthentication } from '~/data/useCases';
 import { OAuthClientSpy } from '../oauth';
+import { makeInvalidUrl, makeUrl } from '../helpers';
 
 describe('Data: RemoteAuthentication', () => {
   test('should authenticate with OAuthClient call correct url', () => {
-    const url = 'http://any-url.com';
+    const url = makeUrl();
     const [sut, oAuthClientSpy] = makeSut(url);
     sut.authenticate();
     expect(oAuthClientSpy.url.length).not.toBe(0);
@@ -13,7 +14,7 @@ describe('Data: RemoteAuthentication', () => {
   });
 
   test('should authenticate with the correct parameters of the OAuthClient call', () => {
-    const [sut, oAuthClientSpy] = makeSut('http://any-url.com');
+    const [sut, oAuthClientSpy] = makeSut(makeUrl());
     const params = makeAuthenticationParams();
     sut.completeUrlWithParam(params);
     sut.authenticate();
@@ -24,7 +25,7 @@ describe('Data: RemoteAuthentication', () => {
   });
 
   test('should authenticate with OAuthClient call response with expected error', async () => {
-    const url = '//any-url.com';
+    const url = makeInvalidUrl();
     const [sut] = makeSut(url);
     try {
       await sut.authenticate();
