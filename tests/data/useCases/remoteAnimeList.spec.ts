@@ -1,11 +1,9 @@
 import faker from 'faker';
 import { AnimeContentError, UnexpectedError } from '~/data/errors';
-import {
-  HttpGetClient,
-  HttpRequest,
-  HttpResponse,
-  HttpStatusCode,
-} from '~/data/http';
+import { HttpStatusCode } from '~/data/http';
+import { Anime } from '~/domain/useCases';
+import { RemoteAnimeList } from '~/data/useCases';
+import { HttpClientSpy } from '../http';
 
 describe('Data: RemoteAnimeList', () => {
   test('should list with httpGetClient call correct url', async () => {
@@ -41,12 +39,25 @@ describe('Data: RemoteAnimeList', () => {
     }
   });
 
-  test('should list with HttpGetClient call response with anime content error', async () => {
+  test('should list with HttpGetClient call response with anime content error for not found', async () => {
     const url = 'http://any-url.com';
     const httpClientSpy = new HttpClientSpy();
     const sut = new RemoteAnimeList(url, httpClientSpy);
     try {
       httpClientSpy.completeWithError(HttpStatusCode.notFound);
+      await sut.list();
+      throw new Error('something unexpected occurred in your test');
+    } catch (error) {
+      expect(error).toEqual(new AnimeContentError());
+    }
+  });
+
+  test('should list with HttpGetClient call response with anime content error for bad request', async () => {
+    const url = 'http://any-url.com';
+    const httpClientSpy = new HttpClientSpy();
+    const sut = new RemoteAnimeList(url, httpClientSpy);
+    try {
+      httpClientSpy.completeWithError(HttpStatusCode.badRequest);
       await sut.list();
       throw new Error('something unexpected occurred in your test');
     } catch (error) {
@@ -64,69 +75,6 @@ describe('Data: RemoteAnimeList', () => {
     expect(response).toEqual(data);
   });
 });
-
-class RemoteAnimeList implements AnimeList {
-  constructor(
-    private readonly url: string,
-    private readonly httpClient: HttpGetClient,
-  ) {}
-
-  async list(
-    authorization?: string,
-  ): Promise<HttpResponse<Array<Anime.Model>>> {
-    const { statusCode, body } = await this.httpClient.get({
-      url: this.url,
-      headers: { Authorization: `Bearer ${authorization}` },
-    });
-
-    switch (statusCode) {
-      case HttpStatusCode.ok:
-        return body!;
-      case HttpStatusCode.notFound:
-        throw new AnimeContentError();
-      case HttpStatusCode.badRequest:
-        throw new AnimeContentError();
-      default:
-        throw new UnexpectedError();
-    }
-  }
-}
-
-class HttpClientSpy implements HttpGetClient {
-  private _url!: string;
-  private _headers!: any;
-  private response: HttpResponse<Array<Anime.Model>> = {
-    statusCode: HttpStatusCode.ok,
-  };
-
-  async get(data: HttpRequest): Promise<HttpResponse<Array<Anime.Model>>> {
-    this._url = data.url;
-    this._headers = data.headers;
-    return this.response;
-  }
-
-  completeWithSuccessData(data: Array<Anime.Model>) {
-    this.response = { statusCode: HttpStatusCode.ok, body: data };
-  }
-
-  completeWithError(
-    error: HttpStatusCode.badRequest | HttpStatusCode.notFound,
-  ) {
-    this.response = { statusCode: error };
-  }
-
-  completeWithUnexpectedError() {
-    this.response = { statusCode: HttpStatusCode.internalServerError };
-  }
-
-  get url(): string {
-    return this._url;
-  }
-
-  get headers(): any {
-    return this._headers;
-  }
-}
 
 const makeAnimeModelList = (): Array<Anime.Model> => {
   const animeList: Array<Anime.Model> = [];
@@ -150,24 +98,3 @@ const makeAnimeModelList = (): Array<Anime.Model> => {
 
   return animeList;
 };
-
-interface AnimeList {
-  list(authorization?: string): Promise<HttpResponse<Array<Anime.Model>>>;
-}
-
-namespace Anime {
-  export type Model = {
-    titles: {
-      en: string;
-    };
-    descriptions: {
-      en: string;
-    };
-    start_date: string;
-    episodes_count: number;
-    genres: Array<string>;
-    id: number;
-    cover_image: string;
-    banner_image: string;
-  };
-}
