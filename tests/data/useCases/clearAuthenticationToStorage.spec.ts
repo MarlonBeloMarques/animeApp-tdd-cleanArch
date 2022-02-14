@@ -1,3 +1,5 @@
+import { ClearAuthenticationToStorage } from '~/data/useCases';
+import { ClearAuthenticationError } from '~/data/errors';
 import { ItemStorageSpy } from '../storage';
 
 describe('Data: ClearAuthenticationToStorage', () => {
@@ -24,32 +26,3 @@ describe('Data: ClearAuthenticationToStorage', () => {
     }
   });
 });
-
-class ClearAuthenticationToStorage implements ClearAuthentication {
-  constructor(private readonly clearStorage: ClearStorage) {}
-
-  async clear(): Promise<void> {
-    try {
-      await this.clearStorage.clear();
-    } catch (error) {
-      throw new ClearAuthenticationError();
-    }
-  }
-}
-
-export interface ClearStorage {
-  clear(): Promise<void>;
-}
-
-interface ClearAuthentication {
-  clear(): Promise<void>;
-}
-
-class ClearAuthenticationError extends Error {
-  constructor() {
-    super();
-    this.message =
-      'There was an error trying to clear your authentication. Try again later.';
-    this.name = 'ClearAuthenticationError';
-  }
-}
