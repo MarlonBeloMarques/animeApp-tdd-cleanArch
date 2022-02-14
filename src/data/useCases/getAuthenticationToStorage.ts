@@ -1,5 +1,5 @@
 import { GetAuthentication } from '~/domain/useCases';
-import { GetAuthorizationError } from '../errors';
+import { GetAuthenticationError } from '../errors';
 import { GetItemToStorage } from '../storage';
 
 export class GetAuthenticationToStorage implements GetAuthentication {
@@ -14,7 +14,7 @@ export class GetAuthenticationToStorage implements GetAuthentication {
       return authentication;
     }
 
-    throw new GetAuthorizationError();
+    throw new GetAuthenticationError();
   }
 
   set authenticationKey(authenticationKey: string) {

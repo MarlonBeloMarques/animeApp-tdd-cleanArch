@@ -1,5 +1,5 @@
 import { GetAuthenticationToStorage } from '~/data/useCases';
-import { GetAuthorizationError } from '~/data/errors';
+import { GetAuthenticationError } from '~/data/errors';
 import { ItemStorageSpy } from '../storage';
 
 describe('Data: GetAuthenticationToStorage', () => {
@@ -18,7 +18,19 @@ describe('Data: GetAuthenticationToStorage', () => {
       await sut.get();
       throw new Error('something unexpected occurred in your test');
     } catch (error) {
-      expect(error).toEqual(new GetAuthorizationError());
+      expect(error).toEqual(new GetAuthenticationError());
     }
+  });
+
+  test('should update storage authentication key value successfully', async () => {
+    const itemStorageSpy = new ItemStorageSpy();
+    const sut = new GetAuthenticationToStorage(itemStorageSpy);
+    const authenticationKey = '@storage_AuthenticationKey';
+    itemStorageSpy.add(authenticationKey, 'any_authentication');
+    expect(itemStorageSpy.key).toEqual(authenticationKey);
+    const newAuthenticationKey = '@storage_AuthKey';
+    itemStorageSpy.add(newAuthenticationKey, 'any_authentication');
+    sut.authenticationKey = newAuthenticationKey;
+    expect(itemStorageSpy.key).toEqual(newAuthenticationKey);
   });
 });
