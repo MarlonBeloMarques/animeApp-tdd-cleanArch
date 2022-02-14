@@ -1,3 +1,5 @@
+import { GetAuthenticationToStorage } from '~/data/useCases';
+import { GetAuthorizationError } from '~/data/errors';
 import { ItemStorageSpy } from '../storage';
 
 describe('Data: GetAuthenticationToStorage', () => {
@@ -20,40 +22,3 @@ describe('Data: GetAuthenticationToStorage', () => {
     }
   });
 });
-
-class GetAuthenticationToStorage implements GetAuthentication {
-  private _authenticationKey = '@storage_AuthenticationKey';
-  constructor(private readonly getItemToStorage: GetItemToStorage) {}
-
-  async get(): Promise<string> {
-    const authentication = await this.getItemToStorage.get(
-      this._authenticationKey,
-    );
-    if (authentication) {
-      return authentication;
-    }
-
-    throw new GetAuthorizationError();
-  }
-
-  set authenticationKey(authenticationKey: string) {
-    this._authenticationKey = authenticationKey;
-  }
-}
-
-interface GetAuthentication {
-  get(): Promise<string>;
-}
-
-export interface GetItemToStorage {
-  get(key: string): Promise<any>;
-}
-
-export class GetAuthorizationError extends Error {
-  constructor() {
-    super();
-    this.message =
-      'Your authorization was not found. Try authenticating again.';
-    this.name = 'GetAuthorizationError';
-  }
-}

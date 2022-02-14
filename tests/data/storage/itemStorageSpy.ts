@@ -1,5 +1,4 @@
-import { AddItemToStorage } from '~/data/storage';
-import { GetItemToStorage } from '../useCases/getAuthenticationToStorage.spec';
+import { AddItemToStorage, GetItemToStorage } from '~/data/storage';
 
 export class ItemStorageSpy implements AddItemToStorage, GetItemToStorage {
   private _item: any;
