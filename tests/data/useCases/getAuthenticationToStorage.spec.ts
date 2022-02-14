@@ -4,16 +4,13 @@ import { ItemStorageSpy } from '../storage';
 
 describe('Data: GetAuthenticationToStorage', () => {
   test('should get with success authentication of storage', async () => {
-    const itemStorageSpy = new ItemStorageSpy();
-    const sut = new GetAuthenticationToStorage(itemStorageSpy);
-    itemStorageSpy.add('@storage_AuthenticationKey', 'any_authentication');
+    const [sut] = makeSut();
     const authentication = await sut.get();
     expect(authentication.length).not.toEqual(0);
   });
 
   test('should get an error when trying to get authentication from storage', async () => {
-    const itemStorageSpy = new ItemStorageSpy();
-    const sut = new GetAuthenticationToStorage(itemStorageSpy);
+    const [sut] = makeSut(false);
     try {
       await sut.get();
       throw new Error('something unexpected occurred in your test');
@@ -23,10 +20,7 @@ describe('Data: GetAuthenticationToStorage', () => {
   });
 
   test('should update storage authentication key value successfully', async () => {
-    const itemStorageSpy = new ItemStorageSpy();
-    const sut = new GetAuthenticationToStorage(itemStorageSpy);
-
-    itemStorageSpy.add('@storage_AuthenticationKey', 'any_authentication');
+    const [sut] = makeSut();
     try {
       const authentication = await sut.get();
       expect(authentication.length).not.toEqual(0);
@@ -43,3 +37,13 @@ describe('Data: GetAuthenticationToStorage', () => {
     }
   });
 });
+
+const makeSut = (
+  addAuthentication = true,
+): [GetAuthenticationToStorage, ItemStorageSpy] => {
+  const itemStorageSpy = new ItemStorageSpy();
+  const sut = new GetAuthenticationToStorage(itemStorageSpy);
+  if (addAuthentication)
+    itemStorageSpy.add('@storage_AuthenticationKey', 'any_authentication');
+  return [sut, itemStorageSpy];
+};
