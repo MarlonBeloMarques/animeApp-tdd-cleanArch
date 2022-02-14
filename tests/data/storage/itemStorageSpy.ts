@@ -9,8 +9,10 @@ export class ItemStorageSpy implements AddItemToStorage, GetItemToStorage {
     this._item = item;
   }
 
-  async get(): Promise<any> {
-    return this._item;
+  async get(key: string): Promise<any> {
+    if (key === this._key) {
+      return this._item;
+    }
   }
 
   get item(): any {

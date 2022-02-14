@@ -25,12 +25,21 @@ describe('Data: GetAuthenticationToStorage', () => {
   test('should update storage authentication key value successfully', async () => {
     const itemStorageSpy = new ItemStorageSpy();
     const sut = new GetAuthenticationToStorage(itemStorageSpy);
-    const authenticationKey = '@storage_AuthenticationKey';
-    itemStorageSpy.add(authenticationKey, 'any_authentication');
-    expect(itemStorageSpy.key).toEqual(authenticationKey);
-    const newAuthenticationKey = '@storage_AuthKey';
-    itemStorageSpy.add(newAuthenticationKey, 'any_authentication');
-    sut.authenticationKey = newAuthenticationKey;
-    expect(itemStorageSpy.key).toEqual(newAuthenticationKey);
+
+    itemStorageSpy.add('@storage_AuthenticationKey', 'any_authentication');
+    try {
+      const authentication = await sut.get();
+      expect(authentication.length).not.toEqual(0);
+    } catch (error) {
+      throw new Error('something unexpected occurred in your test');
+    }
+
+    try {
+      sut.authenticationKey = '@storage_AuthKey';
+      await sut.get();
+      throw new Error('something unexpected occurred in your test');
+    } catch (error) {
+      expect(error).toEqual(new GetAuthenticationError());
+    }
   });
 });
