@@ -1,10 +1,15 @@
 import { AddAuthentication } from '~/domain/useCases';
+import { AuthenticationStorageAbstract } from '../abstracts';
 import { AddAuthenticationError } from '../errors';
 import { AddItemToStorage } from '../storage';
 
-export class AddAuthenticationToStorage implements AddAuthentication {
-  private _authenticationKey = '@storage_AuthenticationKey';
-  constructor(private readonly addItemToStorage: AddItemToStorage) {}
+export class AddAuthenticationToStorage
+  extends AuthenticationStorageAbstract
+  implements AddAuthentication
+{
+  constructor(private readonly addItemToStorage: AddItemToStorage) {
+    super();
+  }
 
   async add(authentication: string): Promise<void> {
     if (this.authenticationIsValid(authentication)) {
@@ -16,9 +21,5 @@ export class AddAuthenticationToStorage implements AddAuthentication {
 
   private authenticationIsValid(authentication: string): boolean {
     return !!(authentication.length !== 0);
-  }
-
-  set authenticationKey(authenticationKey: string) {
-    this._authenticationKey = authenticationKey;
   }
 }

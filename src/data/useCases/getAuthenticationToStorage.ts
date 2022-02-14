@@ -1,10 +1,15 @@
 import { GetAuthentication } from '~/domain/useCases';
+import { AuthenticationStorageAbstract } from '../abstracts';
 import { GetAuthenticationError } from '../errors';
 import { GetItemToStorage } from '../storage';
 
-export class GetAuthenticationToStorage implements GetAuthentication {
-  private _authenticationKey = '@storage_AuthenticationKey';
-  constructor(private readonly getItemToStorage: GetItemToStorage) {}
+export class GetAuthenticationToStorage
+  extends AuthenticationStorageAbstract
+  implements GetAuthentication
+{
+  constructor(private readonly getItemToStorage: GetItemToStorage) {
+    super();
+  }
 
   async get(): Promise<string> {
     const authentication = await this.getItemToStorage.get(
@@ -15,9 +20,5 @@ export class GetAuthenticationToStorage implements GetAuthentication {
     }
 
     throw new GetAuthenticationError();
-  }
-
-  set authenticationKey(authenticationKey: string) {
-    this._authenticationKey = authenticationKey;
   }
 }
