@@ -3,7 +3,7 @@ import { HttpStatusCode } from '~/data/http';
 import { RemoteAnimeList } from '~/data/useCases';
 import { Anime } from '~/domain/useCases';
 import { HttpClientSpy } from '../http';
-import { makeAnimeModelList, makeUrl } from '../helpers';
+import { makeAnimeModelList, makeAuthentication, makeUrl } from '../helpers';
 
 describe('Data: RemoteAnimeList', () => {
   test('should list with httpGetClient call correct url', async () => {
@@ -14,12 +14,12 @@ describe('Data: RemoteAnimeList', () => {
     expect(httpClientSpy.url).toMatch(new RegExp(url));
   });
 
-  test('should list with httpGetClient call correct authorization', async () => {
+  test('should list with httpGetClient call correct authentication', async () => {
     const [sut, httpClientSpy] = makeSut();
-    const authorization = 'any_authorization';
-    sut.list(authorization);
+    const authentication = makeAuthentication();
+    sut.list(authentication);
     expect(Object.entries(httpClientSpy.headers).toString()).toMatch(
-      new RegExp(authorization),
+      new RegExp(authentication),
     );
   });
 

@@ -1,10 +1,11 @@
 import { ClearAuthenticationToStorage } from '~/data/useCases';
 import { ClearAuthenticationError } from '~/data/errors';
 import { ItemStorageSpy } from '../storage';
+import { makeAuthentication } from '../helpers';
 
 describe('Data: ClearAuthenticationToStorage', () => {
   test('should clear authentication of storage with successfully', async () => {
-    const authentication = 'any_authentication';
+    const authentication = makeAuthentication();
     const [sut, itemStorageSpy] = makeSut(authentication);
     await sut.clear();
     expect(itemStorageSpy.item).not.toEqual(authentication);
@@ -23,7 +24,7 @@ describe('Data: ClearAuthenticationToStorage', () => {
 });
 
 const makeSut = (
-  authentication = 'any_authentication',
+  authentication = makeAuthentication(),
 ): [ClearAuthenticationToStorage, ItemStorageSpy] => {
   const itemStorageSpy = new ItemStorageSpy();
   const sut = new ClearAuthenticationToStorage(itemStorageSpy);
