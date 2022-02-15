@@ -4,19 +4,14 @@ import { ItemStorageSpy } from '../storage';
 
 describe('Data: ClearAuthenticationToStorage', () => {
   test('should clear authentication of storage with successfully', async () => {
-    const itemStorageSpy = new ItemStorageSpy();
     const authentication = 'any_authentication';
-    itemStorageSpy.add('@storage_AuthenticationKey', authentication);
-    const sut = new ClearAuthenticationToStorage(itemStorageSpy);
+    const [sut, itemStorageSpy] = makeSut(authentication);
     await sut.clear();
     expect(itemStorageSpy.item).not.toEqual(authentication);
   });
 
   test('should have a ClearAuthenticationError exception when clearing', async () => {
-    const itemStorageSpy = new ItemStorageSpy();
-    const authentication = 'any_authentication';
-    itemStorageSpy.add('@storage_AuthenticationKey', authentication);
-    const sut = new ClearAuthenticationToStorage(itemStorageSpy);
+    const [sut, itemStorageSpy] = makeSut();
     itemStorageSpy.completeWithErrorWhenCleaning();
     try {
       await sut.clear();
@@ -26,3 +21,12 @@ describe('Data: ClearAuthenticationToStorage', () => {
     }
   });
 });
+
+const makeSut = (
+  authentication = 'any_authentication',
+): [ClearAuthenticationToStorage, ItemStorageSpy] => {
+  const itemStorageSpy = new ItemStorageSpy();
+  const sut = new ClearAuthenticationToStorage(itemStorageSpy);
+  itemStorageSpy.add('@storage_AuthenticationKey', authentication);
+  return [sut, itemStorageSpy];
+};
