@@ -5,10 +5,20 @@ import { makeUrl } from '../data/helpers/testFactories';
 
 jest.mock('axios');
 
-export const mockHttpResponse = (): any => ({
+export const mockHttpResponse = (): AxiosResponse => ({
   data: faker.random.objectElement(),
   status: faker.datatype.number(),
+  statusText: faker.random.objectElement(),
+  headers: {},
+  config: {},
 });
+
+export const toHttpResponse = (response: AxiosResponse): HttpResponse => {
+  return {
+    body: response.data,
+    statusCode: response.status,
+  };
+};
 
 export const mockHttpRequest = (): HttpRequest => {
   return {
@@ -37,6 +47,15 @@ describe('Infra: AxiosAdapter', () => {
       method: HttpMethods.get,
     } as HttpAxiosRequest);
   });
+
+  test('should request through the axiosAdapter a correct response', async () => {
+    const request = mockHttpRequest();
+    const sut = new AxiosAdapter();
+    const mockedAxios = mockAxios();
+    const httpResponse = await sut.get(request);
+    const axiosResponse = await mockedAxios.request.mock.results[0].value;
+    expect(httpResponse).toEqual(toHttpResponse(axiosResponse));
+  });
 });
 
 enum HttpMethods {
@@ -56,7 +75,9 @@ type HttpAxiosRequest = {
 type HttpRequestMethod<T> = Partial<T> & { method: HttpMethods };
 
 class AxiosAdapter implements HttpGetClient {
-  private async request(data: HttpRequestMethod<HttpRequest>) {
+  async request(
+    data: HttpRequestMethod<HttpRequest>,
+  ): Promise<HttpResponse<any>> {
     let axiosResponse = {} as AxiosResponse;
     try {
       axiosResponse = await axios.request({
@@ -75,7 +96,7 @@ class AxiosAdapter implements HttpGetClient {
   }
 
   async get(data: HttpRequest): Promise<HttpResponse<any>> {
-    return this.request({
+    return await this.request({
       url: data.url,
       headers: data.headers,
       method: HttpMethods.get,
