@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import faker from 'faker';
 import { HttpGetClient, HttpRequest, HttpResponse } from '~/data/http';
 import { makeUrl } from '../data/helpers/testFactories';
@@ -56,6 +56,29 @@ describe('Infra: AxiosAdapter', () => {
     const axiosResponse = await mockedAxios.request.mock.results[0].value;
     expect(httpResponse).toEqual(toHttpResponse(axiosResponse));
   });
+
+  test('should request through axiosAdapter an error response', async () => {
+    const request = mockHttpRequest();
+    const sut = new AxiosAdapter();
+
+    const mockedAxios = axios as jest.Mocked<typeof axios>;
+    mockedAxios.request.mockClear().mockRejectedValueOnce({
+      response: mockHttpResponse(),
+    });
+
+    const httpResponse = await sut.get(request);
+
+    try {
+      await mockedAxios.request.mock.results[0].value;
+      throw new Error('something unexpected occurred in your test');
+    } catch (error) {
+      const errorResponse = (error as AxiosError).response;
+
+      const httpErrorResponse = toHttpResponse(errorResponse as AxiosResponse);
+
+      expect(httpResponse).toEqual(httpErrorResponse);
+    }
+  });
 });
 
 enum HttpMethods {
@@ -87,6 +110,10 @@ class AxiosAdapter implements HttpGetClient {
         method: data.method,
       });
     } catch (error) {
+      const axiosError = error as AxiosError;
+      if (axiosError.response) {
+        axiosResponse = axiosError.response;
+      }
     } finally {
       return {
         statusCode: axiosResponse.status,
