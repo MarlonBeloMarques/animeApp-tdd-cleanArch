@@ -60,6 +60,17 @@ describe('Data: RemoteAnimeList', () => {
     const response = await sut.list();
     expect(response).toEqual(data);
   });
+
+  test('should successfully list with httpGetClient the correct parameters', () => {
+    const params = makeParams();
+    const [sut, httpClientSpy] = makeSut(makeUrl(), undefined, undefined);
+    sut.completeUrlWithParam(params);
+    sut.list();
+    expect(httpClientSpy.url.length).not.toBe(0);
+    expect(httpClientSpy.url).toMatch(new RegExp(params.locale));
+    expect(httpClientSpy.url).toMatch(new RegExp(params.page.toString()));
+    expect(httpClientSpy.url).toMatch(new RegExp(params.per_page.toString()));
+  });
 });
 
 const makeSut = (
@@ -73,4 +84,12 @@ const makeSut = (
   if (completeWithSuccess)
     httpClientSpy.completeWithSuccessData(completeWithSuccess);
   return [sut, httpClientSpy];
+};
+
+const makeParams = (): Anime.Params => {
+  return {
+    locale: 'en',
+    page: 1,
+    per_page: 100,
+  };
 };
