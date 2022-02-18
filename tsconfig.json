@@ -82,8 +82,8 @@
     "experimentalDecorators": true        /* Enables experimental support for ES7 decorators. */
     // "emitDecoratorMetadata": true,         /* Enables experimental support for emitting type metadata for decorators. */
   },
-  "types": ["src/types/*"], /* Type declaration files to be included in compilation. */
-  "include": ["src", "App.tsx", "tests"],
+  "types": ["types/*"], /* Type declaration files to be included in compilation. */
+  "include": ["src", "App.tsx", "tests", "types"],
   "exclude": [
     "node_modules", "babel.config.js", "metro.config.js", "jest.config.js", "e2e"
   ]

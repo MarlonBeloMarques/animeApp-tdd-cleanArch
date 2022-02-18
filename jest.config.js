@@ -10,9 +10,8 @@ module.exports = {
     '!<rootDir>/src/**/index.ts',
     '!<rootDir>/tests/**/index.ts',
   ],
-  testPathIgnorePatterns: [
-    '<rootDir>/node_modules/',
-  ],
+  setupFiles: ['<rootDir>/jestSetupFile.js'],
+  testPathIgnorePatterns: ['<rootDir>/node_modules/'],
   coverageThreshold: {
     global: {
       branches: 80,

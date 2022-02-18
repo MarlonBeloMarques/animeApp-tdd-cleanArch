@@ -5,7 +5,7 @@ import { mockLinking } from '../mocks/linkingMock';
 
 jest.mock('react-native/Libraries/Linking/Linking');
 
-describe('Data: OAuthAdapter', () => {
+describe('Infra: OAuthAdapter', () => {
   test('should request to openUrl once successfully', () => {
     const [sut, mockedLinking] = makeSut();
     sut.redirect({ url: makeUrl() });
