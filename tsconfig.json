@@ -51,6 +51,9 @@
       "~/data/http": [
         "src/data/http"
       ],
+      "~/data/oauth": [
+        "src/data/oauth"
+      ],
       "~/data/storage": [
         "src/data/storage"
       ],

@@ -1,7 +1,9 @@
 export interface OAuthClient {
-  redirect(data: OAuthRequest): Promise<void>;
+  redirect(data: OAuthClient.Request): Promise<void>;
 }
 
-export type OAuthRequest = {
-  url: string;
-};
+export namespace OAuthClient {
+  export type Request = {
+    url: string;
+  };
+}
