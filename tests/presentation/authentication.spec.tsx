@@ -4,9 +4,7 @@ import { fireEvent, render } from '@testing-library/react-native';
 
 describe('Presentation: Authentication', () => {
   test('should show text button correct', () => {
-    const { getByTestId } = render(
-      <Authentication onPressAuthentication={() => {}} />,
-    );
+    const { getByTestId } = makeSut();
     const buttonId = 'authentication_id';
     const text = `LET'S BEGIN`;
     const button = getByTestId(buttonId);
@@ -15,10 +13,8 @@ describe('Presentation: Authentication', () => {
   });
 
   test('should press button with success', () => {
-    const onPressAuthenticationMock = jest.fn();
-    const { getByTestId } = render(
-      <Authentication onPressAuthentication={onPressAuthenticationMock} />,
-    );
+    const { getByTestId, onPressAuthenticationMock } = makeSut(true);
+
     const buttonId = 'authentication_id';
     const button = getByTestId(buttonId);
     fireEvent.press(button);
@@ -26,9 +22,7 @@ describe('Presentation: Authentication', () => {
   });
 
   test('should show title correct with success', () => {
-    const { getByTestId } = render(
-      <Authentication onPressAuthentication={() => {}} />,
-    );
+    const { getByTestId } = makeSut();
     const titleText = 'ANIMEAPP';
     const titleId = 'title_id';
     const title = getByTestId(titleId);
@@ -37,9 +31,7 @@ describe('Presentation: Authentication', () => {
   });
 
   test('should show subtitle correct with success', () => {
-    const { getByTestId } = render(
-      <Authentication onPressAuthentication={() => {}} />,
-    );
+    const { getByTestId } = makeSut();
     const subtitleText = 'アニメ';
     const subtitleId = 'subtitle_id';
     const subtitle = getByTestId(subtitleId);
@@ -48,9 +40,7 @@ describe('Presentation: Authentication', () => {
   });
 
   test('should show description with success', () => {
-    const { getByTestId } = render(
-      <Authentication onPressAuthentication={() => {}} />,
-    );
+    const { getByTestId } = makeSut();
     const descriptionId = 'description_id';
     const description = getByTestId(descriptionId);
     expect(description).toBeTruthy();
@@ -81,4 +71,30 @@ const Authentication: React.FC<Props> = ({ onPressAuthentication }) => {
   );
 };
 
-export default Authentication;
+const makeSut = (onPressAuthentication = false) => {
+  const onPressAuthenticationMock = jest.fn();
+
+  const { getByTestId } = render(
+    renderWithParams({
+      screen: Authentication,
+      screenProps: {
+        onPressAuthentication: onPressAuthentication
+          ? onPressAuthenticationMock
+          : () => {},
+      },
+    }),
+  );
+
+  return { getByTestId, onPressAuthenticationMock };
+};
+
+type Params<C> = {
+  screen: React.ComponentType<C>;
+  screenProps: C;
+};
+
+const renderWithParams = <C extends Record<string, unknown>>(
+  params: Params<C>,
+) => {
+  return React.createElement(params.screen, params.screenProps);
+};
