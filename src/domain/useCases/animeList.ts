@@ -1,8 +1,7 @@
-import { HttpResponse } from '~/data/http';
 import { AnimeModel, AnimeModelDocument } from '../models';
 
 export interface AnimeList {
-  list(authorization?: string): Promise<HttpResponse<Anime.Model>>;
+  list(authorization?: string): Promise<Anime.Model>;
 }
 
 export namespace Anime {

@@ -1,6 +1,6 @@
 import { Anime, AnimeList } from '~/domain/useCases';
 import { AnimeContentError, UnexpectedError } from '../errors';
-import { HttpGetClient, HttpResponse, HttpStatusCode } from '../http';
+import { HttpGetClient, HttpStatusCode } from '../http';
 
 export class RemoteAnimeList implements AnimeList {
   constructor(
@@ -8,7 +8,7 @@ export class RemoteAnimeList implements AnimeList {
     private readonly httpClient: HttpGetClient,
   ) {}
 
-  async list(authorization?: string): Promise<HttpResponse<Anime.Model>> {
+  async list(authorization?: string): Promise<Anime.Model> {
     const { statusCode, body } = await this.httpClient.get({
       url: this.url,
       headers: { Authorization: `Bearer ${authorization}` },

@@ -9,6 +9,7 @@ module.exports = {
     '<rootDir>/src/**/*.{ts,tsx}',
     '!<rootDir>/src/**/index.ts',
     '!<rootDir>/tests/**/index.ts',
+    '!<rootDir>/tests/integration/*.{ts,tsx}'
   ],
   setupFiles: ['<rootDir>/jestSetupFile.js'],
   testPathIgnorePatterns: ['<rootDir>/node_modules/'],
