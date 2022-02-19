@@ -46,6 +46,15 @@ describe('Presentation: Authentication', () => {
     expect(subtitle).toBeTruthy();
     expect(subtitle.props.children).toEqual(subtitleText);
   });
+
+  test('should show description with success', () => {
+    const { getByTestId } = render(
+      <Authentication onPressAuthentication={() => {}} />,
+    );
+    const descriptionId = 'description_id';
+    const description = getByTestId(descriptionId);
+    expect(description).toBeTruthy();
+  });
 });
 
 type Props = {
@@ -59,6 +68,9 @@ const Authentication: React.FC<Props> = ({ onPressAuthentication }) => {
         <Text testID="title_id">ANIMEAPP</Text>
         <Text testID="subtitle_id">アニメ</Text>
       </View>
+      <Text testID="description_id">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+      </Text>
       <TouchableOpacity
         testID="authentication_id"
         onPress={onPressAuthentication}
