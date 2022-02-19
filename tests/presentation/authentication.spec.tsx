@@ -24,6 +24,17 @@ describe('Presentation: Authentication', () => {
     fireEvent.press(button);
     expect(onPressAuthenticationMock).toHaveBeenCalled();
   });
+
+  test('should show title correct with success', () => {
+    const { getByTestId } = render(
+      <Authentication onPressAuthentication={() => {}} />,
+    );
+    const titleText = 'ANIMEAPP';
+    const titleId = 'title_id';
+    const title = getByTestId(titleId);
+    expect(title).toBeTruthy();
+    expect(title.props.children).toEqual(titleText);
+  });
 });
 
 type Props = {
@@ -33,6 +44,9 @@ type Props = {
 const Authentication: React.FC<Props> = ({ onPressAuthentication }) => {
   return (
     <View>
+      <View>
+        <Text testID="title_id">ANIMEAPP</Text>
+      </View>
       <TouchableOpacity
         testID="authentication_id"
         onPress={onPressAuthentication}
