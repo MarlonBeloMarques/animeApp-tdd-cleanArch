@@ -4,17 +4,19 @@ import { render } from '@testing-library/react-native';
 
 describe('Presentation: Authentication', () => {
   test('should show text button correct', () => {
-    const { getByText } = render(<Authentication />);
+    const { getByTestId } = render(<Authentication />);
+    const buttonId = 'authentication_id';
     const text = `LET'S BEGIN`;
-    const response = getByText(text);
-    expect(response).toBeTruthy();
+    const button = getByTestId(buttonId);
+    const textButton = button.findByType(Text).props.children;
+    expect(textButton).toEqual(text);
   });
 });
 
 const Authentication: React.FC = () => {
   return (
     <View>
-      <TouchableOpacity>
+      <TouchableOpacity testID="authentication_id">
         <Text>{`LET'S BEGIN`}</Text>
       </TouchableOpacity>
     </View>
