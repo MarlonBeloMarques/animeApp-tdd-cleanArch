@@ -3,7 +3,7 @@ import { HttpStatusCode } from '~/data/http';
 import { RemoteAnimeList } from '~/data/useCases';
 import { Anime } from '~/domain/useCases';
 import { HttpClientSpy } from '../http';
-import { makeAnimeModelList, makeAuthentication, makeUrl } from '../helpers';
+import { makeAnimeModel, makeAuthentication, makeUrl } from '../helpers';
 
 describe('Data: RemoteAnimeList', () => {
   test('should list with httpGetClient call correct url', async () => {
@@ -55,7 +55,7 @@ describe('Data: RemoteAnimeList', () => {
   });
 
   test('should list with HttpGetClient call response with success', async () => {
-    const data = makeAnimeModelList();
+    const data = makeAnimeModel();
     const [sut] = makeSut(makeUrl(), undefined, data);
     const response = await sut.list();
     expect(response).toEqual(data);
@@ -76,7 +76,7 @@ describe('Data: RemoteAnimeList', () => {
 const makeSut = (
   url: string = makeUrl(),
   completeWithError?: HttpStatusCode.badRequest | HttpStatusCode.notFound,
-  completeWithSuccess?: Array<Anime.Model>,
+  completeWithSuccess?: Anime.Model,
 ): [RemoteAnimeList, HttpClientSpy] => {
   const httpClientSpy = new HttpClientSpy();
   const sut = new RemoteAnimeList(url, httpClientSpy);

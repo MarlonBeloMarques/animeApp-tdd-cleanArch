@@ -1,11 +1,26 @@
 import faker from 'faker';
 import { Anime } from '~/domain/useCases';
 
-export const makeAnimeModelList = (): Array<Anime.Model> => {
-  const animeList: Array<Anime.Model> = [];
+export const makeAnimeModel = (): Anime.Model => {
+  const anime: Anime.Model = {
+    status_code: faker.datatype.number(),
+    message: faker.lorem.lines(),
+    data: {
+      current_page: faker.datatype.number(),
+      count: faker.datatype.number(),
+      documents: mockAnimeModelDocument(),
+      last_page: faker.datatype.number(),
+    },
+  };
+
+  return anime;
+};
+
+const mockAnimeModelDocument = (): Array<Anime.ModelDocument> => {
   faker.locale = 'en';
+  const documentList: Array<Anime.ModelDocument> = [];
   for (let index = 0; index < 5; index++) {
-    animeList.push({
+    documentList.push({
       titles: {
         en: faker.name.title(),
       },
@@ -21,5 +36,5 @@ export const makeAnimeModelList = (): Array<Anime.Model> => {
     });
   }
 
-  return animeList;
+  return documentList;
 };

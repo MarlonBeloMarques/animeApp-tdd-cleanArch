@@ -9,17 +9,17 @@ import { Anime } from '~/domain/useCases';
 export class HttpClientSpy implements HttpGetClient {
   private _url!: string;
   private _headers!: any;
-  private response: HttpResponse<Array<Anime.Model>> = {
+  private response: HttpResponse<Anime.Model> = {
     statusCode: HttpStatusCode.ok,
   };
 
-  async get(data: HttpRequest): Promise<HttpResponse<Array<Anime.Model>>> {
+  async get(data: HttpRequest): Promise<HttpResponse<Anime.Model>> {
     this._url = data.url;
     this._headers = data.headers;
     return this.response;
   }
 
-  completeWithSuccessData(data: Array<Anime.Model>) {
+  completeWithSuccessData(data: Anime.Model) {
     this.response = { statusCode: HttpStatusCode.ok, body: data };
   }
 
