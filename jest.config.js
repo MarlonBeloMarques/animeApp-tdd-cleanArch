@@ -9,10 +9,16 @@ module.exports = {
     '<rootDir>/src/**/*.{ts,tsx}',
     '!<rootDir>/src/**/index.ts',
     '!<rootDir>/tests/**/index.ts',
-    '!<rootDir>/tests/integration/*.{ts,tsx}'
+    '!<rootDir>/tests/integration/*.{ts,tsx}',
+    '!<rootDir>/src/presentation/themes/**',
+    '!<rootDir>/src/presentation/helpers/**',
+    '!<rootDir>/src/presentation/assets/**'
   ],
   setupFiles: ['<rootDir>/jestSetupFile.js'],
   testPathIgnorePatterns: ['<rootDir>/node_modules/'],
+  transformIgnorePatterns: [
+      "node_modules/(?!(@react-native|react-native|react-native-size-matters)/)"
+    ],
   coverageThreshold: {
     global: {
       branches: 80,
