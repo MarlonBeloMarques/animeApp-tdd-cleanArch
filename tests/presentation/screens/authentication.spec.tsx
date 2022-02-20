@@ -1,7 +1,7 @@
 import { Text } from 'react-native';
 import { fireEvent, render } from '@testing-library/react-native';
 import { Authentication } from '~/presentation/screens';
-import { renderWithParams } from './helpers';
+import { renderWithParams } from '../helpers';
 
 describe('Presentation: Authentication', () => {
   test('should show text button correct', () => {
