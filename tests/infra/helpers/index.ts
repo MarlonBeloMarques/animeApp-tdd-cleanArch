@@ -1,1 +1,1 @@
-export * from './extensionHelpers';
+export * from './extensionFactories';

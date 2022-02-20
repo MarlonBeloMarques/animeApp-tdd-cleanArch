@@ -1,6 +1,7 @@
-import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text } from 'react-native';
 import { fireEvent, render } from '@testing-library/react-native';
+import { Authentication } from '~/presentation/screens';
+import { renderWithParams } from './helpers';
 
 describe('Presentation: Authentication', () => {
   test('should show text button correct', () => {
@@ -47,30 +48,6 @@ describe('Presentation: Authentication', () => {
   });
 });
 
-type Props = {
-  onPressAuthentication: () => void;
-};
-
-const Authentication: React.FC<Props> = ({ onPressAuthentication }) => {
-  return (
-    <View>
-      <View>
-        <Text testID="title_id">ANIMEAPP</Text>
-        <Text testID="subtitle_id">アニメ</Text>
-      </View>
-      <Text testID="description_id">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-      </Text>
-      <TouchableOpacity
-        testID="authentication_id"
-        onPress={onPressAuthentication}
-      >
-        <Text>{`LET'S BEGIN`}</Text>
-      </TouchableOpacity>
-    </View>
-  );
-};
-
 const makeSut = (onPressAuthentication = false) => {
   const onPressAuthenticationMock = jest.fn();
 
@@ -86,15 +63,4 @@ const makeSut = (onPressAuthentication = false) => {
   );
 
   return { getByTestId, onPressAuthenticationMock };
-};
-
-type Params<C> = {
-  screen: React.ComponentType<C>;
-  screenProps: C;
-};
-
-const renderWithParams = <C extends Record<string, unknown>>(
-  params: Params<C>,
-) => {
-  return React.createElement(params.screen, params.screenProps);
 };
