@@ -2,7 +2,7 @@ import React from 'react';
 
 type Params<C> = {
   screen: React.ComponentType<C>;
-  screenProps: C;
+  screenProps?: C;
 };
 
 export const renderWithParams = <C extends Record<string, unknown>>(
