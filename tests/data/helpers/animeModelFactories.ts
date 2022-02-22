@@ -16,7 +16,7 @@ export const makeAnimeModel = (): Anime.Model => {
   return anime;
 };
 
-const mockAnimeModelDocument = (): Array<Anime.ModelDocument> => {
+export const mockAnimeModelDocument = (): Array<Anime.ModelDocument> => {
   faker.locale = 'en';
   const documentList: Array<Anime.ModelDocument> = [];
   for (let index = 0; index < 5; index++) {

@@ -3,6 +3,7 @@ import { FlatList, Text, View } from 'react-native';
 import { render } from '@testing-library/react-native';
 import { Anime } from '~/domain/useCases';
 import { renderWithParams } from '../helpers';
+import { mockAnimeModelDocument } from '../../data/helpers';
 
 describe('Presentation: Animes', () => {
   test('should show message if anime list is empty', () => {
@@ -15,6 +16,20 @@ describe('Presentation: Animes', () => {
     const animesIsEmpty = getByTestId('animes_is_empty_id');
     expect(animesIsEmpty).toBeTruthy();
   });
+
+  test('should list the animes with success', () => {
+    const mockAnimeList = mockAnimeModelDocument();
+    const { getByTestId } = render(
+      renderWithParams({
+        screen: Animes,
+        screenProps: { animeList: mockAnimeList },
+      }),
+    );
+
+    const firstAnime = mockAnimeList[0];
+    const anime = getByTestId(`anime_${firstAnime.id}`);
+    expect(anime).toBeTruthy();
+  });
 });
 
 type Props = {
@@ -26,7 +41,11 @@ const Animes: React.FC<Props> = ({ animeList = [] }) => {
     <View>
       <FlatList
         data={animeList}
-        renderItem={({}) => <View></View>}
+        renderItem={({ item }) => (
+          <View testID={`anime_${item.id}`}>
+            <Text>{item.titles.en}</Text>
+          </View>
+        )}
         ListEmptyComponent={
           <Text testID="animes_is_empty_id">
             {`We couldn't find any anime to show you. Try again later.`}
