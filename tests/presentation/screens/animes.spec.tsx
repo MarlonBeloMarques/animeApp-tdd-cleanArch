@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlatList, Text, View } from 'react-native';
+import { FlatList, Image, Text, View } from 'react-native';
 import { render } from '@testing-library/react-native';
 import { Anime } from '~/domain/useCases';
 import { renderWithParams } from '../helpers';
@@ -30,6 +30,24 @@ describe('Presentation: Animes', () => {
     const anime = getByTestId(`anime_${firstAnime.id}`);
     expect(anime).toBeTruthy();
   });
+
+  test('should list the animes with title and image successfully', () => {
+    const mockAnimeList = mockAnimeModelDocument();
+    const { getByTestId } = render(
+      renderWithParams({
+        screen: Animes,
+        screenProps: { animeList: mockAnimeList },
+      }),
+    );
+
+    const firstAnime = mockAnimeList[0];
+    const anime = getByTestId(`anime_${firstAnime.id}`);
+    const titleAnime = anime.findByType(Text).props.children;
+    const imageAnime = anime.findByType(Image).props.source;
+
+    expect(firstAnime.titles.en).toEqual(titleAnime);
+    expect(firstAnime.cover_image).toEqual(imageAnime.uri);
+  });
 });
 
 type Props = {
@@ -43,6 +61,7 @@ const Animes: React.FC<Props> = ({ animeList = [] }) => {
         data={animeList}
         renderItem={({ item }) => (
           <View testID={`anime_${item.id}`}>
+            <Image source={{ uri: item.cover_image }} />
             <Text>{item.titles.en}</Text>
           </View>
         )}
