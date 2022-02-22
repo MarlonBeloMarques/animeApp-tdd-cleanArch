@@ -1,6 +1,6 @@
 import React from 'react';
-import { FlatList, Image, Text, View } from 'react-native';
-import { render } from '@testing-library/react-native';
+import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
+import { fireEvent, render } from '@testing-library/react-native';
 import { Anime } from '~/domain/useCases';
 import { renderWithParams } from '../helpers';
 import { mockAnimeModelDocument } from '../../data/helpers';
@@ -10,7 +10,7 @@ describe('Presentation: Animes', () => {
     const { getByTestId } = render(
       renderWithParams({
         screen: Animes,
-        screenProps: { animeList: [] },
+        screenProps: { animeList: [], onPressDetailAnime: () => {} },
       }),
     );
     const animesIsEmpty = getByTestId('animes_is_empty_id');
@@ -22,7 +22,7 @@ describe('Presentation: Animes', () => {
     const { getByTestId } = render(
       renderWithParams({
         screen: Animes,
-        screenProps: { animeList: mockAnimeList },
+        screenProps: { animeList: mockAnimeList, onPressDetailAnime: () => {} },
       }),
     );
 
@@ -36,7 +36,7 @@ describe('Presentation: Animes', () => {
     const { getByTestId } = render(
       renderWithParams({
         screen: Animes,
-        screenProps: { animeList: mockAnimeList },
+        screenProps: { animeList: mockAnimeList, onPressDetailAnime: () => {} },
       }),
     );
 
@@ -48,21 +48,46 @@ describe('Presentation: Animes', () => {
     expect(firstAnime.titles.en).toEqual(titleAnime);
     expect(firstAnime.cover_image).toEqual(imageAnime.uri);
   });
+
+  test('should press the anime successfully', async () => {
+    const onPressAnimeDetailMock = jest.fn();
+    const mockAnimeList = mockAnimeModelDocument();
+    const { getByTestId } = render(
+      renderWithParams({
+        screen: Animes,
+        screenProps: {
+          animeList: mockAnimeList,
+          onPressDetailAnime: onPressAnimeDetailMock,
+        },
+      }),
+    );
+
+    const firstAnime = mockAnimeList[0];
+    const animeButton = getByTestId(`anime_button_${firstAnime.id}`);
+    fireEvent.press(animeButton);
+    expect(onPressAnimeDetailMock).toHaveBeenCalled();
+  });
 });
 
 type Props = {
   animeList: Array<Anime.ModelDocument>;
+  onPressDetailAnime: () => void;
 };
 
-const Animes: React.FC<Props> = ({ animeList = [] }) => {
+const Animes: React.FC<Props> = ({ animeList = [], onPressDetailAnime }) => {
   return (
     <View>
       <FlatList
         data={animeList}
         renderItem={({ item }) => (
           <View testID={`anime_${item.id}`}>
-            <Image source={{ uri: item.cover_image }} />
-            <Text>{item.titles.en}</Text>
+            <TouchableOpacity
+              testID={`anime_button_${item.id}`}
+              onPress={onPressDetailAnime}
+            >
+              <Image source={{ uri: item.cover_image }} />
+              <Text>{item.titles.en}</Text>
+            </TouchableOpacity>
           </View>
         )}
         ListEmptyComponent={
