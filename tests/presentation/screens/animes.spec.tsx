@@ -10,7 +10,11 @@ describe('Presentation: Animes', () => {
     const { getByTestId } = render(
       renderWithParams({
         screen: Animes,
-        screenProps: { animeList: [], onPressDetailAnime: () => {} },
+        screenProps: {
+          animeList: [],
+          onPressDetailAnime: () => {},
+          getMoreAnime: () => {},
+        },
       }),
     );
     const animesIsEmpty = getByTestId('animes_is_empty_id');
@@ -22,7 +26,11 @@ describe('Presentation: Animes', () => {
     const { getByTestId } = render(
       renderWithParams({
         screen: Animes,
-        screenProps: { animeList: mockAnimeList, onPressDetailAnime: () => {} },
+        screenProps: {
+          animeList: mockAnimeList,
+          onPressDetailAnime: () => {},
+          getMoreAnime: () => {},
+        },
       }),
     );
 
@@ -36,7 +44,11 @@ describe('Presentation: Animes', () => {
     const { getByTestId } = render(
       renderWithParams({
         screen: Animes,
-        screenProps: { animeList: mockAnimeList, onPressDetailAnime: () => {} },
+        screenProps: {
+          animeList: mockAnimeList,
+          onPressDetailAnime: () => {},
+          getMoreAnime: () => {},
+        },
       }),
     );
 
@@ -58,6 +70,7 @@ describe('Presentation: Animes', () => {
         screenProps: {
           animeList: mockAnimeList,
           onPressDetailAnime: onPressAnimeDetailMock,
+          getMoreAnime: () => {},
         },
       }),
     );
@@ -67,17 +80,88 @@ describe('Presentation: Animes', () => {
     fireEvent.press(animeButton);
     expect(onPressAnimeDetailMock).toHaveBeenCalled();
   });
+
+  test('should request more anime when reaching the end of the list', async () => {
+    const getMoreAnimeMock = jest.fn();
+    const mockAnimeList = mockAnimeModelDocument();
+    const { getByTestId } = render(
+      renderWithParams({
+        screen: Animes,
+        screenProps: {
+          animeList: mockAnimeList,
+          onPressDetailAnime: () => {},
+          getMoreAnime: getMoreAnimeMock,
+        },
+      }),
+    );
+
+    const mockedEventData = mockEventData({ contentOffset: { x: 1, y: 400 } });
+    const animeList = getByTestId('anime_list_id');
+    fireEvent.scroll(animeList, mockedEventData);
+    expect(getMoreAnimeMock).toHaveBeenCalled();
+  });
+
+  test('should not get animes when scrolling without reaching the end', async () => {
+    const getMoreAnimeMock = jest.fn();
+    const mockAnimeList = mockAnimeModelDocument();
+    const { getByTestId } = render(
+      renderWithParams({
+        screen: Animes,
+        screenProps: {
+          animeList: mockAnimeList,
+          onPressDetailAnime: () => {},
+          getMoreAnime: getMoreAnimeMock,
+        },
+      }),
+    );
+
+    const mockedEventData = mockEventData({ contentOffset: { x: 1, y: 200 } });
+    const animeList = getByTestId('anime_list_id');
+    fireEvent.scroll(animeList, mockedEventData);
+    expect(getMoreAnimeMock).not.toHaveBeenCalled();
+  });
 });
+
+type EventDataParams = {
+  contentOffset: {
+    x: number;
+    y: number;
+  };
+};
+
+const mockEventData = (params: EventDataParams) => {
+  return {
+    nativeEvent: {
+      contentOffset: params.contentOffset,
+      contentSize: {
+        height: 500,
+        width: 100,
+      },
+      layoutMeasurement: {
+        height: 100,
+        width: 100,
+      },
+    },
+  };
+};
 
 type Props = {
   animeList: Array<Anime.ModelDocument>;
   onPressDetailAnime: () => void;
+  getMoreAnime: () => void;
+  onEndReachedThreshold?: number;
 };
 
-const Animes: React.FC<Props> = ({ animeList = [], onPressDetailAnime }) => {
+const Animes: React.FC<Props> = ({
+  animeList = [],
+  onPressDetailAnime,
+  getMoreAnime,
+  onEndReachedThreshold = 0.5,
+}) => {
   return (
     <View>
       <FlatList
+        testID="anime_list_id"
         data={animeList}
         renderItem={({ item }) => (
           <View testID={`anime_${item.id}`}>
@@ -95,6 +179,8 @@ const Animes: React.FC<Props> = ({ animeList = [], onPressDetailAnime }) => {
             {`We couldn't find any anime to show you. Try again later.`}
           </Text>
         }
+        onEndReached={getMoreAnime}
+        onEndReachedThreshold={onEndReachedThreshold}
       />
     </View>
   );
