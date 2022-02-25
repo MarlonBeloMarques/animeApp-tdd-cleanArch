@@ -1,7 +1,6 @@
-import React from 'react';
-import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Text } from 'react-native';
 import { fireEvent, render } from '@testing-library/react-native';
-import { Anime } from '~/domain/useCases';
+import { Animes } from '~/presentation/screens';
 import { renderWithParams } from '../helpers';
 import { mockAnimeModelDocument } from '../../data/helpers';
 
@@ -120,6 +119,27 @@ describe('Presentation: Animes', () => {
     fireEvent.scroll(animeList, mockedEventData);
     expect(getMoreAnimeMock).not.toHaveBeenCalled();
   });
+
+  test('should utilize the onEndReachedThreshold correct', async () => {
+    const onEndReachedThreshold = 0.5;
+    const mockAnimeList = mockAnimeModelDocument();
+    const { getByTestId } = render(
+      renderWithParams({
+        screen: Animes,
+        screenProps: {
+          animeList: mockAnimeList,
+          onPressDetailAnime: () => {},
+          getMoreAnime: () => {},
+          onEndReachedThreshold: onEndReachedThreshold,
+        },
+      }),
+    );
+
+    const animeList = getByTestId('anime_list_id');
+    expect(animeList.props.onEndReachedThreshold).toEqual(
+      onEndReachedThreshold,
+    );
+  });
 });
 
 type EventDataParams = {
@@ -143,45 +163,4 @@ const mockEventData = (params: EventDataParams) => {
       },
     },
   };
-};
-
-type Props = {
-  animeList: Array<Anime.ModelDocument>;
-  onPressDetailAnime: () => void;
-  getMoreAnime: () => void;
-  onEndReachedThreshold?: number;
-};
-
-const Animes: React.FC<Props> = ({
-  animeList = [],
-  onPressDetailAnime,
-  getMoreAnime,
-  onEndReachedThreshold = 0.5,
-}) => {
-  return (
-    <View>
-      <FlatList
-        testID="anime_list_id"
-        data={animeList}
-        renderItem={({ item }) => (
-          <View testID={`anime_${item.id}`}>
-            <TouchableOpacity
-              testID={`anime_button_${item.id}`}
-              onPress={onPressDetailAnime}
-            >
-              <Image source={{ uri: item.cover_image }} />
-              <Text>{item.titles.en}</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-        ListEmptyComponent={
-          <Text testID="animes_is_empty_id">
-            {`We couldn't find any anime to show you. Try again later.`}
-          </Text>
-        }
-        onEndReached={getMoreAnime}
-        onEndReachedThreshold={onEndReachedThreshold}
-      />
-    </View>
-  );
 };
