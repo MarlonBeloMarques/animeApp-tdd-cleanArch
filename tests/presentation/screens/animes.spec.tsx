@@ -154,13 +154,29 @@ describe('Presentation: Animes', () => {
   });
 
   test('should get anime list with new image size fields with processImage', () => {
+    const modelDocumentList = new ModelDocumentListMapper(
+      mockAnimeModelDocument(),
+    );
     const sut = processImages({
-      animeList: mockAnimeModelDocument(),
+      animeList: modelDocumentList.toModelDocumentImageList(),
       targetWidth: 172,
     });
     const firstAnime = sut[0];
     expect(firstAnime.cover_image_size.height).toBeTruthy();
     expect(firstAnime.cover_image_size.width).toBeTruthy();
+  });
+
+  test('should get the same size anime list with processImage', () => {
+    const modelDocumentList = new ModelDocumentListMapper(
+      mockAnimeModelDocument(),
+    );
+    const sut = processImages({
+      animeList: modelDocumentList.toModelDocumentImageList(),
+      targetWidth: 172,
+    });
+    expect(sut.length).toEqual(
+      modelDocumentList.toModelDocumentImageList().length,
+    );
   });
 });
 
@@ -172,23 +188,60 @@ type CoverImageSize = {
 type ModelDocumentImage<T> = Partial<T> & { cover_image_size: CoverImageSize };
 
 type ProcessImagesParams = {
-  animeList: Array<Anime.ModelDocument>;
+  animeList: Array<ModelDocumentImage<Anime.ModelDocument>>;
   targetWidth: number;
 };
+
+interface ModelDocumentImageList {
+  toModelDocumentImageList(): Array<ModelDocumentImage<Anime.ModelDocument>>;
+}
+
+class ModelDocumentListMapper implements ModelDocumentImageList {
+  constructor(private modelDocumentList: Array<Anime.ModelDocument>) {}
+
+  toModelDocumentImageList = (): Array<
+    ModelDocumentImage<Anime.ModelDocument>
+  > => {
+    const modelDocumentImageList: Array<
+      ModelDocumentImage<Anime.ModelDocument>
+    > = [];
+
+    this.modelDocumentList.map((modelDocument) => {
+      modelDocumentImageList.push(this.toModelDocumentImage(modelDocument));
+    });
+
+    return modelDocumentImageList;
+  };
+
+  private toModelDocumentImage = (
+    modelDocument: Anime.ModelDocument,
+  ): ModelDocumentImage<Anime.ModelDocument> => {
+    return {
+      titles: modelDocument.titles,
+      cover_image_size: { height: 0, width: 0 },
+      banner_image: modelDocument.banner_image,
+      cover_image: modelDocument.cover_image,
+      descriptions: modelDocument.descriptions,
+      episodes_count: modelDocument.episodes_count,
+      genres: modelDocument.genres,
+      id: modelDocument.id,
+      start_date: modelDocument.start_date,
+    };
+  };
+}
 
 const processImages = ({
   animeList,
   targetWidth,
 }: ProcessImagesParams): Array<ModelDocumentImage<Anime.ModelDocument>> => {
-  const newAnimeList = [
-    { cover_image_size: { width: 0, height: 0 }, ...animeList },
-  ];
-  return newAnimeList.map((anime) => {
+  animeList.map((anime) => {
     const { aspectRatio, width } = generateContentForImage();
     anime.cover_image_size.width = width;
     anime.cover_image_size.height = targetWidth * aspectRatio;
     return anime;
   });
+
+  return animeList;
 };
 
 type ContentImage = {
