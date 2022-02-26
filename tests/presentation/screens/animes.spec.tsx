@@ -1,6 +1,7 @@
 import { Image, Text } from 'react-native';
 import { fireEvent, render } from '@testing-library/react-native';
 import { Animes } from '~/presentation/screens';
+import { Anime } from '~/domain/useCases';
 import { renderWithParams } from '../helpers';
 import { mockAnimeModelDocument } from '../../data/helpers';
 
@@ -151,7 +152,44 @@ describe('Presentation: Animes', () => {
     expect(sut.height).toBeGreaterThanOrEqual(minHeight);
     expect(sut.aspectRatio).toBeTruthy();
   });
+
+  test('should get anime list with new image size fields with processImage', () => {
+    const sut = processImages({
+      animeList: mockAnimeModelDocument(),
+      targetWidth: 172,
+    });
+    const firstAnime = sut[0];
+    expect(firstAnime.cover_image_size.height).toBeTruthy();
+    expect(firstAnime.cover_image_size.width).toBeTruthy();
+  });
 });
+
+type CoverImageSize = {
+  width: number;
+  height: number;
+};
+
+type ModelDocumentImage<T> = Partial<T> & { cover_image_size: CoverImageSize };
+
+type ProcessImagesParams = {
+  animeList: Array<Anime.ModelDocument>;
+  targetWidth: number;
+};
+
+const processImages = ({
+  animeList,
+  targetWidth,
+}: ProcessImagesParams): Array<ModelDocumentImage<Anime.ModelDocument>> => {
+  const newAnimeList = [
+    { cover_image_size: { width: 0, height: 0 }, ...animeList },
+  ];
+  return newAnimeList.map((anime) => {
+    const { aspectRatio, width } = generateContentForImage();
+    anime.cover_image_size.width = width;
+    anime.cover_image_size.height = targetWidth * aspectRatio;
+    return anime;
+  });
+};
 
 type ContentImage = {
   width: number;
