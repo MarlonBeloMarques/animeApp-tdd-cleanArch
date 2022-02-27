@@ -1,7 +1,11 @@
-import { Dimensions } from 'react-native';
+import { Dimensions, Text } from 'react-native';
 import styled from 'styled-components/native';
 import { BackgroundText } from '~/presentation/assets/svg';
 import { getTheme } from '~/presentation/helpers';
+
+const isEmpty = getTheme('title3');
+const baseSpacing = getTheme('baseSpacing');
+const text = getTheme('text');
 
 const Wrapper = styled.View`
   flex: 1;
@@ -23,6 +27,24 @@ export const WrapperAnime = styled.View`
   margin-top: 17px;
   margin-right: 5px;
   margin-left: 5px;
+`;
+
+type WrapperAnimeListProps = {
+  height: number;
+};
+
+export const WrapperAnimeList = styled.View<WrapperAnimeListProps>`
+  flex-direction: column;
+  flex-wrap: wrap;
+  height: ${({ height }) => height}px;
+`;
+
+export const IsEmpty = styled(Text)`
+  font-size: ${isEmpty.fontSize}px;
+  line-height: ${isEmpty.lineHeight}px;
+  text-align: center;
+  color: ${text};
+  margin: 0px ${baseSpacing}px;
 `;
 
 export const ButtonAnime = styled.TouchableOpacity``;

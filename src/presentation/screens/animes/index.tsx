@@ -1,25 +1,29 @@
 import React from 'react';
-import {
-  Dimensions,
-  NativeScrollEvent,
-  ScrollView,
-  Text,
-  View,
-} from 'react-native';
+import { Dimensions, NativeScrollEvent, ScrollView } from 'react-native';
 import { AnimeModelDocument } from 'src/domain/models';
 import { ModelDocumentImage } from '../animes.spec';
 import {
   Background,
   ButtonAnime,
   ImageAnime,
+  IsEmpty,
   TitleAnime,
   WrapperAnime,
+  WrapperAnimeList,
   WrapperBackground,
   WrapperContent,
   WrapperScreen,
 } from './styles';
 
 const { height, width } = Dimensions.get('screen');
+
+type AnimeListIsEmptyProps = {
+  animeList: Array<ModelDocumentImage<AnimeModelDocument>>;
+};
+
+type AnimeCardProps = {
+  anime: ModelDocumentImage<AnimeModelDocument>;
+};
 
 type Props = {
   animeList: Array<ModelDocumentImage<AnimeModelDocument>>;
@@ -48,7 +52,7 @@ const AnimesContainer: React.FC<Props> = ({
     );
   };
 
-  const renderAnime = (anime: ModelDocumentImage<AnimeModelDocument>) => {
+  const AnimeCard = ({ anime }: AnimeCardProps) => {
     return (
       <WrapperAnime key={anime.id} testID={`anime_${anime.id}`}>
         <ButtonAnime
@@ -67,20 +71,22 @@ const AnimesContainer: React.FC<Props> = ({
     );
   };
 
-  const animeListIsEmpty = () => {
-    return (
-      animeList.length === 0 && (
-        <Text style={{ textAlign: 'center' }} testID="animes_is_empty_id">
-          {`We couldn't find any anime to show you. Try again later.`}
-        </Text>
-      )
+  const AnimeListIsEmpty = ({
+    animeList,
+  }: AnimeListIsEmptyProps): JSX.Element =>
+    animeList.length === 0 ? (
+      <IsEmpty testID="animes_is_empty_id">
+        {`We couldn't find any anime to show you. Try again later.`}
+      </IsEmpty>
+    ) : (
+      <></>
     );
-  };
 
   return (
     <WrapperScreen>
       <WrapperContent>
         <ScrollView
+          contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
           testID="anime_list_id"
           onScroll={({ nativeEvent }) => {
             if (onEndReached(onEndReachedThreshold, nativeEvent)) {
@@ -88,16 +94,14 @@ const AnimesContainer: React.FC<Props> = ({
             }
           }}
         >
-          {animeListIsEmpty()}
-          <View
-            style={{
-              flexDirection: 'column',
-              flexWrap: 'wrap',
-              height: Math.round(getMaxHeightFromAnimeList(animeList) / 2),
-            }}
+          <AnimeListIsEmpty animeList={animeList} />
+          <WrapperAnimeList
+            height={Math.round(getMaxHeightFromAnimeList(animeList) / 2)}
           >
-            {animeList.map((anime) => renderAnime(anime))}
-          </View>
+            {animeList.map((anime) => (
+              <AnimeCard key={anime.id} anime={anime} />
+            ))}
+          </WrapperAnimeList>
         </ScrollView>
       </WrapperContent>
       <WrapperBackground>
