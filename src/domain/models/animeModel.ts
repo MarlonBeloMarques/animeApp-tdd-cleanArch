@@ -19,7 +19,7 @@ export type AnimeModel = {
   data: {
     current_page: number;
     count: number;
-    documents: Array<Document>;
+    documents: Array<AnimeModelDocument>;
     last_page: number;
   };
 };

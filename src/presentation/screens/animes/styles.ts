@@ -33,10 +33,16 @@ export const TitleAnime = styled.Text`
   line-height: ${getTheme('callout').lineHeight}px;
 `;
 
-export const ImageAnime = styled.Image`
-  height: 180px;
+type ImageAnimeProps = {
+  width: number;
+  height: number;
+};
+
+export const ImageAnime = styled.Image<ImageAnimeProps>`
   border-radius: ${getTheme('largeRadius')}px;
   margin-bottom: 7px;
+  width: ${({ width }) => width}px;
+  height: ${({ height }) => height}px;
 `;
 
 export const WrapperBackground = styled.View`
