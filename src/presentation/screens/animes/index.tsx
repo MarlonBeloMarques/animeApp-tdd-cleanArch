@@ -14,17 +14,17 @@ type Props = {
     onEndReachedThreshold: number,
     nativeEvent: NativeScrollEvent,
   ) => boolean;
-  onEndReachedThreshold?: number;
-  isLoading?: boolean;
+  onEndReachedThreshold: number;
+  isLoading: boolean;
 };
 
 const AnimesContainer: React.FC<Props> = ({
   animeList,
   onPressDetailAnime,
   getMoreAnime,
-  onEndReachedThreshold = 20,
+  onEndReachedThreshold,
   onEndReached,
-  isLoading = false,
+  isLoading,
 }) => {
   return (
     <Animes

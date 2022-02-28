@@ -3,45 +3,33 @@ import { fireEvent, render } from '@testing-library/react-native';
 import { Animes } from '~/presentation/screens';
 import { ModelDocumentListMapper } from '~/presentation/mappers';
 import { generateContentForImage, processImages } from '~/presentation/helpers';
+import { AnimeModelDocument } from '~/domain/models';
+import { ModelDocumentImageList } from '~/presentation/protocols';
 import { renderWithParams } from '../helpers';
 import { mockAnimeModelDocument } from '../../data/helpers';
 import { mockEventData, mockOnEndReached } from '../mocks';
 
 describe('Presentation: Animes', () => {
   test('should show message if anime list is empty', () => {
-    const mockedOnReached = mockOnEndReached();
-    const { getByTestId } = render(
-      renderWithParams({
-        screen: Animes,
-        screenProps: {
-          animeList: [],
-          onPressDetailAnime: () => {},
-          getMoreAnime: () => {},
-          onEndReached: mockedOnReached,
-        },
-      }),
-    );
+    const { getByTestId } = makeSut({
+      addAnimeList: false,
+      onPressDetailAnime: false,
+      getMoreAnime: false,
+      onEndReachedThreshold: 0,
+      isLoading: false,
+    });
     const animesIsEmpty = getByTestId('animes_is_empty_id');
     expect(animesIsEmpty).toBeTruthy();
   });
 
   test('should list the animes with success', () => {
-    const mockedOnReached = mockOnEndReached();
-    const modelDocumentList = new ModelDocumentListMapper(
-      mockAnimeModelDocument(),
-    );
-    const mockAnimeList = modelDocumentList.toModelDocumentImageList();
-    const { getByTestId } = render(
-      renderWithParams({
-        screen: Animes,
-        screenProps: {
-          animeList: mockAnimeList,
-          onPressDetailAnime: () => {},
-          getMoreAnime: () => {},
-          onEndReached: mockedOnReached,
-        },
-      }),
-    );
+    const { getByTestId, mockAnimeList } = makeSut({
+      addAnimeList: true,
+      onPressDetailAnime: false,
+      getMoreAnime: false,
+      onEndReachedThreshold: 0,
+      isLoading: false,
+    });
 
     const firstAnime = mockAnimeList[0];
     const anime = getByTestId(`anime_${firstAnime.id}`);
@@ -49,22 +37,13 @@ describe('Presentation: Animes', () => {
   });
 
   test('should list the animes with title and image successfully', () => {
-    const mockedOnReached = mockOnEndReached();
-    const modelDocumentList = new ModelDocumentListMapper(
-      mockAnimeModelDocument(),
-    );
-    const mockAnimeList = modelDocumentList.toModelDocumentImageList();
-    const { getByTestId } = render(
-      renderWithParams({
-        screen: Animes,
-        screenProps: {
-          animeList: mockAnimeList,
-          onPressDetailAnime: () => {},
-          getMoreAnime: () => {},
-          onEndReached: mockedOnReached,
-        },
-      }),
-    );
+    const { getByTestId, mockAnimeList } = makeSut({
+      addAnimeList: true,
+      onPressDetailAnime: false,
+      getMoreAnime: false,
+      onEndReachedThreshold: 0,
+      isLoading: false,
+    });
 
     const firstAnime = mockAnimeList[0];
     const anime = getByTestId(`anime_${firstAnime.id}`);
@@ -76,23 +55,13 @@ describe('Presentation: Animes', () => {
   });
 
   test('should press the anime successfully', async () => {
-    const mockedOnReached = mockOnEndReached();
-    const onPressAnimeDetailMock = jest.fn();
-    const modelDocumentList = new ModelDocumentListMapper(
-      mockAnimeModelDocument(),
-    );
-    const mockAnimeList = modelDocumentList.toModelDocumentImageList();
-    const { getByTestId } = render(
-      renderWithParams({
-        screen: Animes,
-        screenProps: {
-          animeList: mockAnimeList,
-          onPressDetailAnime: onPressAnimeDetailMock,
-          getMoreAnime: () => {},
-          onEndReached: mockedOnReached,
-        },
-      }),
-    );
+    const { getByTestId, mockAnimeList, onPressAnimeDetailMock } = makeSut({
+      addAnimeList: true,
+      onPressDetailAnime: true,
+      getMoreAnime: false,
+      onEndReachedThreshold: 0,
+      isLoading: false,
+    });
 
     const firstAnime = mockAnimeList[0];
     const animeButton = getByTestId(`anime_button_${firstAnime.id}`);
@@ -101,24 +70,13 @@ describe('Presentation: Animes', () => {
   });
 
   test('should request more anime when reaching the end of the list', async () => {
-    const getMoreAnimeMock = jest.fn();
-    const mockedOnReached = mockOnEndReached();
-    const modelDocumentList = new ModelDocumentListMapper(
-      mockAnimeModelDocument(),
-    );
-
-    const mockAnimeList = modelDocumentList.toModelDocumentImageList();
-    const { getByTestId } = render(
-      renderWithParams({
-        screen: Animes,
-        screenProps: {
-          animeList: mockAnimeList,
-          onPressDetailAnime: () => {},
-          getMoreAnime: getMoreAnimeMock,
-          onEndReached: mockedOnReached,
-        },
-      }),
-    );
+    const { getByTestId, getMoreAnimeMock } = makeSut({
+      addAnimeList: true,
+      onPressDetailAnime: false,
+      getMoreAnime: true,
+      onEndReachedThreshold: 0,
+      isLoading: false,
+    });
 
     const mockedEventData = mockEventData({ contentOffset: { x: 1, y: 400 } });
     const animeList = getByTestId('anime_list_id');
@@ -127,24 +85,13 @@ describe('Presentation: Animes', () => {
   });
 
   test('should not get animes when scrolling without reaching the end', async () => {
-    const mockedOnReached = mockOnEndReached();
-    const getMoreAnimeMock = jest.fn();
-    const modelDocumentList = new ModelDocumentListMapper(
-      mockAnimeModelDocument(),
-    );
-    const mockAnimeList = modelDocumentList.toModelDocumentImageList();
-
-    const { getByTestId } = render(
-      renderWithParams({
-        screen: Animes,
-        screenProps: {
-          animeList: mockAnimeList,
-          onPressDetailAnime: () => {},
-          getMoreAnime: getMoreAnimeMock,
-          onEndReached: mockedOnReached,
-        },
-      }),
-    );
+    const { getByTestId, getMoreAnimeMock } = makeSut({
+      addAnimeList: true,
+      onPressDetailAnime: false,
+      getMoreAnime: true,
+      onEndReachedThreshold: 0,
+      isLoading: false,
+    });
 
     const mockedEventData = mockEventData({ contentOffset: { x: 1, y: 200 } });
     const animeList = getByTestId('anime_list_id');
@@ -153,25 +100,14 @@ describe('Presentation: Animes', () => {
   });
 
   test('should utilize the onEndReachedThreshold correct', async () => {
-    const mockedOnReached = mockOnEndReached();
     const onEndReachedThreshold = 20;
-
-    const modelDocumentList = new ModelDocumentListMapper(
-      mockAnimeModelDocument(),
-    );
-    const mockAnimeList = modelDocumentList.toModelDocumentImageList();
-    const { getByTestId } = render(
-      renderWithParams({
-        screen: Animes,
-        screenProps: {
-          animeList: mockAnimeList,
-          onPressDetailAnime: () => {},
-          getMoreAnime: () => {},
-          onEndReached: mockedOnReached,
-          onEndReachedThreshold: onEndReachedThreshold,
-        },
-      }),
-    );
+    const { getByTestId, mockedOnReached } = makeSut({
+      addAnimeList: true,
+      onPressDetailAnime: false,
+      getMoreAnime: true,
+      onEndReachedThreshold: onEndReachedThreshold,
+      isLoading: false,
+    });
 
     const mockedEventData = mockEventData({ contentOffset: { x: 1, y: 400 } });
     const animeList = getByTestId('anime_list_id');
@@ -180,25 +116,14 @@ describe('Presentation: Animes', () => {
   });
 
   test('should utilize the onEndReached with params correct', async () => {
-    const mockedOnReached = mockOnEndReached();
     const onEndReachedThreshold = 20;
-
-    const modelDocumentList = new ModelDocumentListMapper(
-      mockAnimeModelDocument(),
-    );
-    const mockAnimeList = modelDocumentList.toModelDocumentImageList();
-    const { getByTestId } = render(
-      renderWithParams({
-        screen: Animes,
-        screenProps: {
-          animeList: mockAnimeList,
-          onPressDetailAnime: () => {},
-          getMoreAnime: () => {},
-          onEndReached: mockedOnReached,
-          onEndReachedThreshold: onEndReachedThreshold,
-        },
-      }),
-    );
+    const { getByTestId, mockedOnReached } = makeSut({
+      addAnimeList: true,
+      onPressDetailAnime: false,
+      getMoreAnime: true,
+      onEndReachedThreshold: onEndReachedThreshold,
+      isLoading: false,
+    });
 
     const mockedEventData = mockEventData({ contentOffset: { x: 1, y: 400 } });
     const animeList = getByTestId('anime_list_id');
@@ -210,14 +135,24 @@ describe('Presentation: Animes', () => {
     });
   });
 
+  test('should show loading animation if isLoading true', () => {
+    const { getByTestId } = makeSut({
+      addAnimeList: true,
+      onPressDetailAnime: false,
+      getMoreAnime: true,
+      onEndReachedThreshold: 0,
+      isLoading: true,
+    });
+    const loading = getByTestId('loading_id');
+    expect(loading).toBeTruthy();
+  });
+
   test('should correctly get the content generated by generateContentForImage', () => {
-    const width = 172;
-    const maxHeight = 220;
-    const minHeight = 110;
-    const sut = generateContentForImage({ width, maxHeight, minHeight });
-    expect(sut.width).toEqual(width);
-    expect(sut.height).toBeLessThanOrEqual(maxHeight);
-    expect(sut.height).toBeGreaterThanOrEqual(minHeight);
+    const imageContent = { width: 172, maxHeight: 220, minHeight: 110 };
+    const sut = generateContentForImage(imageContent);
+    expect(sut.width).toEqual(imageContent.width);
+    expect(sut.height).toBeLessThanOrEqual(imageContent.maxHeight);
+    expect(sut.height).toBeGreaterThanOrEqual(imageContent.minHeight);
     expect(sut.aspectRatio).toBeTruthy();
   });
 
@@ -225,14 +160,7 @@ describe('Presentation: Animes', () => {
     const modelDocumentList = new ModelDocumentListMapper(
       mockAnimeModelDocument(),
     );
-    const sut = processImages({
-      animeList: modelDocumentList.toModelDocumentImageList(),
-      targetWidth: 172,
-      height: {
-        maxHeight: 220,
-        minHeight: 110,
-      },
-    });
+    const sut = makeProcessImage(modelDocumentList);
     const firstAnime = sut[0];
     expect(firstAnime.cover_image_size.height).toBeTruthy();
     expect(firstAnime.cover_image_size.width).toBeTruthy();
@@ -242,39 +170,73 @@ describe('Presentation: Animes', () => {
     const modelDocumentList = new ModelDocumentListMapper(
       mockAnimeModelDocument(),
     );
-    const sut = processImages({
-      animeList: modelDocumentList.toModelDocumentImageList(),
-      targetWidth: 172,
-      height: {
-        maxHeight: 220,
-        minHeight: 110,
-      },
-    });
+    const sut = makeProcessImage(modelDocumentList);
     expect(sut.length).toEqual(
       modelDocumentList.toModelDocumentImageList().length,
     );
   });
+});
 
-  test('should show loading animation if isLoading true', () => {
-    const mockedOnReached = mockOnEndReached();
+const makeProcessImage = (modelDocumentListMapper: ModelDocumentListMapper) => {
+  return processImages({
+    animeList: modelDocumentListMapper.toModelDocumentImageList(),
+    targetWidth: 172,
+    height: {
+      maxHeight: 220,
+      minHeight: 110,
+    },
+  });
+};
+
+type makeSutParams = {
+  addAnimeList: boolean;
+  onPressDetailAnime: boolean;
+  getMoreAnime: boolean;
+  onEndReachedThreshold: number;
+  isLoading: boolean;
+};
+
+const makeSut = ({
+  addAnimeList,
+  onPressDetailAnime,
+  getMoreAnime,
+  onEndReachedThreshold,
+  isLoading,
+}: makeSutParams) => {
+  const mockedOnReached = mockOnEndReached();
+  const onPressAnimeDetailMock = jest.fn();
+  const getMoreAnimeMock = jest.fn();
+  let mockAnimeList: Array<
+    ModelDocumentImageList.ModelDocumentImage<AnimeModelDocument>
+  > = [];
+
+  if (addAnimeList) {
     const modelDocumentList = new ModelDocumentListMapper(
       mockAnimeModelDocument(),
     );
-    const mockAnimeList = modelDocumentList.toModelDocumentImageList();
-    const { getByTestId } = render(
-      renderWithParams({
-        screen: Animes,
-        screenProps: {
-          animeList: mockAnimeList,
-          onPressDetailAnime: () => {},
-          getMoreAnime: () => {},
-          onEndReached: mockedOnReached,
-          isLoading: true,
-        },
-      }),
-    );
+    mockAnimeList = modelDocumentList.toModelDocumentImageList();
+  }
+  const { getByTestId } = render(
+    renderWithParams({
+      screen: Animes,
+      screenProps: {
+        animeList: addAnimeList ? mockAnimeList : [],
+        onPressDetailAnime: onPressDetailAnime
+          ? onPressAnimeDetailMock
+          : () => {},
+        getMoreAnime: getMoreAnime ? getMoreAnimeMock : () => {},
+        onEndReached: mockedOnReached,
+        onEndReachedThreshold: onEndReachedThreshold,
+        isLoading: isLoading,
+      },
+    }),
+  );
 
-    const loading = getByTestId('loading_id');
-    expect(loading).toBeTruthy();
-  });
-});
+  return {
+    getByTestId,
+    mockedOnReached,
+    onPressAnimeDetailMock,
+    mockAnimeList,
+    getMoreAnimeMock,
+  };
+};
