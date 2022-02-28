@@ -1,6 +1,6 @@
 import { Text } from 'react-native';
 import { fireEvent, render } from '@testing-library/react-native';
-import { Authentication } from '~/presentation/screens';
+import Authentication from '~/presentation/screens/authentication/authentication';
 import { renderWithParams } from '../helpers';
 
 describe('UI: Authentication', () => {

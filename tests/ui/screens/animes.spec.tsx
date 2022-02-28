@@ -1,6 +1,6 @@
 import { Image, Text } from 'react-native';
 import { fireEvent, render } from '@testing-library/react-native';
-import { Animes } from '~/presentation/screens';
+import Animes from '~/presentation/screens/animes/animes';
 import { ModelDocumentListMapper } from '~/presentation/mappers';
 import { generateContentForImage, processImages } from '~/presentation/helpers';
 import { AnimeModelDocument } from '~/domain/models';

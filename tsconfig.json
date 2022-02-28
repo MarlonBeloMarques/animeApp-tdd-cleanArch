@@ -72,6 +72,12 @@
       "~/presentation/screens": [
         "src/presentation/screens"
       ],
+      "~/presentation/screens/authentication/authentication": [
+        "src/presentation/screens/authentication/authentication"
+      ],
+      "~/presentation/screens/animes/animes": [
+        "src/presentation/screens/animes/animes"
+      ],
       "~/presentation/assets/svg": [
         "src/presentation/assets/svg"
       ],
