@@ -1,6 +1,12 @@
 import React from 'react';
-import { Dimensions, NativeScrollEvent, ScrollView } from 'react-native';
+import {
+  ActivityIndicator,
+  Dimensions,
+  NativeScrollEvent,
+  ScrollView,
+} from 'react-native';
 import { AnimeModelDocument } from 'src/domain/models';
+import { getTheme } from '~/presentation/helpers';
 import { ModelDocumentImage } from '../animes.spec';
 import {
   Background,
@@ -34,6 +40,7 @@ type Props = {
     nativeEvent: NativeScrollEvent,
   ) => boolean;
   onEndReachedThreshold?: number;
+  isLoading?: boolean;
 };
 
 const AnimesContainer: React.FC<Props> = ({
@@ -42,6 +49,7 @@ const AnimesContainer: React.FC<Props> = ({
   getMoreAnime,
   onEndReachedThreshold = 20,
   onEndReached,
+  isLoading = false,
 }) => {
   const getMaxHeightFromAnimeList = (
     animeList: Array<ModelDocumentImage<AnimeModelDocument>>,
@@ -94,6 +102,13 @@ const AnimesContainer: React.FC<Props> = ({
             }
           }}
         >
+          {isLoading && (
+            <ActivityIndicator
+              testID="loading_id"
+              color={getTheme('white')}
+              size="large"
+            />
+          )}
           <AnimeListIsEmpty animeList={animeList} />
           <WrapperAnimeList
             height={Math.round(getMaxHeightFromAnimeList(animeList) / 2)}

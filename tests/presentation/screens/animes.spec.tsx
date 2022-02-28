@@ -252,6 +252,29 @@ describe('Presentation: Animes', () => {
       modelDocumentList.toModelDocumentImageList().length,
     );
   });
+
+  test('should show loading animation if isLoading true', () => {
+    const mockedOnReached = mockOnEndReached();
+    const modelDocumentList = new ModelDocumentListMapper(
+      mockAnimeModelDocument(),
+    );
+    const mockAnimeList = modelDocumentList.toModelDocumentImageList();
+    const { getByTestId } = render(
+      renderWithParams({
+        screen: Animes,
+        screenProps: {
+          animeList: mockAnimeList,
+          onPressDetailAnime: () => {},
+          getMoreAnime: () => {},
+          onEndReached: mockedOnReached,
+          isLoading: true,
+        },
+      }),
+    );
+
+    const loading = getByTestId('loading_id');
+    expect(loading).toBeTruthy();
+  });
 });
 
 type CoverImageSize = {
