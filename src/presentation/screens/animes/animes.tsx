@@ -44,7 +44,7 @@ type Props = {
     nativeEvent: NativeScrollEvent,
   ) => boolean;
   onEndReachedThreshold: number;
-  isLoading?: boolean;
+  isLoading: boolean;
 };
 
 const Animes: React.FC<Props> = ({
@@ -88,7 +88,7 @@ const Animes: React.FC<Props> = ({
   const AnimeListIsEmpty = ({
     animeList,
   }: AnimeListIsEmptyProps): JSX.Element =>
-    animeList.length === 0 ? (
+    animeList.length === 0 && !isLoading ? (
       <IsEmpty testID="animes_is_empty_id">
         {`We couldn't find any anime to show you. Try again later.`}
       </IsEmpty>

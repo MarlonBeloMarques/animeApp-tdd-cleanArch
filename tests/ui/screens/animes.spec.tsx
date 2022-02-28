@@ -9,7 +9,7 @@ import { renderWithParams } from '../helpers';
 import { mockAnimeModelDocument } from '../../data/helpers';
 import { mockEventData, mockOnEndReached } from '../mocks';
 
-describe('Presentation: Animes', () => {
+describe('UI: Animes', () => {
   test('should show message if anime list is empty', () => {
     const { getByTestId } = makeSut({
       addAnimeList: false,

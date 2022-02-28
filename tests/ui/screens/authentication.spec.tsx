@@ -3,7 +3,7 @@ import { fireEvent, render } from '@testing-library/react-native';
 import { Authentication } from '~/presentation/screens';
 import { renderWithParams } from '../helpers';
 
-describe('Presentation: Authentication', () => {
+describe('UI: Authentication', () => {
   test('should show text button correct', () => {
     const { getByTestId } = makeSut();
     const buttonId = 'authentication_id';
