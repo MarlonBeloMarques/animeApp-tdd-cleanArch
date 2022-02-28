@@ -45,6 +45,9 @@
       "~/domain/useCases": [
         "src/domain/useCases"
       ],
+      "~/domain/models": [
+        "src/domain/models"
+      ],
       "~/data/useCases": [
         "src/data/useCases"
       ],
@@ -77,6 +80,12 @@
       ],
       "~/presentation/helpers": [
         "src/presentation/helpers"
+      ],
+      "~/presentation/mappers": [
+        "src/presentation/mappers"
+      ],
+      "~/presentation/protocols": [
+        "src/presentation/protocols"
       ],
     },                           /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
     "rootDirs": ["src", "tests"],                        /* List of root folders whose combined content represents the structure of the project at runtime. */

@@ -1,9 +1,11 @@
-import { Image, NativeScrollEvent, Text } from 'react-native';
+import { Image, Text } from 'react-native';
 import { fireEvent, render } from '@testing-library/react-native';
 import { Animes } from '~/presentation/screens';
-import { Anime } from '~/domain/useCases';
+import { ModelDocumentListMapper } from '~/presentation/mappers';
+import { generateContentForImage, processImages } from '~/presentation/helpers';
 import { renderWithParams } from '../helpers';
 import { mockAnimeModelDocument } from '../../data/helpers';
+import { mockEventData, mockOnEndReached } from '../mocks';
 
 describe('Presentation: Animes', () => {
   test('should show message if anime list is empty', () => {
@@ -276,144 +278,3 @@ describe('Presentation: Animes', () => {
     expect(loading).toBeTruthy();
   });
 });
-
-type CoverImageSize = {
-  width: number;
-  height: number;
-};
-
-type ModelDocumentImage<T> = Partial<T> & {
-  cover_image_size: CoverImageSize;
-};
-
-type ProcessImagesParams = {
-  animeList: Array<ModelDocumentImage<Anime.ModelDocument>>;
-  targetWidth: number;
-  height: {
-    maxHeight: number;
-    minHeight: number;
-  };
-};
-
-interface ModelDocumentImageList {
-  toModelDocumentImageList(): Array<ModelDocumentImage<Anime.ModelDocument>>;
-}
-
-class ModelDocumentListMapper implements ModelDocumentImageList {
-  constructor(private modelDocumentList: Array<Anime.ModelDocument>) {}
-
-  toModelDocumentImageList = (): Array<
-    ModelDocumentImage<Anime.ModelDocument>
-  > => {
-    const modelDocumentImageList: Array<
-      ModelDocumentImage<Anime.ModelDocument>
-    > = [];
-
-    this.modelDocumentList.map((modelDocument) => {
-      modelDocumentImageList.push(this.toModelDocumentImage(modelDocument));
-    });
-
-    return modelDocumentImageList;
-  };
-
-  private toModelDocumentImage = (
-    modelDocument: Anime.ModelDocument,
-  ): ModelDocumentImage<Anime.ModelDocument> => {
-    return {
-      titles: modelDocument.titles,
-      cover_image_size: { height: 0, width: 0 },
-      banner_image: modelDocument.banner_image,
-      cover_image: modelDocument.cover_image,
-      descriptions: modelDocument.descriptions,
-      episodes_count: modelDocument.episodes_count,
-      genres: modelDocument.genres,
-      id: modelDocument.id,
-      start_date: modelDocument.start_date,
-    };
-  };
-}
-
-const processImages = ({
-  animeList,
-  targetWidth,
-  height,
-}: ProcessImagesParams): Array<ModelDocumentImage<Anime.ModelDocument>> => {
-  animeList.map((anime) => {
-    const { aspectRatio, width } = generateContentForImage({
-      width: targetWidth,
-      maxHeight: height.maxHeight,
-      minHeight: height.minHeight,
-    });
-    anime.cover_image_size.width = width;
-    anime.cover_image_size.height = targetWidth * aspectRatio;
-    return anime;
-  });
-
-  return animeList;
-};
-
-type ContentImage = {
-  width: number;
-  height: number;
-  aspectRatio: number;
-};
-
-type generateContentForImageParams = {
-  width: number;
-  maxHeight: number;
-  minHeight: number;
-};
-
-const generateContentForImage = ({
-  width,
-  maxHeight,
-  minHeight,
-}: generateContentForImageParams): ContentImage => {
-  const height = Math.random() * (maxHeight - minHeight) + minHeight;
-  return {
-    height: height,
-    width: width,
-    aspectRatio: width / height,
-  };
-};
-
-type EventDataParams = {
-  contentOffset: {
-    x: number;
-    y: number;
-  };
-};
-
-const mockOnEndReached = () => {
-  const mockedOnEndReached = jest
-    .fn()
-    .mockImplementation(
-      (
-        onEndReachedThreshold: number,
-        { layoutMeasurement, contentOffset, contentSize }: NativeScrollEvent,
-      ) => {
-        return (
-          layoutMeasurement.height + contentOffset.y >=
-          contentSize.height - onEndReachedThreshold
-        );
-      },
-    );
-
-  return mockedOnEndReached;
-};
-
-const mockEventData = (params: EventDataParams) => {
-  return {
-    nativeEvent: {
-      contentOffset: params.contentOffset,
-      contentSize: {
-        height: 500,
-        width: 100,
-      },
-      layoutMeasurement: {
-        height: 100,
-        width: 100,
-      },
-    },
-  };
-};
