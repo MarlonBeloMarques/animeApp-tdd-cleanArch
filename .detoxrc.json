@@ -1,0 +1,27 @@
+{
+  "testRunner": "jest",
+  "runnerConfig": "e2e/config.json",
+  "skipLegacyWorkersInjection": true,
+  "apps": {
+    "ios": {
+      "name": "animeApp",
+      "type": "ios.app",
+      "binaryPath": "ios/build/animeApp/Build/Products/Debug-iphonesimulator/animeApp.app",
+      "build": "xcodebuild -workspace ios/animeApp.xcworkspace -configuration Debug -scheme animeApp -sdk iphonesimulator -derivedDataPath ios/build/animeApp"
+    }
+  },
+  "devices": {
+    "simulator": {
+      "type": "ios.simulator",
+      "device": {
+        "type": "iPhone 13"
+      }
+    }
+  },
+  "configurations": {
+    "ios": {
+      "device": "simulator",
+      "app": "ios"
+    }
+  }
+}

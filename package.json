@@ -12,7 +12,10 @@
     "lint": "eslint '*/**/*.{js,jsx,ts,tsx}' --fix",
     "pretty": "prettier --config ./.prettierrc.js --write \"*/**/*.{js,jsx,ts,tsx,json}\"",
     "prepare": "husky install",
-    "precommit": "lint-staged"
+    "precommit": "lint-staged",
+    "testRunner": "<rootDir>/node_modules/jest-circus/runner.js",
+    "detox:ios:build": "yarn start && detox build --configuration ios",
+    "detox:ios:test": "detox test --configuration ios"
   },
   "lint-staged": {
     "**/*.ts?(x)": [
@@ -26,6 +29,7 @@
     "axios": "^0.26.0",
     "react": "17.0.2",
     "react-native": "0.67.2",
+    "react-native-size-matters": "^0.4.0",
     "react-native-svg": "^12.1.1",
     "styled-components": "^5.3.3"
   },
@@ -47,6 +51,7 @@
     "babel-jest": "^26.6.3",
     "babel-plugin-root-import": "^6.6.0",
     "cz-conventional-changelog": "3.3.0",
+    "detox": "^19.4.5",
     "eslint": "^8.8.0",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-jsx-a11y": "^6.5.1",
@@ -56,6 +61,7 @@
     "faker": "^5.1.0",
     "husky": "^7.0.4",
     "jest": "^26.6.3",
+    "jest-circus": "^27.5.1",
     "lint-staged": "^12.3.3",
     "metro-react-native-babel-preset": "^0.66.2",
     "prettier": "^2.5.1",
