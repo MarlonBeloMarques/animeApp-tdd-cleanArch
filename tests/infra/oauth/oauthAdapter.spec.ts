@@ -3,8 +3,6 @@ import { OAuthAdapter } from '~/infra/oauth';
 import { makeUrl } from '../../data/helpers/testFactories';
 import { mockLinking } from '../mocks/linkingMock';
 
-jest.mock('react-native/Libraries/Linking/Linking');
-
 describe('Infra: OAuthAdapter', () => {
   test('should request to openUrl once successfully', () => {
     const [sut, mockedLinking] = makeSut();
