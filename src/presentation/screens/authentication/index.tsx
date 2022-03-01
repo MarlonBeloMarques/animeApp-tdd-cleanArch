@@ -1,14 +1,27 @@
 import React from 'react';
+import { showMessage } from 'react-native-flash-message';
 import { OAuthAdapter } from '~/infra/oauth';
 import Authentication from './authentication';
 
-const AuthenticationContainer: React.FC = () => {
+type Props = {
+  redirectUrl: string;
+};
+
+const AuthenticationContainer: React.FC<Props> = ({
+  redirectUrl = 'https://api.aniapi.com/v1/oauth',
+}) => {
   const onPressAuthentication = async () => {
-    const oauthAdapter = new OAuthAdapter();
-    const redirectUrl = 'https://api.aniapi.com/v1/oauth';
-    await oauthAdapter.redirect({
-      url: redirectUrl,
-    });
+    try {
+      const oauthAdapter = new OAuthAdapter();
+      await oauthAdapter.redirect({
+        url: redirectUrl,
+      });
+    } catch (error) {
+      showMessage({
+        message: 'Something went wrong opening the link. Try again later.',
+        type: 'warning',
+      });
+    }
   };
 
   return <Authentication onPressAuthentication={onPressAuthentication} />;

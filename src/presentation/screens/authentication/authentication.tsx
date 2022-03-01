@@ -1,5 +1,6 @@
 import React from 'react';
 import { Dimensions } from 'react-native';
+import FlashMessage from 'react-native-flash-message';
 import {
   Background,
   Button,
@@ -23,6 +24,7 @@ type Props = {
 const Authentication: React.FC<Props> = ({ onPressAuthentication }) => {
   return (
     <WrapperScreen>
+      <FlashMessage testID="flash_message_id" position="top" />
       <WrapperContent>
         <TitleContainer>
           <Title testID="title_id">ANIMEAPP</Title>

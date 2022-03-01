@@ -17,8 +17,8 @@ module.exports = {
   setupFiles: ['<rootDir>/jestSetupFile.js'],
   testPathIgnorePatterns: ['<rootDir>/node_modules/'],
   transformIgnorePatterns: [
-      "node_modules/(?!(@react-native|react-native|react-native-size-matters)/)"
-    ],
+    'node_modules/(?!(@react-native|react-native|react-native-size-matters)/)',
+  ],
   coverageThreshold: {
     global: {
       branches: 80,
