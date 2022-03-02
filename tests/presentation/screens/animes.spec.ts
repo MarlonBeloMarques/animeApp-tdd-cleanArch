@@ -66,7 +66,29 @@ describe('Presentation: Animes', () => {
           }
         }
       },
-      { timeout: 5000 },
+      { timeout: 1000 },
+    );
+  });
+
+  test('should show is empty list message after call with error the list RemoteAnimeList', async () => {
+    const { getByTestId, UNSAFE_getByType } = render(
+      renderWithParams({
+        screen: Animes,
+        screenProps: { url: 'api.aniapi.com/v1/anime' },
+      }),
+    );
+
+    await waitFor(
+      () => {
+        const animesView = UNSAFE_getByType(AnimesView);
+        expect(animesView.props.animeStatusMessage).toEqual(
+          'Unexpected error. Please check your internet and try again.',
+        );
+
+        const animeListIsEmpty = getByTestId('animes_is_empty_id');
+        expect(animeListIsEmpty).toBeTruthy();
+      },
+      { timeout: 1000 },
     );
   });
 });
