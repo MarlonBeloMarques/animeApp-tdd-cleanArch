@@ -1,10 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { RemoteAnimeList } from '~/data/useCases';
-import { AnimeModelDocument } from '~/domain/models';
+import { AnimeModel } from '~/domain/models';
 import { AxiosAdapter } from '~/infra/http';
-import { ModelDocumentListMapper } from '~/presentation/mappers';
-import { ModelDocumentImageList } from '~/presentation/protocols';
+import {
+  AnimeModelMapper,
+  ModelDocumentListMapper,
+} from '~/presentation/mappers';
+import { AnimeModelImage } from '~/presentation/protocols';
 import Animes from './animes';
+
+const animeListResponseError = (error: Error) => {
+  return {
+    data: {
+      current_page: 0,
+      count: 0,
+      documents: [],
+      last_page: 0,
+    },
+    message: error.message,
+    status_code: 0,
+  };
+};
 
 type Props = {
   url: string;
@@ -13,20 +29,29 @@ type Props = {
 const AnimesContainer: React.FC<Props> = ({
   url = 'https://api.aniapi.com/v1/anime',
 }) => {
-  const [animeList, setAnimeList] = useState<
-    Array<ModelDocumentImageList.ModelDocumentImage<AnimeModelDocument>>
-  >([]);
+  const [anime, setAnime] = useState<AnimeModelImage.Model>();
   const [loading, setLoading] = useState(true);
 
   const getAnimeList = async () => {
     const axiosAdapter = new AxiosAdapter();
     const remoteAnimeList = new RemoteAnimeList(url, axiosAdapter);
-    const animeList = await remoteAnimeList.list();
+
+    let listResponse = {} as AnimeModel;
+    try {
+      listResponse = await remoteAnimeList.list();
+    } catch (error) {
+      if (error instanceof Error) {
+        listResponse = animeListResponseError(error);
+      }
+    }
+
     const modelDocumentList = new ModelDocumentListMapper(
-      animeList.data.documents,
+      listResponse.data.documents,
     );
 
-    setAnimeList(modelDocumentList.toModelDocumentImageList());
+    const animeModel = new AnimeModelMapper(listResponse, modelDocumentList);
+
+    setAnime(animeModel.toAnimeModelImage());
     setLoading(false);
   };
 
@@ -36,7 +61,8 @@ const AnimesContainer: React.FC<Props> = ({
 
   return (
     <Animes
-      animeList={animeList}
+      animeStatusMessage={anime?.message}
+      animeList={anime?.data.documents}
       getMoreAnime={() => {}}
       onPressDetailAnime={() => {}}
       onEndReachedThreshold={0}

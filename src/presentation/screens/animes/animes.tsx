@@ -24,7 +24,7 @@ import {
 const { height, width } = Dimensions.get('screen');
 
 type AnimeListIsEmptyProps = {
-  animeList: Array<
+  animeList?: Array<
     ModelDocumentImageList.ModelDocumentImage<AnimeModelDocument>
   >;
 };
@@ -34,9 +34,10 @@ type AnimeCardProps = {
 };
 
 type Props = {
-  animeList: Array<
+  animeList?: Array<
     ModelDocumentImageList.ModelDocumentImage<AnimeModelDocument>
   >;
+  animeStatusMessage?: string;
   onPressDetailAnime: () => void;
   getMoreAnime: () => void;
   onEndReached: (
@@ -56,14 +57,16 @@ const Animes: React.FC<Props> = ({
   isLoading,
 }) => {
   const getMaxHeightFromAnimeList = (
-    animeList: Array<
+    animeList?: Array<
       ModelDocumentImageList.ModelDocumentImage<AnimeModelDocument>
     >,
   ) => {
-    return animeList.reduce(
-      (sum, animeCurrent) => sum + animeCurrent.cover_image_size.height,
-      0,
-    );
+    return animeList
+      ? animeList.reduce(
+          (sum, animeCurrent) => sum + animeCurrent.cover_image_size.height,
+          0,
+        )
+      : 0;
   };
 
   const AnimeCard = ({ anime }: AnimeCardProps) => {
@@ -88,7 +91,7 @@ const Animes: React.FC<Props> = ({
   const AnimeListIsEmpty = ({
     animeList,
   }: AnimeListIsEmptyProps): JSX.Element =>
-    animeList.length === 0 && !isLoading ? (
+    animeList?.length === 0 && !isLoading ? (
       <IsEmpty testID="animes_is_empty_id">
         {`We couldn't find any anime to show you. Try again later.`}
       </IsEmpty>
@@ -119,7 +122,7 @@ const Animes: React.FC<Props> = ({
           <WrapperAnimeList
             height={Math.round(getMaxHeightFromAnimeList(animeList) / 2)}
           >
-            {animeList.map((anime) => (
+            {animeList?.map((anime) => (
               <AnimeCard key={anime.id} anime={anime} />
             ))}
           </WrapperAnimeList>
