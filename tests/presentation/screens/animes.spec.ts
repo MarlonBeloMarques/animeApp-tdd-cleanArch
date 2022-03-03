@@ -1,6 +1,8 @@
 import { render, waitFor } from '@testing-library/react-native';
+import { AnimeModelDocument } from '~/domain/models';
 import { Animes } from '~/presentation/screens';
 import AnimesView from '~/presentation/screens/animes/animes';
+import { ModelDocumentImageList } from '~/presentation/protocols';
 import { renderWithParams } from '../../ui/helpers';
 
 describe('Presentation: Animes', () => {
@@ -74,7 +76,7 @@ describe('Presentation: Animes', () => {
     const { getByTestId, UNSAFE_getByType } = render(
       renderWithParams({
         screen: Animes,
-        screenProps: { url: 'api.aniapi.com/v1/anime' },
+        screenProps: { url: 'api.com/v1/anime' },
       }),
     );
 
@@ -89,6 +91,32 @@ describe('Presentation: Animes', () => {
         expect(animeListIsEmpty).toBeTruthy();
       },
       { timeout: 1000 },
+    );
+  });
+
+  test('should show all anime in the list with height and width', async () => {
+    const { UNSAFE_getByType } = render(
+      renderWithParams({
+        screen: Animes,
+        screenProps: { url: 'https://api.aniapi.com/v1/anime' },
+      }),
+    );
+
+    await waitFor(
+      () => {
+        const animesView = UNSAFE_getByType(AnimesView);
+        expect(animesView.props.animeList.length).toBeTruthy();
+
+        animesView.props.animeList.forEach(
+          (
+            anime: ModelDocumentImageList.ModelDocumentImage<AnimeModelDocument>,
+          ) => {
+            expect(anime.cover_image_size.height).not.toEqual(0);
+            expect(anime.cover_image_size.width).not.toEqual(0);
+          },
+        );
+      },
+      { timeout: 2000 },
     );
   });
 });

@@ -2,14 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { RemoteAnimeList } from '~/data/useCases';
 import { AnimeModel } from '~/domain/models';
 import { AxiosAdapter } from '~/infra/http';
-import {
-  AnimeModelMapper,
-  ModelDocumentListMapper,
-} from '~/presentation/mappers';
+import { ModelDocumentListMapperDecorator } from '~/presentation/decorators';
+import { AnimeModelMapper } from '~/presentation/mappers';
 import { AnimeModelImage } from '~/presentation/protocols';
 import Animes from './animes';
 
-const animeListResponseError = (error: Error) => {
+const initialAnimeListResponse = (message: string) => {
   return {
     data: {
       current_page: 0,
@@ -17,7 +15,7 @@ const animeListResponseError = (error: Error) => {
       documents: [],
       last_page: 0,
     },
-    message: error.message,
+    message: message,
     status_code: 0,
   };
 };
@@ -29,7 +27,9 @@ type Props = {
 const AnimesContainer: React.FC<Props> = ({
   url = 'https://api.aniapi.com/v1/anime',
 }) => {
-  const [anime, setAnime] = useState<AnimeModelImage.Model>();
+  const [anime, setAnime] = useState<AnimeModelImage.Model>(
+    initialAnimeListResponse(''),
+  );
   const [loading, setLoading] = useState(true);
 
   const getAnimeList = async () => {
@@ -41,17 +41,18 @@ const AnimesContainer: React.FC<Props> = ({
       listResponse = await remoteAnimeList.list();
     } catch (error) {
       if (error instanceof Error) {
-        listResponse = animeListResponseError(error);
+        listResponse = initialAnimeListResponse(error.message);
       }
     }
 
-    const modelDocumentList = new ModelDocumentListMapper(
+    const modelDocumentList = new ModelDocumentListMapperDecorator(
       listResponse.data.documents,
     );
 
     const animeModel = new AnimeModelMapper(listResponse, modelDocumentList);
 
     setAnime(animeModel.toAnimeModelImage());
+
     setLoading(false);
   };
 
@@ -61,8 +62,8 @@ const AnimesContainer: React.FC<Props> = ({
 
   return (
     <Animes
-      animeStatusMessage={anime?.message}
-      animeList={anime?.data.documents}
+      animeStatusMessage={anime.message}
+      animeList={anime.data.documents}
       getMoreAnime={() => {}}
       onPressDetailAnime={() => {}}
       onEndReachedThreshold={0}

@@ -2,7 +2,7 @@ import { Anime } from '~/domain/useCases';
 import { ModelDocumentImageList } from '../protocols';
 
 export class ModelDocumentListMapper implements ModelDocumentImageList {
-  constructor(private modelDocumentList: Array<Anime.ModelDocument>) {}
+  constructor(protected modelDocumentList: Array<Anime.ModelDocument>) {}
 
   toModelDocumentImageList = (): Array<
     ModelDocumentImageList.ModelDocumentImage<Anime.ModelDocument>
@@ -18,7 +18,7 @@ export class ModelDocumentListMapper implements ModelDocumentImageList {
     return modelDocumentImageList;
   };
 
-  private toModelDocumentImage = (
+  protected toModelDocumentImage = (
     modelDocument: Anime.ModelDocument,
   ): ModelDocumentImageList.ModelDocumentImage<Anime.ModelDocument> => {
     return {
