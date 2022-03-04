@@ -10,7 +10,10 @@ describe('Presentation: Animes', () => {
     const { getByTestId, UNSAFE_getByType } = render(
       renderWithParams({
         screen: Animes,
-        screenProps: { url: 'https://api.aniapi.com/v1/anime' },
+        screenProps: {
+          url: 'https://api.aniapi.com/v1/anime',
+          onEndReachedThreshold: 20,
+        },
       }),
     );
 
@@ -42,7 +45,10 @@ describe('Presentation: Animes', () => {
     const { getByTestId, UNSAFE_getByType } = render(
       renderWithParams({
         screen: Animes,
-        screenProps: { url: 'api.aniapi.com/v1/anime' },
+        screenProps: {
+          url: 'api.aniapi.com/v1/anime',
+          onEndReachedThreshold: 20,
+        },
       }),
     );
 
@@ -76,7 +82,7 @@ describe('Presentation: Animes', () => {
     const { getByTestId, UNSAFE_getByType } = render(
       renderWithParams({
         screen: Animes,
-        screenProps: { url: 'api.com/v1/anime' },
+        screenProps: { url: 'api.com/v1/anime', onEndReachedThreshold: 20 },
       }),
     );
 
@@ -98,7 +104,10 @@ describe('Presentation: Animes', () => {
     const { UNSAFE_getByType } = render(
       renderWithParams({
         screen: Animes,
-        screenProps: { url: 'https://api.aniapi.com/v1/anime' },
+        screenProps: {
+          url: 'https://api.aniapi.com/v1/anime',
+          onEndReachedThreshold: 20,
+        },
       }),
     );
 

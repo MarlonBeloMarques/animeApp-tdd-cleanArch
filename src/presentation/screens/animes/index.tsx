@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { NativeScrollEvent } from 'react-native';
 import { RemoteAnimeList } from '~/data/useCases';
 import { AnimeModel } from '~/domain/models';
+import { Anime } from '~/domain/useCases';
 import { AxiosAdapter } from '~/infra/http';
 import { ModelDocumentListMapperDecorator } from '~/presentation/decorators';
 import { AnimeModelMapper } from '~/presentation/mappers';
@@ -22,19 +24,24 @@ const initialAnimeListResponse = (message: string) => {
 
 type Props = {
   url: string;
+  onEndReachedThreshold: number;
 };
 
 const AnimesContainer: React.FC<Props> = ({
   url = 'https://api.aniapi.com/v1/anime',
+  onEndReachedThreshold = 20,
 }) => {
   const [anime, setAnime] = useState<AnimeModelImage.Model>(
     initialAnimeListResponse(''),
   );
   const [loading, setLoading] = useState(true);
 
-  const getAnimeList = async () => {
+  const requestAnimeList = async (completeUrlWithParam?: Anime.Params) => {
     const axiosAdapter = new AxiosAdapter();
     const remoteAnimeList = new RemoteAnimeList(url, axiosAdapter);
+
+    if (completeUrlWithParam)
+      remoteAnimeList.completeUrlWithParam(completeUrlWithParam);
 
     let listResponse = {} as AnimeModel;
     try {
@@ -43,8 +50,13 @@ const AnimesContainer: React.FC<Props> = ({
       if (error instanceof Error) {
         listResponse = initialAnimeListResponse(error.message);
       }
+    } finally {
+      return listResponse;
     }
+  };
 
+  const getAnimeList = async () => {
+    const listResponse = await requestAnimeList();
     const modelDocumentList = new ModelDocumentListMapperDecorator(
       listResponse.data.documents,
     );
@@ -54,6 +66,16 @@ const AnimesContainer: React.FC<Props> = ({
     setAnime(animeModel.toAnimeModelImage());
 
     setLoading(false);
+  };
+
+  const onEndReached = (
+    onEndReachedThreshold: number,
+    { layoutMeasurement, contentOffset, contentSize }: NativeScrollEvent,
+  ) => {
+    return (
+      layoutMeasurement.height + contentOffset.y >=
+      contentSize.height - onEndReachedThreshold
+    );
   };
 
   useEffect(() => {
@@ -66,8 +88,8 @@ const AnimesContainer: React.FC<Props> = ({
       animeList={anime.data.documents}
       getMoreAnime={() => {}}
       onPressDetailAnime={() => {}}
-      onEndReachedThreshold={0}
-      onEndReached={() => false}
+      onEndReachedThreshold={onEndReachedThreshold}
+      onEndReached={onEndReached}
       isLoading={loading}
     />
   );
