@@ -68,6 +68,10 @@ const AnimesContainer: React.FC<Props> = ({
     setLoading(false);
   };
 
+  const getMoreAnime = async () => {
+    await requestAnimeList({ locale: 'en', page: 2, per_page: 50 });
+  };
+
   const onEndReached = (
     onEndReachedThreshold: number,
     { layoutMeasurement, contentOffset, contentSize }: NativeScrollEvent,
@@ -86,7 +90,7 @@ const AnimesContainer: React.FC<Props> = ({
     <Animes
       animeStatusMessage={anime.message}
       animeList={anime.data.documents}
-      getMoreAnime={() => {}}
+      getMoreAnime={getMoreAnime}
       onPressDetailAnime={() => {}}
       onEndReachedThreshold={onEndReachedThreshold}
       onEndReached={onEndReached}

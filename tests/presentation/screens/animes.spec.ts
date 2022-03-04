@@ -1,8 +1,10 @@
-import { render, waitFor } from '@testing-library/react-native';
+import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import { AnimeModelDocument } from '~/domain/models';
 import { Animes } from '~/presentation/screens';
 import AnimesView from '~/presentation/screens/animes/animes';
 import { ModelDocumentImageList } from '~/presentation/protocols';
+import { RemoteAnimeList } from '~/data/useCases';
+import { mockEventData } from '../../ui/mocks';
 import { renderWithParams } from '../../ui/helpers';
 
 describe('Presentation: Animes', () => {
@@ -124,6 +126,40 @@ describe('Presentation: Animes', () => {
             expect(anime.cover_image_size.width).not.toEqual(0);
           },
         );
+      },
+      { timeout: 2000 },
+    );
+  });
+
+  test('should call completeUrlWithParam with remoteAnimeList when it gets to the end of the list', async () => {
+    const { UNSAFE_getByType, getByTestId } = render(
+      renderWithParams({
+        screen: Animes,
+        screenProps: {
+          url: 'https://api.aniapi.com/v1/anime',
+          onEndReachedThreshold: 20,
+        },
+      }),
+    );
+
+    await waitFor(
+      () => {
+        const animesView = UNSAFE_getByType(AnimesView);
+        expect(animesView.props.animeList.length).toBeTruthy();
+
+        const spyCompleteUrlWithParam = jest.spyOn(
+          RemoteAnimeList.prototype,
+          'completeUrlWithParam',
+        );
+
+        const animeList = getByTestId('anime_list_id');
+
+        fireEvent.scroll(
+          animeList,
+          mockEventData({ contentOffset: { x: 1, y: 500 } }),
+        );
+
+        expect(spyCompleteUrlWithParam).toHaveBeenCalledTimes(1);
       },
       { timeout: 2000 },
     );
