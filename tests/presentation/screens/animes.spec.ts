@@ -222,4 +222,35 @@ describe('Presentation: Animes', () => {
       { timeout: 2000 },
     );
   });
+
+  test('should not call completeWithUrlParam while it is show message: is empty', async () => {
+    const { UNSAFE_getByType, getByTestId } = render(
+      renderWithParams({
+        screen: Animes,
+        screenProps: {
+          url: 'https://api.aniapi.com/v1',
+          onEndReachedThreshold: 20,
+        },
+      }),
+    );
+
+    const spyCompleteUrlWithParam = jest.spyOn(
+      RemoteAnimeList.prototype,
+      'completeUrlWithParam',
+    );
+
+    await waitFor(
+      () => {
+        const animesView = UNSAFE_getByType(AnimesView);
+        expect(animesView.props.animeStatusMessage).toEqual(
+          'Unexpected error. Please check your internet and try again.',
+        );
+
+        const animeListIsEmpty = getByTestId('animes_is_empty_id');
+        expect(animeListIsEmpty).toBeTruthy();
+        expect(spyCompleteUrlWithParam).not.toHaveBeenCalled();
+      },
+      { timeout: 1000 },
+    );
+  });
 });
