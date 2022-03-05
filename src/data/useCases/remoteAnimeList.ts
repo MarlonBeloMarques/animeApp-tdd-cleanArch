@@ -27,6 +27,6 @@ export class RemoteAnimeList implements AnimeList {
   }
 
   completeUrlWithParam(params: Anime.Params): void {
-    this.url = `${this.url}?${params.page}&${params.per_page}&${params.locale}`;
+    this.url = `${this.url}?page=${params.page}&per_page=${params.per_page}&locale=${params.locale}`;
   }
 }

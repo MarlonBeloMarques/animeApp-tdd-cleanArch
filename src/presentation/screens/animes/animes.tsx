@@ -6,7 +6,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { AnimeModelDocument } from 'src/domain/models';
-import { getTheme } from '~/presentation/helpers';
+import { getTheme, makeId } from '~/presentation/helpers';
 import { ModelDocumentImageList } from '~/presentation/protocols';
 import {
   Background,
@@ -37,6 +37,7 @@ type Props = {
   animeList: Array<
     ModelDocumentImageList.ModelDocumentImage<AnimeModelDocument>
   >;
+  page: number;
   animeStatusMessage: string;
   onPressDetailAnime: () => void;
   getMoreAnime: () => void;
@@ -46,6 +47,7 @@ type Props = {
   ) => boolean;
   onEndReachedThreshold: number;
   isLoading: boolean;
+  waitForEndReached: boolean;
 };
 
 const Animes: React.FC<Props> = ({
@@ -69,7 +71,10 @@ const Animes: React.FC<Props> = ({
 
   const AnimeCard = ({ anime }: AnimeCardProps) => {
     return (
-      <WrapperAnime key={anime.id} testID={`anime_${anime.id}`}>
+      <WrapperAnime
+        key={`${makeId()}_${anime.id}`}
+        testID={`anime_${anime.id}`}
+      >
         <ButtonAnime
           activeOpacity={0.8}
           testID={`anime_button_${anime.id}`}
@@ -108,6 +113,7 @@ const Animes: React.FC<Props> = ({
               getMoreAnime();
             }
           }}
+          scrollEventThrottle={1}
         >
           {isLoading && (
             <ActivityIndicator
@@ -121,7 +127,7 @@ const Animes: React.FC<Props> = ({
             height={Math.round(getMaxHeightFromAnimeList(animeList) / 2)}
           >
             {animeList.map((anime) => (
-              <AnimeCard key={anime.id} anime={anime} />
+              <AnimeCard key={`${makeId()}_${anime.id}`} anime={anime} />
             ))}
           </WrapperAnimeList>
         </ScrollView>

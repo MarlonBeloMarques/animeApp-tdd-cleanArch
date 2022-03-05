@@ -6,7 +6,10 @@ import { Anime } from '~/domain/useCases';
 import { AxiosAdapter } from '~/infra/http';
 import { ModelDocumentListMapperDecorator } from '~/presentation/decorators';
 import { AnimeModelMapper } from '~/presentation/mappers';
-import { AnimeModelImage } from '~/presentation/protocols';
+import {
+  AnimeModelImage,
+  ModelDocumentImageList,
+} from '~/presentation/protocols';
 import Animes from './animes';
 
 const initialAnimeListResponse = (message: string) => {
@@ -34,7 +37,13 @@ const AnimesContainer: React.FC<Props> = ({
   const [anime, setAnime] = useState<AnimeModelImage.Model>(
     initialAnimeListResponse(''),
   );
+  const [animeList, setAnimeList] = useState<
+    ModelDocumentImageList.ModelDocumentImage<Anime.ModelDocument>[]
+  >([]);
+
   const [loading, setLoading] = useState(true);
+  const [waitForEndReached, setWaitForEndReached] = useState(false);
+  const [page, setPage] = useState(1);
 
   const requestAnimeList = async (completeUrlWithParam?: Anime.Params) => {
     const axiosAdapter = new AxiosAdapter();
@@ -56,7 +65,11 @@ const AnimesContainer: React.FC<Props> = ({
   };
 
   const getAnimeList = async () => {
-    const listResponse = await requestAnimeList();
+    const listResponse = await requestAnimeList({
+      locale: 'en',
+      page: page,
+      per_page: 100,
+    });
     const modelDocumentList = new ModelDocumentListMapperDecorator(
       listResponse.data.documents,
     );
@@ -64,18 +77,48 @@ const AnimesContainer: React.FC<Props> = ({
     const animeModel = new AnimeModelMapper(listResponse, modelDocumentList);
 
     setAnime(animeModel.toAnimeModelImage());
+    setAnimeList(animeModel.toAnimeModelImage().data.documents);
 
     setLoading(false);
   };
 
   const getMoreAnime = async () => {
-    await requestAnimeList({ locale: 'en', page: 2, per_page: 50 });
+    const pageCurrent = page + 1;
+    setPage(pageCurrent);
+    setWaitForEndReached(true);
+    const listResponse = await requestAnimeList({
+      locale: 'en',
+      page: pageCurrent,
+      per_page: 100,
+    });
+
+    const modelDocumentList = new ModelDocumentListMapperDecorator(
+      listResponse.data.documents,
+    );
+
+    const animeModel = new AnimeModelMapper(listResponse, modelDocumentList);
+    const animeModelImage = animeModel.toAnimeModelImage();
+
+    const newAnimeList = animeModel.toAnimeModelImage().data.documents;
+
+    setAnime(animeModelImage);
+    setAnimeList((animeListCurrent) => [...animeListCurrent, ...newAnimeList]);
+
+    const timeout = setTimeout(() => {
+      setWaitForEndReached(false);
+    }, 100);
+
+    clearTimeout(timeout);
   };
 
   const onEndReached = (
     onEndReachedThreshold: number,
     { layoutMeasurement, contentOffset, contentSize }: NativeScrollEvent,
   ) => {
+    if (waitForEndReached) {
+      return false;
+    }
+
     return (
       layoutMeasurement.height + contentOffset.y >=
       contentSize.height - onEndReachedThreshold
@@ -88,8 +131,10 @@ const AnimesContainer: React.FC<Props> = ({
 
   return (
     <Animes
+      page={page}
+      waitForEndReached={waitForEndReached}
       animeStatusMessage={anime.message}
-      animeList={anime.data.documents}
+      animeList={animeList}
       getMoreAnime={getMoreAnime}
       onPressDetailAnime={() => {}}
       onEndReachedThreshold={onEndReachedThreshold}

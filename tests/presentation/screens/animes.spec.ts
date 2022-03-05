@@ -131,7 +131,7 @@ describe('Presentation: Animes', () => {
     );
   });
 
-  test('should call completeUrlWithParam with remoteAnimeList when it gets to the end of the list', async () => {
+  test('should update anime list successfully after calling completeWithUrlParam with RemoteAnimeList after reaching end of list', async () => {
     const { UNSAFE_getByType, getByTestId } = render(
       renderWithParams({
         screen: Animes,
@@ -142,23 +142,36 @@ describe('Presentation: Animes', () => {
       }),
     );
 
+    const animesView = UNSAFE_getByType(AnimesView);
+
     await waitFor(
       () => {
-        const animesView = UNSAFE_getByType(AnimesView);
-        expect(animesView.props.animeList.length).toBeTruthy();
+        const animeListLength = animesView.props.animeList.length;
+        expect(animeListLength).toBeTruthy();
+        expect(animeListLength).toEqual(100);
+        expect(animesView.props.page).toEqual(1);
+        expect(animesView.props.waitForEndReached).toEqual(false);
+      },
+      { timeout: 2000 },
+    );
+
+    await waitFor(
+      () => {
+        const animeList = getByTestId('anime_list_id');
 
         const spyCompleteUrlWithParam = jest.spyOn(
           RemoteAnimeList.prototype,
           'completeUrlWithParam',
         );
 
-        const animeList = getByTestId('anime_list_id');
-
         fireEvent.scroll(
           animeList,
           mockEventData({ contentOffset: { x: 1, y: 500 } }),
         );
 
+        expect(animesView.props.page).toEqual(2);
+        expect(animesView.props.waitForEndReached).toEqual(true);
+        expect(animesView.props.animeList.length).toEqual(200);
         expect(spyCompleteUrlWithParam).toHaveBeenCalledTimes(1);
       },
       { timeout: 2000 },
