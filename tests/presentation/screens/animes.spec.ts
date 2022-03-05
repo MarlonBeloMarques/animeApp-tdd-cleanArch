@@ -7,6 +7,10 @@ import { RemoteAnimeList } from '~/data/useCases';
 import { mockEventData } from '../../ui/mocks';
 import { renderWithParams } from '../../ui/helpers';
 
+afterEach(() => {
+  jest.restoreAllMocks();
+});
+
 describe('Presentation: Animes', () => {
   test('should hide loading animation after call with success the list RemoteAnimeList', async () => {
     const { getByTestId, UNSAFE_getByType } = render(
@@ -39,7 +43,7 @@ describe('Presentation: Animes', () => {
           }
         }
       },
-      { timeout: 5000 },
+      { timeout: 2000 },
     );
   });
 
@@ -173,6 +177,47 @@ describe('Presentation: Animes', () => {
         expect(animesView.props.waitForEndReached).toEqual(true);
         expect(animesView.props.animeList.length).toEqual(200);
         expect(spyCompleteUrlWithParam).toHaveBeenCalledTimes(1);
+      },
+      { timeout: 2000 },
+    );
+  });
+
+  test('should not call completeWithUrlParam while it is loading', async () => {
+    const { UNSAFE_getByType, getByTestId } = render(
+      renderWithParams({
+        screen: Animes,
+        screenProps: {
+          url: 'https://api.aniapi.com/v1/anime',
+          onEndReachedThreshold: 20,
+        },
+      }),
+    );
+
+    const spyCompleteUrlWithParam = jest.spyOn(
+      RemoteAnimeList.prototype,
+      'completeUrlWithParam',
+    );
+
+    const loadingStart = getByTestId('loading_id');
+    expect(loadingStart).toBeTruthy();
+
+    await waitFor(
+      () => {
+        const animesView = UNSAFE_getByType(AnimesView);
+        expect(animesView.props.animeList.length).toBeTruthy();
+
+        try {
+          const loadingEnd = getByTestId('loading_id');
+          expect(loadingEnd).toBeTruthy();
+          throw new Error('something unexpected occurred in your test');
+        } catch (error) {
+          if (error instanceof Error) {
+            expect(error.message).toEqual(
+              'Unable to find an element with testID: loading_id',
+            );
+            expect(spyCompleteUrlWithParam).not.toHaveBeenCalled();
+          }
+        }
       },
       { timeout: 2000 },
     );

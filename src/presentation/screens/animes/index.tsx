@@ -115,7 +115,7 @@ const AnimesContainer: React.FC<Props> = ({
     onEndReachedThreshold: number,
     { layoutMeasurement, contentOffset, contentSize }: NativeScrollEvent,
   ) => {
-    if (waitForEndReached) {
+    if (waitForEndReached || loading) {
       return false;
     }
 
