@@ -125,6 +125,8 @@ const AnimesContainer: React.FC<Props> = ({
     );
   };
 
+  const onPressDetailAnime = () => {};
+
   useEffect(() => {
     getAnimeList();
   }, []);
@@ -136,7 +138,7 @@ const AnimesContainer: React.FC<Props> = ({
       animeStatusMessage={anime.message}
       animeList={animeList}
       getMoreAnime={getMoreAnime}
-      onPressDetailAnime={() => {}}
+      onPressDetailAnime={onPressDetailAnime}
       onEndReachedThreshold={onEndReachedThreshold}
       onEndReached={onEndReached}
       isLoading={loading}
