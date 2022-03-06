@@ -39,7 +39,9 @@ type Props = {
   >;
   page: number;
   animeStatusMessage: string;
-  onPressDetailAnime: () => void;
+  onPressDetailAnime: (
+    modelDocumentImage: ModelDocumentImageList.ModelDocumentImage<AnimeModelDocument>,
+  ) => void;
   getMoreAnime: () => void;
   onEndReached: (
     onEndReachedThreshold: number,
@@ -78,7 +80,7 @@ const Animes: React.FC<Props> = ({
         <ButtonAnime
           activeOpacity={0.8}
           testID={`anime_button_${anime.id}`}
-          onPress={onPressDetailAnime}
+          onPress={() => onPressDetailAnime(anime)}
         >
           <ImageAnime
             width={anime.cover_image_size.width}

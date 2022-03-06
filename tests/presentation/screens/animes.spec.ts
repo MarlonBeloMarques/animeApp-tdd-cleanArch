@@ -3,7 +3,7 @@ import { AnimeModelDocument } from '~/domain/models';
 import { Animes } from '~/presentation/screens';
 import AnimesView from '~/presentation/screens/animes/animes';
 import { ModelDocumentImageList } from '~/presentation/protocols';
-import { RemoteAnimeList } from '~/data/useCases';
+import { AnimeDetailToNavigation, RemoteAnimeList } from '~/data/useCases';
 import { mockEventData } from '../../ui/mocks';
 import { renderWithParams } from '../../ui/helpers';
 
@@ -252,5 +252,32 @@ describe('Presentation: Animes', () => {
       },
       { timeout: 1000 },
     );
+  });
+
+  test('should press the anime successfully and get the details', async () => {
+    const { UNSAFE_getByType, getByTestId } = render(
+      renderWithParams({
+        screen: Animes,
+        screenProps: {
+          url: 'https://api.aniapi.com/v1/anime',
+          onEndReachedThreshold: 20,
+        },
+      }),
+    );
+
+    const spyGetAnimeDetail = jest.spyOn(
+      AnimeDetailToNavigation.prototype,
+      'get',
+    );
+
+    await waitFor(() => {
+      const animesView = UNSAFE_getByType(AnimesView);
+      expect(animesView.props.animeList.length).toBeTruthy();
+      const firstAnime = animesView.props.animeList[0];
+      const animeButton = getByTestId(`anime_button_${firstAnime.id}`);
+
+      fireEvent.press(animeButton);
+      expect(spyGetAnimeDetail).toHaveBeenCalledTimes(1);
+    });
   });
 });

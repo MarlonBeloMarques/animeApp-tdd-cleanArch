@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { NativeScrollEvent } from 'react-native';
-import { RemoteAnimeList } from '~/data/useCases';
-import { AnimeModel } from '~/domain/models';
+import { AnimeDetailToNavigation, RemoteAnimeList } from '~/data/useCases';
+import { AnimeModel, AnimeModelDocument } from '~/domain/models';
 import { Anime } from '~/domain/useCases';
 import { AxiosAdapter } from '~/infra/http';
 import { ModelDocumentListMapperDecorator } from '~/presentation/decorators';
-import { AnimeModelMapper } from '~/presentation/mappers';
+import {
+  AnimeModelImageMapper,
+  AnimeModelMapper,
+} from '~/presentation/mappers';
 import {
   AnimeModelImage,
   ModelDocumentImageList,
@@ -125,7 +128,15 @@ const AnimesContainer: React.FC<Props> = ({
     );
   };
 
-  const onPressDetailAnime = () => {};
+  const onPressDetailAnime = (
+    modelDocumentImage: ModelDocumentImageList.ModelDocumentImage<AnimeModelDocument>,
+  ) => {
+    const animeModelImage = new AnimeModelImageMapper(modelDocumentImage);
+    const animeDetail = new AnimeDetailToNavigation(
+      animeModelImage.toModelDocument(),
+    );
+    animeDetail.get();
+  };
 
   useEffect(() => {
     getAnimeList();
