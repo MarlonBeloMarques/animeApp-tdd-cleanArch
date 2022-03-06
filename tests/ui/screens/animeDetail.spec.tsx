@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dimensions, Image, Text, View } from 'react-native';
+import { Dimensions, Image, ScrollView, Text, View } from 'react-native';
 import faker from 'faker';
 import { render } from '@testing-library/react-native';
 import { AnimeDetail } from '~/domain/useCases';
@@ -37,6 +37,28 @@ describe('UI: AnimeDetail', () => {
     expect(animeTitle).toBeTruthy();
     expect(animeTitle.props.children).toEqual(animeDetail.titles.en);
   });
+
+  test('should list with success the genres of anime', () => {
+    const animeDetail = makeAnimeDetail();
+    const { getByTestId } = render(
+      renderWithParams({
+        screen: AnimeDetailContainer,
+        screenProps: { animeDetail: animeDetail },
+      }),
+    );
+
+    const animeGenresScroll = getByTestId('anime_genres_scroll_id');
+    expect(animeGenresScroll).toBeTruthy();
+
+    const keyFirstAnimeGenre = animeDetail.genres.indexOf(
+      animeDetail.genres[0],
+    );
+    const firstAnimeGenre = getByTestId(`anime_genre_${keyFirstAnimeGenre}`);
+    expect(firstAnimeGenre).toBeTruthy();
+    expect(firstAnimeGenre.props.children).toEqual(
+      animeDetail.genres[keyFirstAnimeGenre],
+    );
+  });
 });
 
 const makeAnimeDetail = (): AnimeDetail.Detail => {
@@ -68,6 +90,17 @@ const AnimeDetailContainer: React.FC<Props> = ({ animeDetail }) => {
           source={{ uri: animeDetail.banner_image }}
         />
         <Text testID="anime_title_id">{animeDetail.titles.en}</Text>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          testID="anime_genres_scroll_id"
+        >
+          {animeDetail.genres.map((genre, index) => (
+            <View key={index}>
+              <Text testID={`anime_genre_${index}`}>{genre}</Text>
+            </View>
+          ))}
+        </ScrollView>
       </View>
     </View>
   );
