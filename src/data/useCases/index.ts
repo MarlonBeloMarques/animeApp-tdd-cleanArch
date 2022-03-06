@@ -3,3 +3,4 @@ export * from './remoteAnimeList';
 export * from './addAuthenticationToStorage';
 export * from './getAuthenticationToStorage';
 export * from './clearAuthenticationToStorage';
+export * from './animeDetailToNavigation';
