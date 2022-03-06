@@ -107,11 +107,9 @@ const AnimesContainer: React.FC<Props> = ({
     setAnime(animeModelImage);
     setAnimeList((animeListCurrent) => [...animeListCurrent, ...newAnimeList]);
 
-    const timeout = setTimeout(() => {
+    setTimeout(() => {
       setWaitForEndReached(false);
     }, 100);
-
-    clearTimeout(timeout);
   };
 
   const onEndReached = (
