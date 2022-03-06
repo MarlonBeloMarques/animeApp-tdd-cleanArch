@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dimensions, Image, View } from 'react-native';
+import { Dimensions, Image, Text, View } from 'react-native';
 import faker from 'faker';
 import { render } from '@testing-library/react-native';
 import { AnimeDetail } from '~/domain/useCases';
@@ -22,6 +22,20 @@ describe('UI: AnimeDetail', () => {
     expect(animeImage.props.width).toBeTruthy();
     expect(animeImage.props.height).toBeTruthy();
     expect(animeImage.props.source.uri).toEqual(animeDetail.banner_image);
+  });
+
+  test('should show title with success', () => {
+    const animeDetail = makeAnimeDetail();
+    const { getByTestId } = render(
+      renderWithParams({
+        screen: AnimeDetailContainer,
+        screenProps: { animeDetail: animeDetail },
+      }),
+    );
+
+    const animeTitle = getByTestId('anime_title_id');
+    expect(animeTitle).toBeTruthy();
+    expect(animeTitle.props.children).toEqual(animeDetail.titles.en);
   });
 });
 
@@ -53,6 +67,7 @@ const AnimeDetailContainer: React.FC<Props> = ({ animeDetail }) => {
           testID="anime_image_id"
           source={{ uri: animeDetail.banner_image }}
         />
+        <Text testID="anime_title_id">{animeDetail.titles.en}</Text>
       </View>
     </View>
   );
