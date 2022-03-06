@@ -13,5 +13,7 @@ export namespace AnimeDetail {
     genres: Array<string>;
     episodes_count: number;
     start_date: string;
+    cover_image: string;
+    banner_image: string;
   };
 }
