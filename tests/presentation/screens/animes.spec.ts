@@ -160,7 +160,7 @@ describe('Presentation: Animes', () => {
     );
 
     await waitFor(
-      () => {
+      async () => {
         const animeList = getByTestId('anime_list_id');
 
         const spyCompleteUrlWithParam = jest.spyOn(
@@ -177,6 +177,10 @@ describe('Presentation: Animes', () => {
         expect(animesView.props.waitForEndReached).toEqual(true);
         expect(animesView.props.animeList.length).toEqual(200);
         expect(spyCompleteUrlWithParam).toHaveBeenCalledTimes(1);
+
+        await new Promise((resolve) => setTimeout(resolve, 200));
+
+        expect(animesView.props.waitForEndReached).toEqual(false);
       },
       { timeout: 2000 },
     );
