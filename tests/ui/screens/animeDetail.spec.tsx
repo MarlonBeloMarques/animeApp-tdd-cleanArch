@@ -1,11 +1,14 @@
 import React from 'react';
 import { Dimensions, Image, ScrollView, Text, View } from 'react-native';
 import faker from 'faker';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { render } from '@testing-library/react-native';
 import { AnimeDetail } from '~/domain/useCases';
 import { renderWithParams } from '../helpers';
 
 const { width } = Dimensions.get('screen');
+
+jest.mock('react-native-vector-icons/MaterialIcons', () => 'Icon');
 
 describe('UI: AnimeDetail', () => {
   test('should show image with success', () => {
@@ -73,6 +76,24 @@ describe('UI: AnimeDetail', () => {
     expect(aboutAnime).toBeTruthy();
     expect(aboutAnime.props.children).toEqual(animeDetail.descriptions.en);
   });
+
+  test('should show the content of the amount of the anime episodes successfully', () => {
+    const animeDetail = makeAnimeDetail();
+    const { getByTestId } = render(
+      renderWithParams({
+        screen: AnimeDetailContainer,
+        screenProps: { animeDetail: animeDetail },
+      }),
+    );
+
+    const quantityEpisodesIcon = getByTestId('quantity_episodes_icon_id');
+    const episodesQuantity = getByTestId('episodes_quantity_id');
+    expect(quantityEpisodesIcon).toBeTruthy();
+    expect(quantityEpisodesIcon.props.name).toEqual('video-collection');
+    expect(quantityEpisodesIcon.props.size).toEqual(14);
+    expect(episodesQuantity).toBeTruthy();
+    expect(episodesQuantity.props.children).toEqual(animeDetail.episodes_count);
+  });
 });
 
 const makeAnimeDetail = (): AnimeDetail.Detail => {
@@ -115,6 +136,18 @@ const AnimeDetailContainer: React.FC<Props> = ({ animeDetail }) => {
             </View>
           ))}
         </ScrollView>
+        <View>
+          <View>
+            <Icon
+              testID="quantity_episodes_icon_id"
+              name="video-collection"
+              size={14}
+            />
+            <Text testID="episodes_quantity_id">
+              {animeDetail.episodes_count}
+            </Text>
+          </View>
+        </View>
         <View>
           <Text>About</Text>
           <Text testID="about_anime_id">{animeDetail.descriptions.en}</Text>
