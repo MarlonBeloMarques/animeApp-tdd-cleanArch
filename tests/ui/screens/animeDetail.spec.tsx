@@ -59,6 +59,20 @@ describe('UI: AnimeDetail', () => {
       animeDetail.genres[keyFirstAnimeGenre],
     );
   });
+
+  test('should show description about the anime with success', () => {
+    const animeDetail = makeAnimeDetail();
+    const { getByTestId } = render(
+      renderWithParams({
+        screen: AnimeDetailContainer,
+        screenProps: { animeDetail: animeDetail },
+      }),
+    );
+
+    const aboutAnime = getByTestId('about_anime_id');
+    expect(aboutAnime).toBeTruthy();
+    expect(aboutAnime.props.children).toEqual(animeDetail.descriptions.en);
+  });
 });
 
 const makeAnimeDetail = (): AnimeDetail.Detail => {
@@ -101,6 +115,10 @@ const AnimeDetailContainer: React.FC<Props> = ({ animeDetail }) => {
             </View>
           ))}
         </ScrollView>
+        <View>
+          <Text>About</Text>
+          <Text testID="about_anime_id">{animeDetail.descriptions.en}</Text>
+        </View>
       </View>
     </View>
   );
