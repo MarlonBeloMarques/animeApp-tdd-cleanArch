@@ -14,3 +14,5 @@ jest.mock('react-native-flash-message', () => {
 });
 
 jest.mock('@react-native-async-storage/async-storage', () => mockAsyncStorage);
+jest.mock('react-native-vector-icons/MaterialIcons', () => 'Icon');
+

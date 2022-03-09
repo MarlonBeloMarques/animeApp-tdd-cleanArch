@@ -1,21 +1,15 @@
-import React from 'react';
-import { Dimensions, Image, ScrollView, Text, View } from 'react-native';
 import faker from 'faker';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import { render } from '@testing-library/react-native';
 import { AnimeDetail } from '~/domain/useCases';
+import { AnimeDetail as AnimeDetailView } from '~/presentation/screens';
 import { renderWithParams } from '../helpers';
-
-const { width } = Dimensions.get('screen');
-
-jest.mock('react-native-vector-icons/MaterialIcons', () => 'Icon');
 
 describe('UI: AnimeDetail', () => {
   test('should show image with success', () => {
     const animeDetail = makeAnimeDetail();
     const { getByTestId } = render(
       renderWithParams({
-        screen: AnimeDetailContainer,
+        screen: AnimeDetailView,
         screenProps: { animeDetail: animeDetail },
       }),
     );
@@ -31,7 +25,7 @@ describe('UI: AnimeDetail', () => {
     const animeDetail = makeAnimeDetail();
     const { getByTestId } = render(
       renderWithParams({
-        screen: AnimeDetailContainer,
+        screen: AnimeDetailView,
         screenProps: { animeDetail: animeDetail },
       }),
     );
@@ -45,7 +39,7 @@ describe('UI: AnimeDetail', () => {
     const animeDetail = makeAnimeDetail();
     const { getByTestId } = render(
       renderWithParams({
-        screen: AnimeDetailContainer,
+        screen: AnimeDetailView,
         screenProps: { animeDetail: animeDetail },
       }),
     );
@@ -67,7 +61,7 @@ describe('UI: AnimeDetail', () => {
     const animeDetail = makeAnimeDetail();
     const { getByTestId } = render(
       renderWithParams({
-        screen: AnimeDetailContainer,
+        screen: AnimeDetailView,
         screenProps: { animeDetail: animeDetail },
       }),
     );
@@ -81,7 +75,7 @@ describe('UI: AnimeDetail', () => {
     const animeDetail = makeAnimeDetail();
     const { getByTestId } = render(
       renderWithParams({
-        screen: AnimeDetailContainer,
+        screen: AnimeDetailView,
         screenProps: { animeDetail: animeDetail },
       }),
     );
@@ -92,7 +86,9 @@ describe('UI: AnimeDetail', () => {
     expect(quantityEpisodesIcon.props.name).toEqual('video-collection');
     expect(quantityEpisodesIcon.props.size).toEqual(14);
     expect(episodesQuantity).toBeTruthy();
-    expect(episodesQuantity.props.children).toEqual(animeDetail.episodes_count);
+    expect(episodesQuantity.props.children).toEqual(
+      `${animeDetail.episodes_count} episodes`,
+    );
   });
 });
 
@@ -108,51 +104,4 @@ const makeAnimeDetail = (): AnimeDetail.Detail => {
       en: faker.name.title(),
     },
   };
-};
-
-type Props = {
-  animeDetail: AnimeDetail.Detail;
-};
-
-const AnimeDetailContainer: React.FC<Props> = ({ animeDetail }) => {
-  return (
-    <View>
-      <View>
-        <Image
-          width={width}
-          height={100}
-          testID="anime_image_id"
-          source={{ uri: animeDetail.banner_image }}
-        />
-        <Text testID="anime_title_id">{animeDetail.titles.en}</Text>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          testID="anime_genres_scroll_id"
-        >
-          {animeDetail.genres.map((genre, index) => (
-            <View key={index}>
-              <Text testID={`anime_genre_${index}`}>{genre}</Text>
-            </View>
-          ))}
-        </ScrollView>
-        <View>
-          <View>
-            <Icon
-              testID="quantity_episodes_icon_id"
-              name="video-collection"
-              size={14}
-            />
-            <Text testID="episodes_quantity_id">
-              {animeDetail.episodes_count}
-            </Text>
-          </View>
-        </View>
-        <View>
-          <Text>About</Text>
-          <Text testID="about_anime_id">{animeDetail.descriptions.en}</Text>
-        </View>
-      </View>
-    </View>
-  );
 };
