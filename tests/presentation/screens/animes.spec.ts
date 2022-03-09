@@ -4,6 +4,7 @@ import { Animes } from '~/presentation/screens';
 import AnimesView from '~/presentation/screens/animes/animes';
 import { ModelDocumentImageList } from '~/presentation/protocols';
 import { AnimeDetailToNavigation, RemoteAnimeList } from '~/data/useCases';
+import { UnexpectedError } from '~/data/errors';
 import { mockEventData } from '../../ui/mocks';
 import { renderWithParams } from '../../ui/helpers';
 
@@ -101,6 +102,32 @@ describe('Presentation: Animes', () => {
 
         const animeListIsEmpty = getByTestId('animes_is_empty_id');
         expect(animeListIsEmpty).toBeTruthy();
+      },
+      { timeout: 1000 },
+    );
+  });
+
+  test('should return unexpected error after calling remoteAnimeList list', async () => {
+    jest
+      .spyOn(RemoteAnimeList.prototype, 'list')
+      .mockRejectedValue(Promise.reject(new UnexpectedError()));
+
+    const { UNSAFE_getByType } = render(
+      renderWithParams({
+        screen: Animes,
+        screenProps: {
+          url: 'https://api.aniapi.com/v1/anime',
+          onEndReachedThreshold: 20,
+        },
+      }),
+    );
+
+    await waitFor(
+      () => {
+        const animesView = UNSAFE_getByType(AnimesView);
+        expect(animesView.props.animeStatusMessage).toEqual(
+          new UnexpectedError().message,
+        );
       },
       { timeout: 1000 },
     );

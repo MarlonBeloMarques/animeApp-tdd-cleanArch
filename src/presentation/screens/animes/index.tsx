@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { NativeScrollEvent } from 'react-native';
+import { UnexpectedError } from '~/data/errors';
 import { AnimeDetailToNavigation, RemoteAnimeList } from '~/data/useCases';
 import { AnimeModel, AnimeModelDocument } from '~/domain/models';
 import { Anime } from '~/domain/useCases';
@@ -33,10 +34,7 @@ type Props = {
   onEndReachedThreshold: number;
 };
 
-const AnimesContainer: React.FC<Props> = ({
-  url = 'https://api.aniapi.com/v1/anime',
-  onEndReachedThreshold = 20,
-}) => {
+const AnimesContainer: React.FC<Props> = ({ url, onEndReachedThreshold }) => {
   const [anime, setAnime] = useState<AnimeModelImage.Model>(
     initialAnimeListResponse(''),
   );
@@ -48,12 +46,10 @@ const AnimesContainer: React.FC<Props> = ({
   const [waitForEndReached, setWaitForEndReached] = useState(false);
   const [page, setPage] = useState(1);
 
-  const requestAnimeList = async (completeUrlWithParam?: Anime.Params) => {
+  const requestAnimeList = async (completeUrlWithParam: Anime.Params) => {
     const axiosAdapter = new AxiosAdapter();
     const remoteAnimeList = new RemoteAnimeList(url, axiosAdapter);
-
-    if (completeUrlWithParam)
-      remoteAnimeList.completeUrlWithParam(completeUrlWithParam);
+    remoteAnimeList.completeUrlWithParam(completeUrlWithParam);
 
     let listResponse = {} as AnimeModel;
     try {
@@ -61,6 +57,8 @@ const AnimesContainer: React.FC<Props> = ({
     } catch (error) {
       if (error instanceof Error) {
         listResponse = initialAnimeListResponse(error.message);
+      } else {
+        listResponse = initialAnimeListResponse(new UnexpectedError().message);
       }
     } finally {
       return listResponse;

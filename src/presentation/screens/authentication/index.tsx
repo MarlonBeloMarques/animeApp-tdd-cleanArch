@@ -7,9 +7,7 @@ type Props = {
   redirectUrl: string;
 };
 
-const AuthenticationContainer: React.FC<Props> = ({
-  redirectUrl = 'https://api.aniapi.com/v1/oauth',
-}) => {
+const AuthenticationContainer: React.FC<Props> = ({ redirectUrl }) => {
   const onPressAuthentication = async () => {
     try {
       const oauthAdapter = new OAuthAdapter();
