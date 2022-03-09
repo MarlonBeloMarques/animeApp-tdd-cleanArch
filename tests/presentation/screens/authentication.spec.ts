@@ -1,4 +1,5 @@
-import { fireEvent, render } from '@testing-library/react-native';
+import * as FlashMessage from 'react-native-flash-message';
+import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import { Authentication } from '~/presentation/screens';
 import { mockLinking } from '../../infra/mocks/linkingMock';
 import { renderWithParams } from '../../ui/helpers';
@@ -15,6 +16,23 @@ describe('Presentation: Authentication', () => {
     const { getByTestId } = makeSut();
     const flashMessage = getByTestId('flash_message_id');
     expect(flashMessage).toBeTruthy();
+  });
+
+  test('should call the flesh message alert', async () => {
+    const { getByTestId, mockedLinking } = makeSut();
+    mockedLinking.openURL.mockClear().mockRejectedValueOnce(() => {
+      return new Error('some error reason');
+    });
+
+    const spy = jest.spyOn(FlashMessage, 'showMessage');
+
+    await waitFor(() => {
+      fireEvent.press(getByTestId('authentication_id'));
+      expect(spy).toHaveBeenCalledWith({
+        message: 'Something went wrong opening the link. Try again later.',
+        type: 'warning',
+      });
+    });
   });
 });
 
