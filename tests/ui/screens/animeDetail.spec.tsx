@@ -1,18 +1,10 @@
-import faker from 'faker';
 import { render } from '@testing-library/react-native';
-import { AnimeDetail } from '~/domain/useCases';
 import { AnimeDetail as AnimeDetailView } from '~/presentation/screens';
-import { renderWithParams } from '../helpers';
+import { makeAnimeDetail, renderWithParams } from '../helpers';
 
 describe('UI: AnimeDetail', () => {
   test('should show image with success', () => {
-    const animeDetail = makeAnimeDetail();
-    const { getByTestId } = render(
-      renderWithParams({
-        screen: AnimeDetailView,
-        screenProps: { animeDetail: animeDetail },
-      }),
-    );
+    const { getByTestId, animeDetail } = makeSut();
 
     const animeImage = getByTestId('anime_image_id');
     expect(animeImage).toBeTruthy();
@@ -22,13 +14,7 @@ describe('UI: AnimeDetail', () => {
   });
 
   test('should show title with success', () => {
-    const animeDetail = makeAnimeDetail();
-    const { getByTestId } = render(
-      renderWithParams({
-        screen: AnimeDetailView,
-        screenProps: { animeDetail: animeDetail },
-      }),
-    );
+    const { getByTestId, animeDetail } = makeSut();
 
     const animeTitle = getByTestId('anime_title_id');
     expect(animeTitle).toBeTruthy();
@@ -36,13 +22,7 @@ describe('UI: AnimeDetail', () => {
   });
 
   test('should list with success the genres of anime', () => {
-    const animeDetail = makeAnimeDetail();
-    const { getByTestId } = render(
-      renderWithParams({
-        screen: AnimeDetailView,
-        screenProps: { animeDetail: animeDetail },
-      }),
-    );
+    const { getByTestId, animeDetail } = makeSut();
 
     const animeGenresScroll = getByTestId('anime_genres_scroll_id');
     expect(animeGenresScroll).toBeTruthy();
@@ -58,13 +38,7 @@ describe('UI: AnimeDetail', () => {
   });
 
   test('should show description about the anime with success', () => {
-    const animeDetail = makeAnimeDetail();
-    const { getByTestId } = render(
-      renderWithParams({
-        screen: AnimeDetailView,
-        screenProps: { animeDetail: animeDetail },
-      }),
-    );
+    const { getByTestId, animeDetail } = makeSut();
 
     const aboutAnime = getByTestId('about_anime_id');
     expect(aboutAnime).toBeTruthy();
@@ -72,13 +46,7 @@ describe('UI: AnimeDetail', () => {
   });
 
   test('should show the content of the amount of the anime episodes successfully', () => {
-    const animeDetail = makeAnimeDetail();
-    const { getByTestId } = render(
-      renderWithParams({
-        screen: AnimeDetailView,
-        screenProps: { animeDetail: animeDetail },
-      }),
-    );
+    const { getByTestId, animeDetail } = makeSut();
 
     const quantityEpisodesIcon = getByTestId('quantity_episodes_icon_id');
     const episodesQuantity = getByTestId('episodes_quantity_id');
@@ -92,13 +60,7 @@ describe('UI: AnimeDetail', () => {
   });
 
   test('should show anime release date content successfully', () => {
-    const animeDetail = makeAnimeDetail();
-    const { getByTestId } = render(
-      renderWithParams({
-        screen: AnimeDetailView,
-        screenProps: { animeDetail: animeDetail },
-      }),
-    );
+    const { getByTestId, animeDetail } = makeSut();
 
     const dateReleaseIcon = getByTestId('date_release_icon_id');
     const dateRelease = getByTestId('date_release_id');
@@ -111,16 +73,15 @@ describe('UI: AnimeDetail', () => {
   });
 });
 
-const makeAnimeDetail = (): AnimeDetail.Detail => {
-  return {
-    banner_image: faker.internet.url(),
-    cover_image: faker.internet.url(),
-    descriptions: { en: faker.commerce.productDescription() },
-    episodes_count: faker.datatype.number(),
-    genres: ['Adventure', 'Action'],
-    start_date: faker.date.past().toISOString(),
-    titles: {
-      en: faker.name.title(),
-    },
-  };
+const makeSut = () => {
+  const animeDetail = makeAnimeDetail();
+
+  const { getByTestId } = render(
+    renderWithParams({
+      screen: AnimeDetailView,
+      screenProps: { animeDetail: animeDetail },
+    }),
+  );
+
+  return { getByTestId, animeDetail };
 };
