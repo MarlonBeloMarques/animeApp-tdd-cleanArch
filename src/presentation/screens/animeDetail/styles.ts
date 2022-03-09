@@ -67,10 +67,14 @@ export const WrapperAnimeDetails = styled.View`
   flex-direction: row;
 `;
 
-export const WrapperQuantityEpisodesAnime = styled.View`
+const WrapperDetailAnimeContent = styled.View`
   flex-direction: row;
   margin: 0px ${getTheme('smallSpacing')}px;
 `;
+
+export const WrapperQuantityEpisodesAnime = styled(WrapperDetailAnimeContent)``;
+
+export const WrapperDateReleaseAnime = styled(WrapperDetailAnimeContent)``;
 
 export const AnimeGenresScroll = styled.ScrollView``;
 
@@ -109,9 +113,13 @@ export const GenreAnime = styled.Text`
   color: ${tertiary};
 `;
 
-export const QuantityEpisodesAnime = styled.Text`
+const DetailAnimeContent = styled.Text`
   font-size: ${caption1.fontSize}px;
   line-height: ${caption1.lineHeight}px;
   color: ${getTheme('quaternary')};
   margin-left: ${minimumSpacing}px;
 `;
+
+export const QuantityEpisodesAnime = styled(DetailAnimeContent)``;
+
+export const DateReleaseAnime = styled(DetailAnimeContent)``;

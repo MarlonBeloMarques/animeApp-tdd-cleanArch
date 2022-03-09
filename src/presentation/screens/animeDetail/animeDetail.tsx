@@ -10,6 +10,7 @@ import {
   AnimeGenresScroll,
   AnimeTitle,
   Background,
+  DateReleaseAnime,
   GenreAnime,
   QuantityEpisodesAnime,
   WrapperAboutAnime,
@@ -18,6 +19,7 @@ import {
   WrapperAnimeGenre,
   WrapperBackground,
   WrapperContent,
+  WrapperDateReleaseAnime,
   WrapperQuantityEpisodesAnime,
   WrapperScreen,
 } from './styles';
@@ -33,6 +35,10 @@ type Props = {
 const AnimeDetail: React.FC<Props> = ({ animeDetail }) => {
   const getDescriptionsAnime = () => {
     return animeDetail.descriptions.en.replace(/<\/?[^>]+(>|$)/g, '');
+  };
+
+  const getDateRelease = () => {
+    return new Date(animeDetail.start_date).toLocaleDateString();
   };
 
   return (
@@ -66,6 +72,17 @@ const AnimeDetail: React.FC<Props> = ({ animeDetail }) => {
                 {`${animeDetail.episodes_count} episodes`}
               </QuantityEpisodesAnime>
             </WrapperQuantityEpisodesAnime>
+            <WrapperDateReleaseAnime>
+              <Icon
+                testID="date_release_icon_id"
+                name="calendar-today"
+                size={14}
+                color={getTheme('quaternary')}
+              />
+              <DateReleaseAnime testID="date_release_id">
+                {getDateRelease()}
+              </DateReleaseAnime>
+            </WrapperDateReleaseAnime>
           </WrapperAnimeDetails>
           <WrapperAboutAnime>
             <AnimeAbout>About</AnimeAbout>

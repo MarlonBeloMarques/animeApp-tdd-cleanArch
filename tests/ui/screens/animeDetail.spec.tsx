@@ -90,6 +90,25 @@ describe('UI: AnimeDetail', () => {
       `${animeDetail.episodes_count} episodes`,
     );
   });
+
+  test('should show anime release date content successfully', () => {
+    const animeDetail = makeAnimeDetail();
+    const { getByTestId } = render(
+      renderWithParams({
+        screen: AnimeDetailView,
+        screenProps: { animeDetail: animeDetail },
+      }),
+    );
+
+    const dateReleaseIcon = getByTestId('date_release_icon_id');
+    const dateRelease = getByTestId('date_release_id');
+    expect(dateReleaseIcon).toBeTruthy();
+    expect(dateReleaseIcon.props.name).toEqual('calendar-today');
+    expect(dateReleaseIcon.props.size).toEqual(14);
+    expect(dateRelease.props.children).toEqual(
+      new Date(animeDetail.start_date).toLocaleDateString(),
+    );
+  });
 });
 
 const makeAnimeDetail = (): AnimeDetail.Detail => {
