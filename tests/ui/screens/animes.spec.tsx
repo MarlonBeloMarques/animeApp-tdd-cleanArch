@@ -228,6 +228,9 @@ const makeSut = ({
         onEndReached: mockedOnReached,
         onEndReachedThreshold: onEndReachedThreshold,
         isLoading: isLoading,
+        animeStatusMessage: '',
+        page: 1,
+        waitForEndReached: false,
       },
     }),
   );
