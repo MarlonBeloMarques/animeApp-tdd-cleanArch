@@ -176,6 +176,41 @@ describe('Presentation: Animes', () => {
     });
   });
 
+  test('should call onEndReached several times when scrolling to validate waitForEndReached successfully', async () => {
+    const { getByType, getByTestId } = makeSut(
+      {
+        mockResolvedValueOnce: false,
+        mockResolvedValue: true,
+        mockRejectedValueOnce: false,
+        mockRejectedValue: false,
+      },
+      100,
+    );
+
+    const animesView = getByType(AnimesView);
+
+    await waitFor(() => {
+      const animeListLength = animesView.props.animeList.length;
+      expect(animeListLength).toBeTruthy();
+      expect(animeListLength).toEqual(100);
+      expect(animesView.props.page).toEqual(1);
+      expect(animesView.props.waitForEndReached).toEqual(false);
+    });
+
+    await waitFor(async () => {
+      const animeList = getByTestId('anime_list_id');
+      fireEvent.scroll(
+        animeList,
+        mockEventData({ contentOffset: { x: 1, y: 500 } }),
+      );
+      expect(animesView.props.waitForEndReached).toEqual(true);
+
+      await new Promise((resolve) => setTimeout(resolve, 200));
+
+      expect(animesView.props.waitForEndReached).toEqual(false);
+    });
+  });
+
   test('should not call completeWithUrlParam while it is loading', async () => {
     const { getByType, getByTestId } = makeSut({
       mockResolvedValueOnce: true,
