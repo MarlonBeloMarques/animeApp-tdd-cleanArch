@@ -1,6 +1,6 @@
 import React from 'react';
 import { Dimensions } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { Icon } from '~/presentation/modules';
 import { AnimeDetail as AnimeDetailUseCase } from '~/domain/useCases';
 import { getTheme } from '~/presentation/helpers';
 import {

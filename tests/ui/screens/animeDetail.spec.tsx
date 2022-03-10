@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react-native';
-import { AnimeDetail as AnimeDetailView } from '~/presentation/screens';
+import AnimeDetailView from '~/presentation/screens/animeDetail/animeDetail';
 import { makeAnimeDetail, renderWithParams } from '../helpers';
 
 describe('UI: AnimeDetail', () => {
