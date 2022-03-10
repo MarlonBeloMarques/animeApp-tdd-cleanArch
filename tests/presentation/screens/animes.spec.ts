@@ -11,26 +11,18 @@ import { renderWithParams } from '../../ui/helpers';
 
 describe('Presentation: Animes', () => {
   test('should hide loading animation after call with success the list RemoteAnimeList', async () => {
-    jest
-      .spyOn(RemoteAnimeList.prototype, 'list')
-      .mockClear()
-      .mockResolvedValueOnce(makeAnimeModel());
-
-    const { getByTestId, UNSAFE_getByType } = render(
-      renderWithParams({
-        screen: Animes,
-        screenProps: {
-          url: makeUrl(),
-          onEndReachedThreshold: 20,
-        },
-      }),
-    );
+    const { getByTestId, getByType } = makeSut({
+      mockResolvedValueOnce: true,
+      mockResolvedValue: false,
+      mockRejectedValueOnce: false,
+      mockRejectedValue: false,
+    });
 
     const loadingStart = getByTestId('loading_id');
     expect(loadingStart).toBeTruthy();
 
     await waitFor(() => {
-      const animesView = UNSAFE_getByType(AnimesView);
+      const animesView = getByType(AnimesView);
       expect(animesView.props.animeList.length).toBeTruthy();
 
       try {
@@ -48,26 +40,18 @@ describe('Presentation: Animes', () => {
   });
 
   test('should hide loading animation after call with error the list RemoteAnimeList', async () => {
-    jest
-      .spyOn(RemoteAnimeList.prototype, 'list')
-      .mockClear()
-      .mockRejectedValueOnce(new UnexpectedError());
-
-    const { getByTestId, UNSAFE_getByType } = render(
-      renderWithParams({
-        screen: Animes,
-        screenProps: {
-          url: makeUrl(),
-          onEndReachedThreshold: 20,
-        },
-      }),
-    );
+    const { getByTestId, getByType } = makeSut({
+      mockResolvedValueOnce: false,
+      mockResolvedValue: false,
+      mockRejectedValueOnce: true,
+      mockRejectedValue: false,
+    });
 
     const loadingStart = getByTestId('loading_id');
     expect(loadingStart).toBeTruthy();
 
     await waitFor(() => {
-      const animesView = UNSAFE_getByType(AnimesView);
+      const animesView = getByType(AnimesView);
       expect(animesView.props.animeStatusMessage).toEqual(
         'Unexpected error. Please check your internet and try again.',
       );
@@ -87,20 +71,15 @@ describe('Presentation: Animes', () => {
   });
 
   test('should show is empty list message after call with error the list RemoteAnimeList', async () => {
-    jest
-      .spyOn(RemoteAnimeList.prototype, 'list')
-      .mockClear()
-      .mockRejectedValueOnce(new UnexpectedError());
-
-    const { getByTestId, UNSAFE_getByType } = render(
-      renderWithParams({
-        screen: Animes,
-        screenProps: { url: makeUrl(), onEndReachedThreshold: 20 },
-      }),
-    );
+    const { getByTestId, getByType } = makeSut({
+      mockResolvedValueOnce: false,
+      mockResolvedValue: false,
+      mockRejectedValueOnce: true,
+      mockRejectedValue: false,
+    });
 
     await waitFor(() => {
-      const animesView = UNSAFE_getByType(AnimesView);
+      const animesView = getByType(AnimesView);
       expect(animesView.props.animeStatusMessage).toEqual(
         'Unexpected error. Please check your internet and try again.',
       );
@@ -111,50 +90,35 @@ describe('Presentation: Animes', () => {
   });
 
   test('should return unexpected error after calling remoteAnimeList list', async () => {
-    jest
-      .spyOn(RemoteAnimeList.prototype, 'list')
-      .mockClear()
-      .mockRejectedValue(Promise.reject(new UnexpectedError()));
-
-    const { UNSAFE_getByType } = render(
-      renderWithParams({
-        screen: Animes,
-        screenProps: {
-          url: makeUrl(),
-          onEndReachedThreshold: 20,
-        },
-      }),
-    );
-
-    await waitFor(
-      () => {
-        const animesView = UNSAFE_getByType(AnimesView);
-        expect(animesView.props.animeStatusMessage).toEqual(
-          new UnexpectedError().message,
-        );
+    const { getByType } = makeSut(
+      {
+        mockResolvedValueOnce: false,
+        mockResolvedValue: false,
+        mockRejectedValueOnce: false,
+        mockRejectedValue: true,
       },
-      { timeout: 1000 },
-    );
-  });
-
-  test('should show all anime in the list with height and width', async () => {
-    jest
-      .spyOn(RemoteAnimeList.prototype, 'list')
-      .mockClear()
-      .mockResolvedValueOnce(makeAnimeModel());
-
-    const { UNSAFE_getByType } = render(
-      renderWithParams({
-        screen: Animes,
-        screenProps: {
-          url: makeUrl(),
-          onEndReachedThreshold: 20,
-        },
-      }),
+      5,
+      true,
     );
 
     await waitFor(() => {
-      const animesView = UNSAFE_getByType(AnimesView);
+      const animesView = getByType(AnimesView);
+      expect(animesView.props.animeStatusMessage).toEqual(
+        new UnexpectedError().message,
+      );
+    });
+  });
+
+  test('should show all anime in the list with height and width', async () => {
+    const { getByType } = makeSut({
+      mockResolvedValueOnce: true,
+      mockResolvedValue: false,
+      mockRejectedValueOnce: false,
+      mockRejectedValue: false,
+    });
+
+    await waitFor(() => {
+      const animesView = getByType(AnimesView);
       expect(animesView.props.animeList.length).toBeTruthy();
 
       animesView.props.animeList.forEach(
@@ -169,22 +133,17 @@ describe('Presentation: Animes', () => {
   });
 
   test('should update anime list successfully after calling completeWithUrlParam with RemoteAnimeList after reaching end of list', async () => {
-    jest
-      .spyOn(RemoteAnimeList.prototype, 'list')
-      .mockClear()
-      .mockResolvedValue(makeAnimeModel(100));
-
-    const { UNSAFE_getByType, getByTestId } = render(
-      renderWithParams({
-        screen: Animes,
-        screenProps: {
-          url: makeUrl(),
-          onEndReachedThreshold: 20,
-        },
-      }),
+    const { getByType, getByTestId } = makeSut(
+      {
+        mockResolvedValueOnce: false,
+        mockResolvedValue: true,
+        mockRejectedValueOnce: false,
+        mockRejectedValue: false,
+      },
+      100,
     );
 
-    const animesView = UNSAFE_getByType(AnimesView);
+    const animesView = getByType(AnimesView);
 
     await waitFor(() => {
       const animeListLength = animesView.props.animeList.length;
@@ -218,20 +177,12 @@ describe('Presentation: Animes', () => {
   });
 
   test('should not call completeWithUrlParam while it is loading', async () => {
-    jest
-      .spyOn(RemoteAnimeList.prototype, 'list')
-      .mockClear()
-      .mockResolvedValueOnce(makeAnimeModel());
-
-    const { UNSAFE_getByType, getByTestId } = render(
-      renderWithParams({
-        screen: Animes,
-        screenProps: {
-          url: makeUrl(),
-          onEndReachedThreshold: 20,
-        },
-      }),
-    );
+    const { getByType, getByTestId } = makeSut({
+      mockResolvedValueOnce: true,
+      mockResolvedValue: false,
+      mockRejectedValueOnce: false,
+      mockRejectedValue: false,
+    });
 
     const spyCompleteUrlWithParam = jest
       .spyOn(RemoteAnimeList.prototype, 'completeUrlWithParam')
@@ -241,7 +192,7 @@ describe('Presentation: Animes', () => {
     expect(loadingStart).toBeTruthy();
 
     await waitFor(() => {
-      const animesView = UNSAFE_getByType(AnimesView);
+      const animesView = getByType(AnimesView);
       expect(animesView.props.animeList.length).toBeTruthy();
 
       try {
@@ -260,27 +211,19 @@ describe('Presentation: Animes', () => {
   });
 
   test('should not call completeWithUrlParam while it is show message: is empty', async () => {
-    jest
-      .spyOn(RemoteAnimeList.prototype, 'list')
-      .mockClear()
-      .mockRejectedValueOnce(new UnexpectedError());
-
-    const { UNSAFE_getByType, getByTestId } = render(
-      renderWithParams({
-        screen: Animes,
-        screenProps: {
-          url: makeUrl(),
-          onEndReachedThreshold: 20,
-        },
-      }),
-    );
+    const { getByType, getByTestId } = makeSut({
+      mockResolvedValueOnce: false,
+      mockResolvedValue: false,
+      mockRejectedValueOnce: true,
+      mockRejectedValue: false,
+    });
 
     const spyCompleteUrlWithParam = jest
       .spyOn(RemoteAnimeList.prototype, 'completeUrlWithParam')
       .mockClear();
 
     await waitFor(() => {
-      const animesView = UNSAFE_getByType(AnimesView);
+      const animesView = getByType(AnimesView);
       expect(animesView.props.animeStatusMessage).toEqual(
         'Unexpected error. Please check your internet and try again.',
       );
@@ -292,27 +235,19 @@ describe('Presentation: Animes', () => {
   });
 
   test('should press the anime successfully and get the details', async () => {
-    jest
-      .spyOn(RemoteAnimeList.prototype, 'list')
-      .mockClear()
-      .mockResolvedValueOnce(makeAnimeModel());
-
-    const { UNSAFE_getByType, getByTestId } = render(
-      renderWithParams({
-        screen: Animes,
-        screenProps: {
-          url: makeUrl(),
-          onEndReachedThreshold: 20,
-        },
-      }),
-    );
+    const { getByType, getByTestId } = makeSut({
+      mockResolvedValueOnce: true,
+      mockResolvedValue: false,
+      mockRejectedValueOnce: false,
+      mockRejectedValue: false,
+    });
 
     const spyGetAnimeDetail = jest
       .spyOn(AnimeDetailToNavigation.prototype, 'get')
       .mockClear();
 
     await waitFor(() => {
-      const animesView = UNSAFE_getByType(AnimesView);
+      const animesView = getByType(AnimesView);
       expect(animesView.props.animeList.length).toBeTruthy();
       const firstAnime = animesView.props.animeList[0];
       const animeButton = getByTestId(`anime_button_${firstAnime.id}`);
@@ -322,3 +257,63 @@ describe('Presentation: Animes', () => {
     });
   });
 });
+
+type MakeMockSutParams = {
+  mockResolvedValueOnce: boolean;
+  mockResolvedValue: boolean;
+  mockRejectedValueOnce: boolean;
+  mockRejectedValue: boolean;
+};
+
+const makeSut = (
+  {
+    mockResolvedValueOnce,
+    mockResolvedValue,
+    mockRejectedValueOnce,
+    mockRejectedValue,
+  }: MakeMockSutParams,
+  lengthMakeAnimeModel = 5,
+  returnRejectedValueIsUnexpected = false,
+) => {
+  const mockedRemoteAnimeList = jest.spyOn(RemoteAnimeList.prototype, 'list');
+
+  if (mockResolvedValueOnce)
+    mockedRemoteAnimeList
+      .mockResolvedValueOnce(makeAnimeModel(lengthMakeAnimeModel))
+      .mockClear();
+
+  if (mockResolvedValue)
+    mockedRemoteAnimeList
+      .mockResolvedValue(makeAnimeModel(lengthMakeAnimeModel))
+      .mockClear();
+
+  if (mockRejectedValueOnce)
+    mockedRemoteAnimeList
+      .mockRejectedValueOnce(
+        returnRejectedValueIsUnexpected
+          ? Promise.reject(new UnexpectedError())
+          : new UnexpectedError(),
+      )
+      .mockClear();
+
+  if (mockRejectedValue)
+    mockedRemoteAnimeList
+      .mockRejectedValue(
+        returnRejectedValueIsUnexpected
+          ? Promise.reject(new UnexpectedError())
+          : new UnexpectedError(),
+      )
+      .mockClear();
+
+  const { getByTestId, UNSAFE_getByType } = render(
+    renderWithParams({
+      screen: Animes,
+      screenProps: {
+        url: makeUrl(),
+        onEndReachedThreshold: 20,
+      },
+    }),
+  );
+
+  return { getByTestId, getByType: UNSAFE_getByType };
+};
