@@ -7,10 +7,7 @@ import { makeAnimeDetail, renderWithParams } from '../../ui/helpers';
 
 describe('Presentation: AnimeDetail', () => {
   test('should passed anime detail via props with success', async () => {
-    const mockedAnimeDetail = makeAnimeDetail();
-    const navigateSpy = jest.spyOn(CommonActions, 'navigate');
-
-    const { getByType } = makeSut();
+    const { getByType, mockedAnimeDetail, navigateSpy } = makeSut();
 
     await waitFor(async () => {
       NavigationActions.navigate(Routes.ANIME_DETAIL, {
@@ -30,11 +27,13 @@ describe('Presentation: AnimeDetail', () => {
 });
 
 const makeSut = () => {
+  const mockedAnimeDetail = makeAnimeDetail();
+  const navigateSpy = jest.spyOn(CommonActions, 'navigate');
   const { UNSAFE_getByType } = render(
     renderWithParams({
       screen: Main,
     }),
   );
 
-  return { getByType: UNSAFE_getByType };
+  return { getByType: UNSAFE_getByType, mockedAnimeDetail, navigateSpy };
 };
