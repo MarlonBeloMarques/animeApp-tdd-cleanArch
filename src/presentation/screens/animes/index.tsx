@@ -5,6 +5,7 @@ import { AnimeDetailToNavigation, RemoteAnimeList } from '~/data/useCases';
 import { AnimeModel, AnimeModelDocument } from '~/domain/models';
 import { Anime } from '~/domain/useCases';
 import { AxiosAdapter } from '~/infra/http';
+import { NavigationActions, Routes } from '~/main/navigation';
 import { ModelDocumentListMapperDecorator } from '~/presentation/decorators';
 import {
   AnimeModelImageMapper,
@@ -131,7 +132,8 @@ const AnimesContainer: React.FC<Props> = ({ url, onEndReachedThreshold }) => {
     const animeDetail = new AnimeDetailToNavigation(
       animeModelImage.toModelDocument(),
     );
-    animeDetail.get();
+    const detail = animeDetail.get();
+    NavigationActions.navigate(Routes.ANIME_DETAIL, { animeDetail: detail });
   };
 
   useEffect(() => {

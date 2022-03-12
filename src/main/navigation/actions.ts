@@ -2,6 +2,7 @@ import {
   CommonActions,
   NavigationContainerRef,
   useNavigation,
+  useRoute,
 } from '@react-navigation/native';
 import { Routes } from './routes';
 
@@ -26,4 +27,4 @@ const navigate = (
   );
 };
 
-export { navigate, useNavigation, setTopLevelNavigator };
+export { navigate, useNavigation, setTopLevelNavigator, useRoute };

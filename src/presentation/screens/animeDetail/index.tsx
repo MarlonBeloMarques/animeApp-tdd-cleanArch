@@ -1,12 +1,12 @@
 import React from 'react';
-import { AnimeDetail as AnimeDetailUseCase } from '~/domain/useCases';
+import { RouteProp } from '@react-navigation/native';
+import { NavigationActions, Routes } from '~/main/navigation';
 import AnimeDetail from './animeDetail';
 
-type Props = {
-  animeDetail: AnimeDetailUseCase.Detail;
-};
-
-const AnimeDetailContainer: React.FC<Props> = ({ animeDetail }) => {
+const AnimeDetailContainer: React.FC = () => {
+  const {
+    params: { animeDetail },
+  } = NavigationActions.useRoute<RouteProp<StackParams, Routes.ANIME_DETAIL>>();
   return <AnimeDetail animeDetail={animeDetail} />;
 };
 

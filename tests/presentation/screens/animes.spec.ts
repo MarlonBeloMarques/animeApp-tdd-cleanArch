@@ -1,11 +1,12 @@
 import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import { AnimeModelDocument } from '~/domain/models';
-import { Animes } from '~/presentation/screens';
 import AnimesView from '~/presentation/screens/animes/animes';
 import { ModelDocumentImageList } from '~/presentation/protocols';
 import { AnimeDetailToNavigation, RemoteAnimeList } from '~/data/useCases';
 import { UnexpectedError } from '~/data/errors';
-import { makeAnimeModel, makeUrl } from '../../data/helpers';
+import Main from '~/main';
+import { NavigationActions } from '~/main/navigation';
+import { makeAnimeModel } from '../../data/helpers';
 import { mockEventData } from '../../ui/mocks';
 import { renderWithParams } from '../../ui/helpers';
 
@@ -219,16 +220,16 @@ describe('Presentation: Animes', () => {
       mockRejectedValue: false,
     });
 
-    const spyCompleteUrlWithParam = jest
-      .spyOn(RemoteAnimeList.prototype, 'completeUrlWithParam')
-      .mockClear();
-
     const loadingStart = getByTestId('loading_id');
     expect(loadingStart).toBeTruthy();
 
     await waitFor(() => {
       const animesView = getByType(AnimesView);
       expect(animesView.props.animeList.length).toBeTruthy();
+
+      const spyCompleteUrlWithParam = jest
+        .spyOn(RemoteAnimeList.prototype, 'completeUrlWithParam')
+        .mockClear();
 
       try {
         const loadingEnd = getByTestId('loading_id');
@@ -239,13 +240,14 @@ describe('Presentation: Animes', () => {
           expect(error.message).toEqual(
             'Unable to find an element with testID: loading_id',
           );
+
           expect(spyCompleteUrlWithParam).not.toHaveBeenCalled();
         }
       }
     });
   });
 
-  test('should not call completeWithUrlParam while it is show message: is empty', async () => {
+  test('should call completeWithUrlParam while it is show message: is empty', async () => {
     const { getByType, getByTestId } = makeSut({
       mockResolvedValueOnce: false,
       mockResolvedValue: false,
@@ -253,15 +255,15 @@ describe('Presentation: Animes', () => {
       mockRejectedValue: false,
     });
 
-    const spyCompleteUrlWithParam = jest
-      .spyOn(RemoteAnimeList.prototype, 'completeUrlWithParam')
-      .mockClear();
-
     await waitFor(() => {
       const animesView = getByType(AnimesView);
       expect(animesView.props.animeStatusMessage).toEqual(
         'Unexpected error. Please check your internet and try again.',
       );
+
+      const spyCompleteUrlWithParam = jest
+        .spyOn(RemoteAnimeList.prototype, 'completeUrlWithParam')
+        .mockClear();
 
       const animeListIsEmpty = getByTestId('animes_is_empty_id');
       expect(animeListIsEmpty).toBeTruthy();
@@ -342,13 +344,11 @@ const makeSut = (
 
   const { getByTestId, UNSAFE_getByType } = render(
     renderWithParams({
-      screen: Animes,
-      screenProps: {
-        url: makeUrl(),
-        onEndReachedThreshold: 20,
-      },
+      screen: Main,
     }),
   );
+
+  NavigationActions.navigate('ANIMES');
 
   return { getByTestId, getByType: UNSAFE_getByType };
 };
