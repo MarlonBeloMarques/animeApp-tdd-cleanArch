@@ -108,7 +108,11 @@ const Animes: React.FC<Props> = ({
     <WrapperScreen>
       <WrapperContent>
         <ScrollView
-          contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: 'center',
+            marginTop: getTheme('largeSpacing') * 2,
+          }}
           testID="anime_list_id"
           onScroll={({ nativeEvent }) => {
             if (onEndReached(onEndReachedThreshold, nativeEvent)) {

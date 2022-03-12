@@ -5,6 +5,7 @@ import {
   AnimesFactory,
   AuthenticationFactory,
 } from '~/main/factories';
+import { getTheme } from '~/presentation/helpers';
 import { Routes } from './routes';
 
 const Stack = createNativeStackNavigator<StackParams>();
@@ -16,6 +17,7 @@ const StackNavigation: React.FC = () => {
       screenOptions={{
         headerTransparent: true,
         headerBackTitleVisible: false,
+        headerTintColor: getTheme('white'),
         title: '',
       }}
     >

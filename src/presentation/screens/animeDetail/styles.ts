@@ -28,6 +28,7 @@ export const WrapperScreen = styled(Wrapper)`
 
 export const WrapperAnimeDetail = styled.View`
   z-index: 2;
+  flex: 1;
 `;
 
 type WrapperContentProps = {
@@ -52,6 +53,7 @@ export const WrapperBackground = styled.View`
 
 export const WrapperAboutAnime = styled.View`
   margin: ${getTheme('largeSpacing')}px 0px;
+  flex: 1;
 `;
 
 export const WrapperAnimeGenre = styled.View`
@@ -60,11 +62,13 @@ export const WrapperAnimeGenre = styled.View`
   border-color: ${tertiary};
   border-width: 1px;
   margin: 0px ${minimumSpacing}px;
+  justify-content: center;
 `;
 
 export const WrapperAnimeDetails = styled.View`
   justify-content: flex-end;
   flex-direction: row;
+  flex: 0.2;
 `;
 
 const WrapperDetailAnimeContent = styled.View`
@@ -76,7 +80,9 @@ export const WrapperQuantityEpisodesAnime = styled(WrapperDetailAnimeContent)``;
 
 export const WrapperDateReleaseAnime = styled(WrapperDetailAnimeContent)``;
 
-export const AnimeGenresScroll = styled.ScrollView``;
+export const AnimeGenresScroll = styled.ScrollView`
+  flex: 0.14;
+`;
 
 export const AnimeTitle = styled(Text)`
   font-weight: bold;
@@ -89,6 +95,10 @@ export const AnimeAbout = styled(Text)`
   font-size: ${body.fontSize}px;
   line-height: ${body.lineHeight}px;
   margin-bottom: ${minimumSpacing}px;
+`;
+
+export const AnimeDescriptionScroll = styled.ScrollView`
+  flex: 1;
 `;
 
 export const AnimeDescription = styled(Text)`

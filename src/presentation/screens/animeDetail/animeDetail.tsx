@@ -7,6 +7,7 @@ import {
   AnimeAbout,
   AnimeBanner,
   AnimeDescription,
+  AnimeDescriptionScroll,
   AnimeGenresScroll,
   AnimeTitle,
   Background,
@@ -50,7 +51,9 @@ const AnimeDetail: React.FC<Props> = ({ animeDetail }) => {
           </AnimeTitle>
           <AnimeGenresScroll
             horizontal
-            style={{ marginVertical: getTheme('mediumSpacing') }}
+            style={{
+              marginVertical: getTheme('mediumSpacing'),
+            }}
             showsHorizontalScrollIndicator={false}
             testID="anime_genres_scroll_id"
           >
@@ -86,9 +89,11 @@ const AnimeDetail: React.FC<Props> = ({ animeDetail }) => {
           </WrapperAnimeDetails>
           <WrapperAboutAnime>
             <AnimeAbout>About</AnimeAbout>
-            <AnimeDescription testID="about_anime_id">
-              {getDescriptionsAnime()}
-            </AnimeDescription>
+            <AnimeDescriptionScroll showsVerticalScrollIndicator={false}>
+              <AnimeDescription testID="about_anime_id">
+                {getDescriptionsAnime()}
+              </AnimeDescription>
+            </AnimeDescriptionScroll>
           </WrapperAboutAnime>
         </WrapperAnimeDetail>
         <WrapperBackground>
