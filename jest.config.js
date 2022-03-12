@@ -12,13 +12,17 @@ module.exports = {
     '!<rootDir>/tests/integration/*.{ts,tsx}',
     '!<rootDir>/src/presentation/themes/**',
     '!<rootDir>/src/presentation/helpers/**',
-    '!<rootDir>/src/presentation/assets/**'
+    '!<rootDir>/src/presentation/assets/**',
+    '!<rootDir>/src/main/types/**'
   ],
   setupFiles: ['<rootDir>/jestSetupFile.js'],
   testPathIgnorePatterns: ['<rootDir>/node_modules/'],
   transformIgnorePatterns: [
     'node_modules/(?!(@react-native|react-native|react-native-size-matters)/)',
   ],
+  moduleNameMapper: {
+      ".+\\.(css|style|less|sass|scss|png|jpg|ttf|woff|woff2)$": "identity-obj-proxy"
+  },
   coverageThreshold: {
     global: {
       branches: 80,

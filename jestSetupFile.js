@@ -1,5 +1,4 @@
 import mockAsyncStorage from '@react-native-async-storage/async-storage/jest/async-storage-mock';
-import {  } from 'react-native';
 
 jest.mock('react-native-flash-message', () => {
   const React = require('react');
@@ -13,6 +12,7 @@ jest.mock('react-native-flash-message', () => {
   };
 });
 
+jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
 jest.mock('@react-native-async-storage/async-storage', () => mockAsyncStorage);
 jest.mock('react-native-vector-icons/MaterialIcons', () => 'Icon');
 
