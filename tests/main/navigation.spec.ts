@@ -6,17 +6,8 @@ import { renderWithParams } from '../ui/helpers';
 
 describe('Main: Navigation', () => {
   test('should call navigate actions with success', async () => {
-    const setTopLevelNavigatorSpy = jest.spyOn(
-      NavigationActions,
-      'setTopLevelNavigator',
-    );
     const navigateSpy = jest.spyOn(CommonActions, 'navigate');
-
-    render(
-      renderWithParams({
-        screen: Main,
-      }),
-    );
+    const { setTopLevelNavigatorSpy } = makeSut();
 
     await waitFor(() => {
       expect(setTopLevelNavigatorSpy).toHaveBeenCalled();
@@ -25,3 +16,18 @@ describe('Main: Navigation', () => {
     });
   });
 });
+
+const makeSut = () => {
+  const setTopLevelNavigatorSpy = jest.spyOn(
+    NavigationActions,
+    'setTopLevelNavigator',
+  );
+
+  render(
+    renderWithParams({
+      screen: Main,
+    }),
+  );
+
+  return { setTopLevelNavigatorSpy };
+};

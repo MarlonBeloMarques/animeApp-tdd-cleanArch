@@ -1,6 +1,6 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Authentication } from '~/presentation/screens';
+import { AuthenticationFactory } from '~/main/factories';
 import { Routes } from './routes';
 
 const Stack = createNativeStackNavigator<StackParams>();
@@ -15,7 +15,9 @@ const StackNavigation: React.FC = () => {
         title: '',
       }}
     >
-      <Stack.Screen name={Routes.AUTHENTICATION} component={Authentication} />
+      <Stack.Screen name={Routes.AUTHENTICATION}>
+        {(props) => <AuthenticationFactory {...props} />}
+      </Stack.Screen>
     </Stack.Navigator>
   );
 };
