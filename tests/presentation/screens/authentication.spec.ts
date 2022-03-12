@@ -1,4 +1,5 @@
 import * as FlashMessage from 'react-native-flash-message';
+import { Alert } from 'react-native';
 import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import { Authentication } from '~/presentation/screens';
 import { mockLinking } from '../../infra/mocks/linkingMock';
@@ -9,6 +10,7 @@ describe('Presentation: Authentication', () => {
     const { getByTestId, mockedLinking } = makeSut();
     const button = getByTestId('authentication_id');
     fireEvent.press(button);
+
     expect(mockedLinking.openURL).toHaveBeenCalledTimes(1);
   });
 
@@ -34,10 +36,26 @@ describe('Presentation: Authentication', () => {
       });
     });
   });
+
+  test('should not call alert when pressing to authenticate', () => {
+    const { alertSpy } = makeSut(false);
+    expect(alertSpy).not.toHaveBeenCalled();
+  });
 });
 
-const makeSut = () => {
+const makeSut = (pressAlertWithSuccess = true) => {
   const mockedLinking = mockLinking();
+  const alertSpy = jest
+    .spyOn(Alert, 'alert')
+    .mockImplementation((title, message, callbackOrButtons) => {
+      if (pressAlertWithSuccess) {
+        if (callbackOrButtons && callbackOrButtons[0].onPress) {
+          callbackOrButtons[0].onPress();
+        }
+      }
+    })
+    .mockClear();
+
   const { getByTestId } = render(
     renderWithParams({
       screen: Authentication,
@@ -45,5 +63,5 @@ const makeSut = () => {
     }),
   );
 
-  return { getByTestId, mockedLinking };
+  return { getByTestId, mockedLinking, alertSpy };
 };

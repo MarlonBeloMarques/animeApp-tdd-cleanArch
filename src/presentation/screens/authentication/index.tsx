@@ -1,4 +1,5 @@
 import React from 'react';
+import { Alert } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 import { OAuthAdapter } from '~/infra/oauth';
 import Authentication from './authentication';
@@ -9,6 +10,20 @@ type Props = {
 
 const AuthenticationContainer: React.FC<Props> = ({ redirectUrl }) => {
   const onPressAuthentication = async () => {
+    Alert.alert('Authentication', 'do you want to authenticate?', [
+      {
+        text: 'Yes',
+        style: 'default',
+        onPress: async () => await redirectAuthentication(),
+      },
+      {
+        text: 'No',
+        style: 'destructive',
+      },
+    ]);
+  };
+
+  const redirectAuthentication = async () => {
     try {
       const oauthAdapter = new OAuthAdapter();
       await oauthAdapter.redirect({
