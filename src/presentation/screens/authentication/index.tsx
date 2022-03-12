@@ -2,6 +2,7 @@ import React from 'react';
 import { Alert } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 import { OAuthAdapter } from '~/infra/oauth';
+import { NavigationActions, Routes } from '~/main/navigation';
 import Authentication from './authentication';
 
 type Props = {
@@ -19,8 +20,13 @@ const AuthenticationContainer: React.FC<Props> = ({ redirectUrl }) => {
       {
         text: 'No',
         style: 'destructive',
+        onPress: () => navigateToAnimes(),
       },
     ]);
+  };
+
+  const navigateToAnimes = () => {
+    NavigationActions.navigate(Routes.ANIMES);
   };
 
   const redirectAuthentication = async () => {

@@ -1,3 +1,4 @@
 export enum Routes {
   AUTHENTICATION = 'AUTHENTICATION',
+  ANIMES = 'ANIMES',
 }

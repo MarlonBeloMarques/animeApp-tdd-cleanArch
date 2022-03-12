@@ -2,6 +2,7 @@ import * as FlashMessage from 'react-native-flash-message';
 import { Alert } from 'react-native';
 import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import { Authentication } from '~/presentation/screens';
+import { NavigationActions, Routes } from '~/main/navigation';
 import { mockLinking } from '../../infra/mocks/linkingMock';
 import { renderWithParams } from '../../ui/helpers';
 
@@ -37,9 +38,18 @@ describe('Presentation: Authentication', () => {
     });
   });
 
-  test('should not call alert when pressing to authenticate', () => {
+  test('should not call alert', () => {
     const { alertSpy } = makeSut(false);
     expect(alertSpy).not.toHaveBeenCalled();
+  });
+
+  test('should when calling the alert and clicking no, call navigate to animes', () => {
+    const navigateSpy = jest.spyOn(NavigationActions, 'navigate');
+    const { getByTestId } = makeSut(false);
+    const button = getByTestId('authentication_id');
+    fireEvent.press(button);
+
+    expect(navigateSpy).toHaveBeenCalledWith(Routes.ANIMES);
   });
 });
 
@@ -51,6 +61,10 @@ const makeSut = (pressAlertWithSuccess = true) => {
       if (pressAlertWithSuccess) {
         if (callbackOrButtons && callbackOrButtons[0].onPress) {
           callbackOrButtons[0].onPress();
+        }
+      } else {
+        if (callbackOrButtons && callbackOrButtons[1].onPress) {
+          callbackOrButtons[1].onPress();
         }
       }
     })
