@@ -56,6 +56,7 @@ const Animes: React.FC<Props> = ({
   onEndReachedThreshold,
   onEndReached,
   isLoading,
+  waitForEndReached,
 }) => {
   const getMaxHeightFromAnimeList = (
     animeList: Array<
@@ -104,7 +105,11 @@ const Animes: React.FC<Props> = ({
   return (
     <WrapperScreen>
       {isLoading && (
-        <WrapperLoading width={width} height={height}>
+        <WrapperLoading
+          width={width}
+          height={height}
+          showBackgroundColor={waitForEndReached}
+        >
           <ActivityIndicator
             testID="loading_id"
             color={getTheme('white')}

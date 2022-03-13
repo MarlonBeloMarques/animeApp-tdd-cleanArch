@@ -26,6 +26,7 @@ export const ContentScroll = styled.ScrollView``;
 type WrapperLoadingProps = {
   height: number;
   width: number;
+  showBackgroundColor: boolean;
 };
 
 export const WrapperLoading = styled.View<WrapperLoadingProps>`
@@ -35,7 +36,8 @@ export const WrapperLoading = styled.View<WrapperLoadingProps>`
   z-index: 4;
   justify-content: center;
   align-items: center;
-  background-color: rgba(52, 52, 52, 0.6);
+  ${({ showBackgroundColor }) =>
+    showBackgroundColor && `background-color: rgba(52, 52, 52, 0.6)`}
 `;
 
 export const WrapperAnime = styled.View`
