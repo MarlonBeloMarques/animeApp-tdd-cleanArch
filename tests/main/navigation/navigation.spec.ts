@@ -4,8 +4,8 @@ import { NavigationActions, Routes } from '~/main/navigation';
 import Main from '~/main';
 import Animes from '~/presentation/screens/animes/animes';
 import { RemoteAnimeList } from '~/data/useCases';
-import { makeAnimeModel } from '../data/helpers';
-import { renderWithParams } from '../ui/helpers';
+import { makeAnimeModel } from '../../data/helpers';
+import { renderWithParams } from '../../ui/helpers';
 
 describe('Main: Navigation', () => {
   test('should call navigate actions with success', async () => {
