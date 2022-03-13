@@ -85,6 +85,7 @@ const AnimesContainer: React.FC<Props> = ({ url, onEndReachedThreshold }) => {
   };
 
   const getMoreAnime = async () => {
+    setLoading(true);
     const pageCurrent = page + 1;
     setPage(pageCurrent);
     setWaitForEndReached(true);
@@ -108,6 +109,7 @@ const AnimesContainer: React.FC<Props> = ({ url, onEndReachedThreshold }) => {
 
     setTimeout(() => {
       setWaitForEndReached(false);
+      setLoading(false);
     }, 100);
   };
 

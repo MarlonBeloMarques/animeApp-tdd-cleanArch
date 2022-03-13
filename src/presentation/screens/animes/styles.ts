@@ -21,6 +21,23 @@ export const WrapperContent = styled(Wrapper)`
   z-index: 2;
 `;
 
+export const ContentScroll = styled.ScrollView``;
+
+type WrapperLoadingProps = {
+  height: number;
+  width: number;
+};
+
+export const WrapperLoading = styled.View<WrapperLoadingProps>`
+  height: ${({ height }) => height}px;
+  width: ${({ width }) => width}px;
+  position: absolute;
+  z-index: 4;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(52, 52, 52, 0.6);
+`;
+
 export const WrapperAnime = styled.View`
   width: ${Dimensions.get('screen').width / 2 -
   (getTheme('smallSpacing') + 10)}px;

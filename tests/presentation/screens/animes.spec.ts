@@ -174,6 +174,7 @@ describe('Presentation: Animes', () => {
       await new Promise((resolve) => setTimeout(resolve, 200));
 
       expect(animesView.props.waitForEndReached).toEqual(false);
+      expect(animesView.props.isLoading).toEqual(false);
     });
   });
 
@@ -209,6 +210,7 @@ describe('Presentation: Animes', () => {
       await new Promise((resolve) => setTimeout(resolve, 200));
 
       expect(animesView.props.waitForEndReached).toEqual(false);
+      expect(animesView.props.isLoading).toEqual(false);
     });
   });
 

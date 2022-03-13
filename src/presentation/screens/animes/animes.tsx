@@ -1,16 +1,12 @@
 import React from 'react';
-import {
-  ActivityIndicator,
-  Dimensions,
-  NativeScrollEvent,
-  ScrollView,
-} from 'react-native';
+import { ActivityIndicator, Dimensions, NativeScrollEvent } from 'react-native';
 import { AnimeModelDocument } from 'src/domain/models';
 import { getTheme, makeId } from '~/presentation/helpers';
 import { ModelDocumentImageList } from '~/presentation/protocols';
 import {
   Background,
   ButtonAnime,
+  ContentScroll,
   ImageAnime,
   IsEmpty,
   TitleAnime,
@@ -18,6 +14,7 @@ import {
   WrapperAnimeList,
   WrapperBackground,
   WrapperContent,
+  WrapperLoading,
   WrapperScreen,
 } from './styles';
 
@@ -106,8 +103,17 @@ const Animes: React.FC<Props> = ({
 
   return (
     <WrapperScreen>
+      {isLoading && (
+        <WrapperLoading width={width} height={height}>
+          <ActivityIndicator
+            testID="loading_id"
+            color={getTheme('white')}
+            size="large"
+          />
+        </WrapperLoading>
+      )}
       <WrapperContent>
-        <ScrollView
+        <ContentScroll
           contentContainerStyle={{
             flexGrow: 1,
             justifyContent: 'center',
@@ -121,13 +127,6 @@ const Animes: React.FC<Props> = ({
           }}
           scrollEventThrottle={1}
         >
-          {isLoading && (
-            <ActivityIndicator
-              testID="loading_id"
-              color={getTheme('white')}
-              size="large"
-            />
-          )}
           <AnimeListIsEmpty animeList={animeList} />
           <WrapperAnimeList
             height={Math.round(getMaxHeightFromAnimeList(animeList) / 2)}
@@ -136,7 +135,7 @@ const Animes: React.FC<Props> = ({
               <AnimeCard key={`${makeId()}_${anime.id}`} anime={anime} />
             ))}
           </WrapperAnimeList>
-        </ScrollView>
+        </ContentScroll>
       </WrapperContent>
       <WrapperBackground>
         <Background width={width} height={height} />
