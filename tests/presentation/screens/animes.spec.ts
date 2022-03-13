@@ -141,7 +141,7 @@ describe('Presentation: Animes', () => {
         mockRejectedValueOnce: false,
         mockRejectedValue: false,
       },
-      100,
+      50,
     );
 
     const animesView = getByType(AnimesView);
@@ -149,7 +149,7 @@ describe('Presentation: Animes', () => {
     await waitFor(() => {
       const animeListLength = animesView.props.animeList.length;
       expect(animeListLength).toBeTruthy();
-      expect(animeListLength).toEqual(100);
+      expect(animeListLength).toEqual(50);
       expect(animesView.props.page).toEqual(1);
       expect(animesView.props.waitForEndReached).toEqual(false);
     });
@@ -166,10 +166,11 @@ describe('Presentation: Animes', () => {
     );
 
     await waitFor(async () => {
+      expect(spyCompleteUrlWithParam).toHaveBeenCalledTimes(1);
       expect(animesView.props.page).toEqual(2);
       expect(animesView.props.waitForEndReached).toEqual(true);
-      expect(animesView.props.animeList.length).toEqual(200);
-      expect(spyCompleteUrlWithParam).toHaveBeenCalledTimes(1);
+
+      expect(animesView.props.animeList.length).toEqual(100);
 
       await new Promise((resolve) => setTimeout(resolve, 900));
 
@@ -186,7 +187,7 @@ describe('Presentation: Animes', () => {
         mockRejectedValueOnce: false,
         mockRejectedValue: false,
       },
-      100,
+      50,
     );
 
     const animesView = getByType(AnimesView);
@@ -194,7 +195,7 @@ describe('Presentation: Animes', () => {
     await waitFor(() => {
       const animeListLength = animesView.props.animeList.length;
       expect(animeListLength).toBeTruthy();
-      expect(animeListLength).toEqual(100);
+      expect(animeListLength).toEqual(50);
       expect(animesView.props.page).toEqual(1);
       expect(animesView.props.waitForEndReached).toEqual(false);
     });

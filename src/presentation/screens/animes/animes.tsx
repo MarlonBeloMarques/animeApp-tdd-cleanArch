@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { ActivityIndicator, Dimensions, NativeScrollEvent } from 'react-native';
 import { AnimeModelDocument } from 'src/domain/models';
 import { getTheme, makeId } from '~/presentation/helpers';
@@ -11,6 +11,7 @@ import {
   IsEmpty,
   TitleAnime,
   WrapperAnime,
+  WrapperAnimeCard,
   WrapperAnimeList,
   WrapperBackground,
   WrapperContent,
@@ -58,17 +59,6 @@ const Animes: React.FC<Props> = ({
   isLoading,
   waitForEndReached,
 }) => {
-  const getMaxHeightFromAnimeList = (
-    animeList: Array<
-      ModelDocumentImageList.ModelDocumentImage<AnimeModelDocument>
-    >,
-  ) => {
-    return animeList.reduce(
-      (sum, animeCurrent) => sum + animeCurrent.cover_image_size.height,
-      0,
-    );
-  };
-
   const AnimeCard = ({ anime }: AnimeCardProps) => {
     return (
       <WrapperAnime
@@ -102,19 +92,6 @@ const Animes: React.FC<Props> = ({
       <></>
     );
 
-  const animeListDecorator = useMemo(
-    () => (
-      <WrapperAnimeList
-        height={Math.round(getMaxHeightFromAnimeList(animeList) / 2)}
-      >
-        {animeList.map((anime) => (
-          <AnimeCard key={`${makeId()}_${anime.id}`} anime={anime} />
-        ))}
-      </WrapperAnimeList>
-    ),
-    [animeList],
-  );
-
   return (
     <WrapperScreen>
       {isLoading && (
@@ -133,6 +110,7 @@ const Animes: React.FC<Props> = ({
       <WrapperContent>
         <ContentScroll
           contentContainerStyle={{
+            alignSelf: 'stretch',
             flexGrow: 1,
             justifyContent: 'center',
             marginTop: getTheme('largeSpacing') * 2,
@@ -146,7 +124,24 @@ const Animes: React.FC<Props> = ({
           scrollEventThrottle={1}
         >
           <AnimeListIsEmpty animeList={animeList} />
-          {animeListDecorator}
+          <WrapperAnimeList>
+            {Array.from(Array(2), (_, num) => {
+              return (
+                <WrapperAnimeCard key={`${makeId()}-${num.toString()}`}>
+                  {animeList
+                    .map((el, i) => {
+                      if (i % 2 === num)
+                        return (
+                          <AnimeCard key={`${makeId()}_${el.id}`} anime={el} />
+                        );
+
+                      return null;
+                    })
+                    .filter((e) => !!e)}
+                </WrapperAnimeCard>
+              );
+            })}
+          </WrapperAnimeList>
         </ContentScroll>
       </WrapperContent>
       <WrapperBackground>

@@ -48,14 +48,14 @@ export const WrapperAnime = styled.View`
   margin-left: 5px;
 `;
 
-type WrapperAnimeListProps = {
-  height: number;
-};
-
-export const WrapperAnimeList = styled.View<WrapperAnimeListProps>`
+export const WrapperAnimeCard = styled.View`
+  flex: 0.5;
   flex-direction: column;
-  flex-wrap: wrap;
-  height: ${({ height }) => height}px;
+`;
+
+export const WrapperAnimeList = styled.View`
+  flex: 1;
+  flex-direction: row;
 `;
 
 export const IsEmpty = styled(Text)`
