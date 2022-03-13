@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ActivityIndicator, Dimensions, NativeScrollEvent } from 'react-native';
 import { AnimeModelDocument } from 'src/domain/models';
 import { getTheme, makeId } from '~/presentation/helpers';
@@ -102,6 +102,19 @@ const Animes: React.FC<Props> = ({
       <></>
     );
 
+  const animeListDecorator = useMemo(
+    () => (
+      <WrapperAnimeList
+        height={Math.round(getMaxHeightFromAnimeList(animeList) / 2)}
+      >
+        {animeList.map((anime) => (
+          <AnimeCard key={`${makeId()}_${anime.id}`} anime={anime} />
+        ))}
+      </WrapperAnimeList>
+    ),
+    [animeList],
+  );
+
   return (
     <WrapperScreen>
       {isLoading && (
@@ -133,13 +146,7 @@ const Animes: React.FC<Props> = ({
           scrollEventThrottle={1}
         >
           <AnimeListIsEmpty animeList={animeList} />
-          <WrapperAnimeList
-            height={Math.round(getMaxHeightFromAnimeList(animeList) / 2)}
-          >
-            {animeList.map((anime) => (
-              <AnimeCard key={`${makeId()}_${anime.id}`} anime={anime} />
-            ))}
-          </WrapperAnimeList>
+          {animeListDecorator}
         </ContentScroll>
       </WrapperContent>
       <WrapperBackground>

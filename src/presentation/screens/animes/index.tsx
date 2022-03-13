@@ -110,7 +110,7 @@ const AnimesContainer: React.FC<Props> = ({ url, onEndReachedThreshold }) => {
     setTimeout(() => {
       setWaitForEndReached(false);
       setLoading(false);
-    }, 100);
+    }, 800);
   };
 
   const onEndReached = (

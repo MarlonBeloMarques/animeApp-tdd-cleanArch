@@ -171,7 +171,7 @@ describe('Presentation: Animes', () => {
       expect(animesView.props.animeList.length).toEqual(200);
       expect(spyCompleteUrlWithParam).toHaveBeenCalledTimes(1);
 
-      await new Promise((resolve) => setTimeout(resolve, 200));
+      await new Promise((resolve) => setTimeout(resolve, 900));
 
       expect(animesView.props.waitForEndReached).toEqual(false);
       expect(animesView.props.isLoading).toEqual(false);
@@ -207,7 +207,7 @@ describe('Presentation: Animes', () => {
       );
       expect(animesView.props.waitForEndReached).toEqual(true);
 
-      await new Promise((resolve) => setTimeout(resolve, 200));
+      await new Promise((resolve) => setTimeout(resolve, 900));
 
       expect(animesView.props.waitForEndReached).toEqual(false);
       expect(animesView.props.isLoading).toEqual(false);
