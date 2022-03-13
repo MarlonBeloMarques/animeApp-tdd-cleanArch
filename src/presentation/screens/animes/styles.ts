@@ -23,21 +23,31 @@ export const WrapperContent = styled(Wrapper)`
 
 export const ContentScroll = styled.ScrollView``;
 
-type WrapperLoadingProps = {
+type WrapperOrientationProps = {
   height: number;
   width: number;
+};
+
+type WrapperLoadingProps = {
   showBackgroundColor: boolean;
 };
 
-export const WrapperLoading = styled.View<WrapperLoadingProps>`
+const WrapperOrientation = styled.View<WrapperOrientationProps>`
   height: ${({ height }) => height}px;
   width: ${({ width }) => width}px;
   position: absolute;
   z-index: 4;
   justify-content: center;
   align-items: center;
+`;
+
+export const WrapperLoading = styled(WrapperOrientation)<WrapperLoadingProps>`
   ${({ showBackgroundColor }) =>
     showBackgroundColor && `background-color: rgba(52, 52, 52, 0.6)`}
+`;
+
+export const WrapperAnimeListIsEmpty = styled(WrapperOrientation)`
+  flex: 1;
 `;
 
 export const WrapperAnime = styled.View`

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ActivityIndicator, Dimensions, NativeScrollEvent } from 'react-native';
 import { AnimeModelDocument } from 'src/domain/models';
 import { getTheme, makeId } from '~/presentation/helpers';
@@ -13,6 +13,7 @@ import {
   WrapperAnime,
   WrapperAnimeCard,
   WrapperAnimeList,
+  WrapperAnimeListIsEmpty,
   WrapperBackground,
   WrapperContent,
   WrapperLoading,
@@ -85,12 +86,38 @@ const Animes: React.FC<Props> = ({
     animeList,
   }: AnimeListIsEmptyProps): JSX.Element =>
     animeList.length === 0 && !isLoading ? (
-      <IsEmpty testID="animes_is_empty_id">
-        {`We couldn't find any anime to show you. Try again later.`}
-      </IsEmpty>
+      <WrapperAnimeListIsEmpty width={width} height={height}>
+        <IsEmpty testID="animes_is_empty_id">
+          {`We couldn't find any anime to show you. Try again later.`}
+        </IsEmpty>
+      </WrapperAnimeListIsEmpty>
     ) : (
       <></>
     );
+
+  const renderAnimeList = useMemo(
+    () => (
+      <WrapperAnimeList>
+        {Array.from(Array(2), (_, num) => {
+          return (
+            <WrapperAnimeCard key={`${makeId()}-${num.toString()}`}>
+              {animeList
+                .map((el, i) => {
+                  if (i % 2 === num)
+                    return (
+                      <AnimeCard key={`${makeId()}_${el.id}`} anime={el} />
+                    );
+
+                  return null;
+                })
+                .filter((e) => !!e)}
+            </WrapperAnimeCard>
+          );
+        })}
+      </WrapperAnimeList>
+    ),
+    [animeList],
+  );
 
   return (
     <WrapperScreen>
@@ -107,6 +134,7 @@ const Animes: React.FC<Props> = ({
           />
         </WrapperLoading>
       )}
+      <AnimeListIsEmpty animeList={animeList} />
       <WrapperContent>
         <ContentScroll
           contentContainerStyle={{
@@ -123,25 +151,7 @@ const Animes: React.FC<Props> = ({
           }}
           scrollEventThrottle={1}
         >
-          <AnimeListIsEmpty animeList={animeList} />
-          <WrapperAnimeList>
-            {Array.from(Array(2), (_, num) => {
-              return (
-                <WrapperAnimeCard key={`${makeId()}-${num.toString()}`}>
-                  {animeList
-                    .map((el, i) => {
-                      if (i % 2 === num)
-                        return (
-                          <AnimeCard key={`${makeId()}_${el.id}`} anime={el} />
-                        );
-
-                      return null;
-                    })
-                    .filter((e) => !!e)}
-                </WrapperAnimeCard>
-              );
-            })}
-          </WrapperAnimeList>
+          {renderAnimeList}
         </ContentScroll>
       </WrapperContent>
       <WrapperBackground>
