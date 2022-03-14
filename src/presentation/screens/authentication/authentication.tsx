@@ -31,7 +31,8 @@ const Authentication: React.FC<Props> = ({ onPressAuthentication }) => {
           <SubTitle testID="subtitle_id">アニメ</SubTitle>
         </TitleContainer>
         <Description testID="description_id">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+          a catalog full of varied animes, containing all the information you
+          need.
         </Description>
         <WrapperButton>
           <Button
