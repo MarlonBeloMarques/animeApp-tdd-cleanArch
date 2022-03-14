@@ -22,12 +22,6 @@ import {
 
 const { height, width } = Dimensions.get('screen');
 
-type AnimeListIsEmptyProps = {
-  animeList: Array<
-    ModelDocumentImageList.ModelDocumentImage<AnimeModelDocument>
-  >;
-};
-
 type AnimeCardProps = {
   anime: ModelDocumentImageList.ModelDocumentImage<AnimeModelDocument>;
 };
@@ -49,6 +43,7 @@ type Props = {
   onEndReachedThreshold: number;
   isLoading: boolean;
   waitForEndReached: boolean;
+  animeListIsEmpty: boolean;
 };
 
 const Animes: React.FC<Props> = ({
@@ -59,6 +54,7 @@ const Animes: React.FC<Props> = ({
   onEndReached,
   isLoading,
   waitForEndReached,
+  animeListIsEmpty,
 }) => {
   const AnimeCard = ({ anime }: AnimeCardProps) => {
     return (
@@ -82,10 +78,8 @@ const Animes: React.FC<Props> = ({
     );
   };
 
-  const AnimeListIsEmpty = ({
-    animeList,
-  }: AnimeListIsEmptyProps): JSX.Element =>
-    animeList.length === 0 && !isLoading ? (
+  const AnimeListIsEmpty = (): JSX.Element =>
+    animeListIsEmpty ? (
       <WrapperAnimeListIsEmpty width={width} height={height}>
         <IsEmpty testID="animes_is_empty_id">
           {`We couldn't find any anime to show you. Try again later.`}
@@ -134,7 +128,7 @@ const Animes: React.FC<Props> = ({
           />
         </WrapperLoading>
       )}
-      <AnimeListIsEmpty animeList={animeList} />
+      <AnimeListIsEmpty />
       <WrapperContent>
         <ContentScroll
           contentContainerStyle={{

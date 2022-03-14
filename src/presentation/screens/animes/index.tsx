@@ -45,6 +45,7 @@ const AnimesContainer: React.FC<Props> = ({ url, onEndReachedThreshold }) => {
 
   const [loading, setLoading] = useState(true);
   const [waitForEndReached, setWaitForEndReached] = useState(false);
+  const [animeListIsEmpty, setAnimeListIsEmpty] = useState(false);
   const [page, setPage] = useState(1);
 
   const requestAnimeList = async (completeUrlWithParam: Anime.Params) => {
@@ -142,6 +143,10 @@ const AnimesContainer: React.FC<Props> = ({ url, onEndReachedThreshold }) => {
     getAnimeList();
   }, []);
 
+  useEffect(() => {
+    setAnimeListIsEmpty(animeList.length === 0 && !loading);
+  }, [animeList, loading]);
+
   return (
     <Animes
       page={page}
@@ -153,6 +158,7 @@ const AnimesContainer: React.FC<Props> = ({ url, onEndReachedThreshold }) => {
       onEndReachedThreshold={onEndReachedThreshold}
       onEndReached={onEndReached}
       isLoading={loading}
+      animeListIsEmpty={animeListIsEmpty}
     />
   );
 };

@@ -17,6 +17,7 @@ describe('UI: Animes', () => {
       getMoreAnime: false,
       onEndReachedThreshold: 0,
       isLoading: false,
+      animeListIsEmpty: true,
     });
     const animesIsEmpty = getByTestId('animes_is_empty_id');
     expect(animesIsEmpty).toBeTruthy();
@@ -29,6 +30,7 @@ describe('UI: Animes', () => {
       getMoreAnime: false,
       onEndReachedThreshold: 0,
       isLoading: false,
+      animeListIsEmpty: false,
     });
 
     const firstAnime = mockAnimeList[0];
@@ -43,6 +45,7 @@ describe('UI: Animes', () => {
       getMoreAnime: false,
       onEndReachedThreshold: 0,
       isLoading: false,
+      animeListIsEmpty: false,
     });
 
     const firstAnime = mockAnimeList[0];
@@ -61,6 +64,7 @@ describe('UI: Animes', () => {
       getMoreAnime: false,
       onEndReachedThreshold: 0,
       isLoading: false,
+      animeListIsEmpty: false,
     });
 
     const firstAnime = mockAnimeList[0];
@@ -76,6 +80,7 @@ describe('UI: Animes', () => {
       getMoreAnime: true,
       onEndReachedThreshold: 0,
       isLoading: false,
+      animeListIsEmpty: false,
     });
 
     const mockedEventData = mockEventData({ contentOffset: { x: 1, y: 400 } });
@@ -91,6 +96,7 @@ describe('UI: Animes', () => {
       getMoreAnime: true,
       onEndReachedThreshold: 0,
       isLoading: false,
+      animeListIsEmpty: false,
     });
 
     const mockedEventData = mockEventData({ contentOffset: { x: 1, y: 200 } });
@@ -107,6 +113,7 @@ describe('UI: Animes', () => {
       getMoreAnime: true,
       onEndReachedThreshold: onEndReachedThreshold,
       isLoading: false,
+      animeListIsEmpty: false,
     });
 
     const mockedEventData = mockEventData({ contentOffset: { x: 1, y: 400 } });
@@ -123,6 +130,7 @@ describe('UI: Animes', () => {
       getMoreAnime: true,
       onEndReachedThreshold: onEndReachedThreshold,
       isLoading: false,
+      animeListIsEmpty: false,
     });
 
     const mockedEventData = mockEventData({ contentOffset: { x: 1, y: 400 } });
@@ -142,6 +150,7 @@ describe('UI: Animes', () => {
       getMoreAnime: true,
       onEndReachedThreshold: 0,
       isLoading: true,
+      animeListIsEmpty: false,
     });
     const loading = getByTestId('loading_id');
     expect(loading).toBeTruthy();
@@ -194,6 +203,7 @@ type makeSutParams = {
   getMoreAnime: boolean;
   onEndReachedThreshold: number;
   isLoading: boolean;
+  animeListIsEmpty: boolean;
 };
 
 const makeSut = ({
@@ -202,6 +212,7 @@ const makeSut = ({
   getMoreAnime,
   onEndReachedThreshold,
   isLoading,
+  animeListIsEmpty,
 }: makeSutParams) => {
   const mockedOnReached = mockOnEndReached();
   const onPressAnimeDetailMock = jest.fn();
@@ -231,6 +242,7 @@ const makeSut = ({
         animeStatusMessage: '',
         page: 1,
         waitForEndReached: false,
+        animeListIsEmpty: animeListIsEmpty,
       },
     }),
   );
