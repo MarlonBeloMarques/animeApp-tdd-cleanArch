@@ -1,6 +1,7 @@
 import React from 'react';
 import { Alert } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
+import { RemoteAuthentication } from '~/data/useCases';
 import { OAuthAdapter } from '~/infra/oauth';
 import { NavigationActions, Routes } from '~/main/navigation';
 import Authentication from './authentication';
@@ -32,9 +33,11 @@ const AuthenticationContainer: React.FC<Props> = ({ redirectUrl }) => {
   const redirectAuthentication = async () => {
     try {
       const oauthAdapter = new OAuthAdapter();
-      await oauthAdapter.redirect({
-        url: redirectUrl,
-      });
+      const remoteAuthentication = new RemoteAuthentication(
+        redirectUrl,
+        oauthAdapter,
+      );
+      await remoteAuthentication.authenticate();
     } catch (error) {
       showMessage({
         message: 'Something went wrong opening the link. Try again later.',
