@@ -27,7 +27,7 @@ In addition to the concept of Clean Architecture, we use the MVP pattern, where 
 
 This was the Architecture diagram built to follow as a basis for development:
 
-![AnimeApp-Arch.png](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/a70f5815-dde1-44b9-baff-7b6c57d11631/AnimeApp-Arch.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20220314%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20220314T162643Z&X-Amz-Expires=86400&X-Amz-Signature=1b284eed621c10a6ed41cbfae75459615adec8402f10e166b32852d1aa1e50fc&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22AnimeApp-Arch.png%22&x-id=GetObject)
+![AnimeApp-Arch.png](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/90762bc7-71ef-4c3d-b4e9-75093317131d/Captura_de_Tela_2022-03-14_as_19.15.41.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20220314%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20220314T221647Z&X-Amz-Expires=86400&X-Amz-Signature=9b36ee87d24bea3a516c33ea26daa6819ff848f34fd448b5529b550b05039ccc&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22Captura%2520de%2520Tela%25202022-03-14%2520a%25CC%2580s%252019.15.41.png%22&x-id=GetObject)
 
 **About the Tests**
 
