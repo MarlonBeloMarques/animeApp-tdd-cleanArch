@@ -4,7 +4,7 @@ import {
   AnimeDetailFactory,
   AnimesFactory,
   AuthenticationFactory,
-} from '~/main/factories';
+} from '~/main/factories/screens';
 import { getTheme } from '~/presentation/helpers';
 import { Routes } from './routes';
 
