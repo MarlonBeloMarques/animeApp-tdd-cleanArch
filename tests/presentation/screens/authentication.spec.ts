@@ -3,6 +3,8 @@ import { Alert } from 'react-native';
 import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import { Authentication } from '~/presentation/screens';
 import { NavigationActions, Routes } from '~/main/navigation';
+import { RemoteAuthentication } from '~/data/useCases';
+import { OAuthAdapter } from '~/infra/oauth';
 import { mockLinking } from '../../infra/mocks/linkingMock';
 import { renderWithParams } from '../../ui/helpers';
 
@@ -70,10 +72,16 @@ const makeSut = (pressAlertWithSuccess = true) => {
     })
     .mockClear();
 
+  const oAuthAdapter = new OAuthAdapter();
+  const remoteAuthentication = new RemoteAuthentication(
+    'https://www.google.com',
+    oAuthAdapter,
+  );
+
   const { getByTestId } = render(
     renderWithParams({
       screen: Authentication,
-      screenProps: { redirectUrl: 'https://www.google.com' },
+      screenProps: { remoteAuthentication: remoteAuthentication },
     }),
   );
 

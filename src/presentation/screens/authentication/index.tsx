@@ -1,16 +1,15 @@
 import React from 'react';
 import { Alert } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
-import { RemoteAuthentication } from '~/data/useCases';
-import { OAuthAdapter } from '~/infra/oauth';
+import { Authentication as AuthenticationUseCase } from '~/domain/useCases';
 import { NavigationActions, Routes } from '~/main/navigation';
 import Authentication from './authentication';
 
 type Props = {
-  redirectUrl: string;
+  remoteAuthentication: AuthenticationUseCase;
 };
 
-const AuthenticationContainer: React.FC<Props> = ({ redirectUrl }) => {
+const AuthenticationContainer: React.FC<Props> = ({ remoteAuthentication }) => {
   const onPressAuthentication = async () => {
     Alert.alert('Authentication', 'do you want to authenticate?', [
       {
@@ -32,11 +31,6 @@ const AuthenticationContainer: React.FC<Props> = ({ redirectUrl }) => {
 
   const redirectAuthentication = async () => {
     try {
-      const oauthAdapter = new OAuthAdapter();
-      const remoteAuthentication = new RemoteAuthentication(
-        redirectUrl,
-        oauthAdapter,
-      );
       await remoteAuthentication.authenticate();
     } catch (error) {
       showMessage({
