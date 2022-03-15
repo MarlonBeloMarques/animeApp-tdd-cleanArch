@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { NativeScrollEvent } from 'react-native';
 import { UnexpectedError } from '~/data/errors';
-import { AnimeDetailToNavigation, RemoteAnimeList } from '~/data/useCases';
+import { AnimeDetailToNavigation } from '~/data/useCases';
 import { AnimeModel, AnimeModelDocument } from '~/domain/models';
-import { Anime } from '~/domain/useCases';
-import { AxiosAdapter } from '~/infra/http';
+import { Anime, AnimeList } from '~/domain/useCases';
 import { NavigationActions, Routes } from '~/main/navigation';
 import { ModelDocumentListMapperDecorator } from '~/presentation/decorators';
 import {
@@ -31,11 +30,14 @@ const initialAnimeListResponse = (message: string) => {
 };
 
 type Props = {
-  url: string;
+  remoteAnimeList: AnimeList;
   onEndReachedThreshold: number;
 };
 
-const AnimesContainer: React.FC<Props> = ({ url, onEndReachedThreshold }) => {
+const AnimesContainer: React.FC<Props> = ({
+  onEndReachedThreshold,
+  remoteAnimeList,
+}) => {
   const [anime, setAnime] = useState<AnimeModelImage.Model>(
     initialAnimeListResponse(''),
   );
@@ -49,8 +51,6 @@ const AnimesContainer: React.FC<Props> = ({ url, onEndReachedThreshold }) => {
   const [page, setPage] = useState(1);
 
   const requestAnimeList = async (completeUrlWithParam: Anime.Params) => {
-    const axiosAdapter = new AxiosAdapter();
-    const remoteAnimeList = new RemoteAnimeList(url, axiosAdapter);
     remoteAnimeList.completeUrlWithParam(completeUrlWithParam);
 
     let listResponse = {} as AnimeModel;

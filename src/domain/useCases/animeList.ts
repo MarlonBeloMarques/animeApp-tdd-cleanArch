@@ -2,6 +2,7 @@ import { AnimeModel, AnimeModelDocument } from '../models';
 
 export interface AnimeList {
   list(authorization?: string): Promise<Anime.Model>;
+  completeUrlWithParam(completeUrlWithParam: Anime.Params): void;
 }
 
 export namespace Anime {
