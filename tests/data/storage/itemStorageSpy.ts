@@ -1,6 +1,9 @@
-import { AddItemToStorage, GetItemToStorage } from '~/data/storage';
+import {
+  AddItemToStorage,
+  ClearStorage,
+  GetItemToStorage,
+} from '~/data/storage';
 import { UnexpectedError } from '~/data/errors';
-import { ClearStorage } from '../useCases/clearAuthenticationToStorage.spec';
 
 export class ItemStorageSpy
   implements AddItemToStorage, GetItemToStorage, ClearStorage

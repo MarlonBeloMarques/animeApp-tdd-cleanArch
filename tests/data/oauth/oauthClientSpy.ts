@@ -1,9 +1,9 @@
-import { OAuthClient, OAuthRequest } from 'src/data/oauth';
+import { OAuthClient } from 'src/data/oauth';
 
 export class OAuthClientSpy implements OAuthClient {
   private _url!: string;
 
-  async redirect(data: OAuthRequest) {
+  async redirect(data: OAuthClient.Request) {
     this._url = data.url;
   }
 
