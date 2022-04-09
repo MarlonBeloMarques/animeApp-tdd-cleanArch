@@ -29,11 +29,11 @@ describe('Presentation: Authentication', () => {
       return new Error('some error reason');
     });
 
-    const spy = jest.spyOn(FlashMessage, 'showMessage');
+    const showMessageSpy = jest.spyOn(FlashMessage, 'showMessage');
 
     await waitFor(() => {
       fireEvent.press(getByTestId('authentication_id'));
-      expect(spy).toHaveBeenCalledWith({
+      expect(showMessageSpy).toHaveBeenCalledWith({
         message: 'Something went wrong opening the link. Try again later.',
         type: 'warning',
       });

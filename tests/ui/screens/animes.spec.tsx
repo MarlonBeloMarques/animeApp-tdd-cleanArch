@@ -197,7 +197,7 @@ const makeProcessImage = (modelDocumentListMapper: ModelDocumentListMapper) => {
   });
 };
 
-type makeSutParams = {
+type ParamsMakeSut = {
   addAnimeList: boolean;
   onPressDetailAnime: boolean;
   getMoreAnime: boolean;
@@ -213,7 +213,7 @@ const makeSut = ({
   onEndReachedThreshold,
   isLoading,
   animeListIsEmpty,
-}: makeSutParams) => {
+}: ParamsMakeSut) => {
   const mockedOnReached = mockOnEndReached();
   const onPressAnimeDetailMock = jest.fn();
   const getMoreAnimeMock = jest.fn();
