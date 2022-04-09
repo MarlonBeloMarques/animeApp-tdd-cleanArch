@@ -8,7 +8,7 @@ import { UnexpectedError } from '~/data/errors';
 import Main from '~/main';
 import { NavigationActions } from '~/main/navigation';
 import { makeAnimeModel } from '../../data/helpers';
-import { mockEventData } from '../../ui/mocks';
+import { fakeEventData } from '../../ui/mocks';
 import { renderWithParams } from '../../ui/helpers';
 
 describe('Presentation: Animes', () => {
@@ -157,7 +157,7 @@ describe('Presentation: Animes', () => {
 
     await fireEvent.scroll(
       animeList,
-      mockEventData({ contentOffset: { x: 1, y: 500 } }),
+      fakeEventData({ contentOffset: { x: 1, y: 500 } }),
     );
 
     await waitFor(async () => {
@@ -193,7 +193,7 @@ describe('Presentation: Animes', () => {
       const animeList = getByTestId('anime_list_id');
       await fireEvent.scroll(
         animeList,
-        mockEventData({ contentOffset: { x: 1, y: 500 } }),
+        fakeEventData({ contentOffset: { x: 1, y: 500 } }),
       );
       expect(animesView.props.waitForEndReached).toEqual(true);
 

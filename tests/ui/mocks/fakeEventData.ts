@@ -5,7 +5,7 @@ type EventDataParams = {
   };
 };
 
-export const mockEventData = (params: EventDataParams) => {
+export const fakeEventData = (params: EventDataParams) => {
   return {
     nativeEvent: {
       contentOffset: params.contentOffset,

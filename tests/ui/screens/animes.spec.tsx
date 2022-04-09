@@ -10,8 +10,8 @@ import { mockAnimeModelDocument } from '../../data/helpers';
 import {
   ContentOffset,
   contentSizeStub,
+  fakeEventData,
   layoutMeasurementStub,
-  mockEventData,
   mockOnEndReached,
 } from '../mocks';
 
@@ -99,7 +99,7 @@ describe('UI: Animes', () => {
       waitForEndReached: false,
     });
 
-    const mockedEventData = mockEventData({ contentOffset: { x: 1, y: 400 } });
+    const mockedEventData = fakeEventData({ contentOffset: { x: 1, y: 400 } });
     const animeList = getByTestId('anime_list_id');
     fireEvent.scroll(animeList, mockedEventData);
     expect(getMoreAnimeMock).toHaveBeenCalled();
@@ -117,7 +117,7 @@ describe('UI: Animes', () => {
       waitForEndReached: false,
     });
 
-    const mockedEventData = mockEventData({ contentOffset: { x: 1, y: 200 } });
+    const mockedEventData = fakeEventData({ contentOffset: { x: 1, y: 200 } });
     const animeList = getByTestId('anime_list_id');
     fireEvent.scroll(animeList, mockedEventData);
     expect(getMoreAnimeMock).not.toHaveBeenCalled();
@@ -136,7 +136,7 @@ describe('UI: Animes', () => {
       waitForEndReached: false,
     });
 
-    const mockedEventData = mockEventData({ contentOffset: { x: 1, y: 400 } });
+    const mockedEventData = fakeEventData({ contentOffset: { x: 1, y: 400 } });
     const animeList = getByTestId('anime_list_id');
     fireEvent.scroll(animeList, mockedEventData);
     expect(mockedOnReached.mock.calls[0][0]).toEqual(onEndReachedThreshold);
@@ -156,7 +156,7 @@ describe('UI: Animes', () => {
       waitForEndReached: false,
     });
 
-    const mockedEventData = mockEventData({ contentOffset: { x: 1, y: 400 } });
+    const mockedEventData = fakeEventData({ contentOffset: { x: 1, y: 400 } });
     const animeList = getByTestId('anime_list_id');
     fireEvent.scroll(animeList, mockedEventData);
     expect(mockedOnReached).toHaveBeenCalledWith(
@@ -183,7 +183,7 @@ describe('UI: Animes', () => {
       waitForEndReached: true,
     });
 
-    const mockedEventData = mockEventData({ contentOffset: { x: 1, y: 400 } });
+    const mockedEventData = fakeEventData({ contentOffset: { x: 1, y: 400 } });
     const animeList = getByTestId('anime_list_id');
     fireEvent.scroll(animeList, mockedEventData);
     const endReached = mockedOnReached();
