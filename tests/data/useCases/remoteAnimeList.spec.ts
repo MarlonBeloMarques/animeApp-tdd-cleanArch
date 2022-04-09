@@ -71,6 +71,20 @@ describe('Data: RemoteAnimeList', () => {
     expect(httpClientSpy.url).toMatch(new RegExp(params.page.toString()));
     expect(httpClientSpy.url).toMatch(new RegExp(params.per_page.toString()));
   });
+
+  test('should successfully complete the url by calling httpGetClient several times', () => {
+    const [sut, httpClientSpy] = makeSut(makeUrl(), undefined, undefined);
+
+    for (let count = 1; count < 3; count++) {
+      const params = makeParams(count);
+      sut.completeUrlWithParam(params);
+      sut.list();
+      expect(httpClientSpy.url.length).not.toBe(0);
+      expect(httpClientSpy.url).toEqual(
+        `${makeUrl()}?page=${count}&per_page=100&locale=en`,
+      );
+    }
+  });
 });
 
 const makeSut = (
@@ -86,10 +100,10 @@ const makeSut = (
   return [sut, httpClientSpy];
 };
 
-const makeParams = (): Anime.Params => {
+const makeParams = (pageCount = 1): Anime.Params => {
   return {
     locale: 'en',
-    page: 1,
+    page: pageCount,
     per_page: 100,
   };
 };
