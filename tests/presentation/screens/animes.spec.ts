@@ -1,3 +1,4 @@
+import { ReactTestInstance } from 'react-test-renderer';
 import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import { AnimeModelDocument } from '~/domain/models';
 import AnimesView from '~/presentation/screens/animes/animes';
@@ -146,13 +147,7 @@ describe('Presentation: Animes', () => {
 
     const animesView = getByType(AnimesView);
 
-    await waitFor(() => {
-      const animeListLength = animesView.props.animeList.length;
-      expect(animeListLength).toBeTruthy();
-      expect(animeListLength).toEqual(50);
-      expect(animesView.props.page).toEqual(1);
-      expect(animesView.props.waitForEndReached).toEqual(false);
-    });
+    await expectStartAnimeList(animesView, 50);
 
     const animeList = getByTestId('anime_list_id');
 
@@ -192,13 +187,7 @@ describe('Presentation: Animes', () => {
 
     const animesView = getByType(AnimesView);
 
-    await waitFor(() => {
-      const animeListLength = animesView.props.animeList.length;
-      expect(animeListLength).toBeTruthy();
-      expect(animeListLength).toEqual(50);
-      expect(animesView.props.page).toEqual(1);
-      expect(animesView.props.waitForEndReached).toEqual(false);
-    });
+    await expectStartAnimeList(animesView, 50);
 
     await waitFor(async () => {
       const animeList = getByTestId('anime_list_id');
@@ -297,6 +286,19 @@ describe('Presentation: Animes', () => {
     });
   });
 });
+
+const expectStartAnimeList = async (
+  animesView: ReactTestInstance,
+  length: number,
+) => {
+  await waitFor(() => {
+    const animeListLength = animesView.props.animeList.length;
+    expect(animeListLength).toBeTruthy();
+    expect(animeListLength).toEqual(length);
+    expect(animesView.props.page).toEqual(1);
+    expect(animesView.props.waitForEndReached).toEqual(false);
+  });
+};
 
 type MakeMockSutParams = {
   mockResolvedValueOnce: boolean;
