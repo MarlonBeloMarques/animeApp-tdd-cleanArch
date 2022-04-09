@@ -86,28 +86,45 @@ const AnimesContainer: React.FC<Props> = ({
   };
 
   const getMoreAnime = async () => {
-    setLoading(true);
-    const pageCurrent = page + 1;
-    setPage(pageCurrent);
-    setWaitForEndReached(true);
+    const { pageCurrent } = startGetMoreAnime();
     const listResponse = await requestAnimeList({
       locale: 'en',
       page: pageCurrent,
       per_page: 100,
     });
 
-    const modelDocumentList = new ModelDocumentListMapperDecorator(
-      listResponse.data.documents,
-    );
-
-    const animeModel = new AnimeModelMapper(listResponse, modelDocumentList);
-    const animeModelImage = animeModel.toAnimeModelImage();
-
-    const newAnimeList = animeModel.toAnimeModelImage().data.documents;
+    const { animeModelImage, newAnimeList } =
+      animeModelToAnimeModelImageList(listResponse);
 
     setAnime(animeModelImage);
     setAnimeList((animeListCurrent) => [...animeListCurrent, ...newAnimeList]);
 
+    finishGetMoreAnime();
+  };
+
+  const startGetMoreAnime = () => {
+    setLoading(true);
+    const pageCurrent = page + 1;
+    setPage(pageCurrent);
+    setWaitForEndReached(true);
+
+    return { pageCurrent };
+  };
+
+  const animeModelToAnimeModelImageList = (anime: AnimeModel) => {
+    const modelDocumentList = new ModelDocumentListMapperDecorator(
+      anime.data.documents,
+    );
+
+    const animeModel = new AnimeModelMapper(anime, modelDocumentList);
+    const animeModelImage = animeModel.toAnimeModelImage();
+
+    const newAnimeList = animeModel.toAnimeModelImage().data.documents;
+
+    return { animeModelImage, newAnimeList };
+  };
+
+  const finishGetMoreAnime = () => {
     setTimeout(() => {
       setWaitForEndReached(false);
       setLoading(false);
