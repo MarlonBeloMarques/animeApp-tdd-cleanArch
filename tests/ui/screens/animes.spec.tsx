@@ -7,7 +7,13 @@ import { AnimeModelDocument } from '~/domain/models';
 import { ModelDocumentImageList } from '~/presentation/protocols';
 import { renderWithParams } from '../helpers';
 import { mockAnimeModelDocument } from '../../data/helpers';
-import { mockEventData, mockOnEndReached } from '../mocks';
+import {
+  ContentOffset,
+  contentSizeStub,
+  layoutMeasurementStub,
+  mockEventData,
+  mockOnEndReached,
+} from '../mocks';
 
 describe('UI: Animes', () => {
   test('should show message if anime list is empty', () => {
@@ -18,6 +24,8 @@ describe('UI: Animes', () => {
       onEndReachedThreshold: 0,
       isLoading: false,
       animeListIsEmpty: true,
+      contentOffset: { x: 1, y: 400 },
+      waitForEndReached: false,
     });
     const animesIsEmpty = getByTestId('animes_is_empty_id');
     expect(animesIsEmpty).toBeTruthy();
@@ -31,6 +39,8 @@ describe('UI: Animes', () => {
       onEndReachedThreshold: 0,
       isLoading: false,
       animeListIsEmpty: false,
+      contentOffset: { x: 1, y: 400 },
+      waitForEndReached: false,
     });
 
     const firstAnime = mockAnimeList[0];
@@ -46,6 +56,8 @@ describe('UI: Animes', () => {
       onEndReachedThreshold: 0,
       isLoading: false,
       animeListIsEmpty: false,
+      contentOffset: { x: 1, y: 400 },
+      waitForEndReached: false,
     });
 
     const firstAnime = mockAnimeList[0];
@@ -65,6 +77,8 @@ describe('UI: Animes', () => {
       onEndReachedThreshold: 0,
       isLoading: false,
       animeListIsEmpty: false,
+      contentOffset: { x: 1, y: 400 },
+      waitForEndReached: false,
     });
 
     const firstAnime = mockAnimeList[0];
@@ -81,6 +95,8 @@ describe('UI: Animes', () => {
       onEndReachedThreshold: 0,
       isLoading: false,
       animeListIsEmpty: false,
+      contentOffset: { x: 1, y: 400 },
+      waitForEndReached: false,
     });
 
     const mockedEventData = mockEventData({ contentOffset: { x: 1, y: 400 } });
@@ -97,6 +113,8 @@ describe('UI: Animes', () => {
       onEndReachedThreshold: 0,
       isLoading: false,
       animeListIsEmpty: false,
+      contentOffset: { x: 1, y: 200 },
+      waitForEndReached: false,
     });
 
     const mockedEventData = mockEventData({ contentOffset: { x: 1, y: 200 } });
@@ -114,6 +132,8 @@ describe('UI: Animes', () => {
       onEndReachedThreshold: onEndReachedThreshold,
       isLoading: false,
       animeListIsEmpty: false,
+      contentOffset: { x: 1, y: 400 },
+      waitForEndReached: false,
     });
 
     const mockedEventData = mockEventData({ contentOffset: { x: 1, y: 400 } });
@@ -124,6 +144,7 @@ describe('UI: Animes', () => {
 
   test('should utilize the onEndReached with params correct', async () => {
     const onEndReachedThreshold = 20;
+    const waitForEndReached = false;
     const { getByTestId, mockedOnReached } = makeSut({
       addAnimeList: true,
       onPressDetailAnime: false,
@@ -131,16 +152,42 @@ describe('UI: Animes', () => {
       onEndReachedThreshold: onEndReachedThreshold,
       isLoading: false,
       animeListIsEmpty: false,
+      contentOffset: { x: 1, y: 400 },
+      waitForEndReached: false,
     });
 
     const mockedEventData = mockEventData({ contentOffset: { x: 1, y: 400 } });
     const animeList = getByTestId('anime_list_id');
     fireEvent.scroll(animeList, mockedEventData);
-    expect(mockedOnReached).toHaveBeenCalledWith(onEndReachedThreshold, {
-      layoutMeasurement: mockedEventData.nativeEvent.layoutMeasurement,
-      contentOffset: mockedEventData.nativeEvent.contentOffset,
-      contentSize: mockedEventData.nativeEvent.contentSize,
+    expect(mockedOnReached).toHaveBeenCalledWith(
+      onEndReachedThreshold,
+      waitForEndReached,
+      {
+        layoutMeasurement: mockedEventData.nativeEvent.layoutMeasurement,
+        contentOffset: mockedEventData.nativeEvent.contentOffset,
+        contentSize: mockedEventData.nativeEvent.contentSize,
+      },
+    );
+  });
+
+  test('should use the onEndReached with waitForEndReached equal to true', async () => {
+    const onEndReachedThreshold = 20;
+    const { getByTestId, mockedOnReached } = makeSut({
+      addAnimeList: true,
+      onPressDetailAnime: false,
+      getMoreAnime: true,
+      onEndReachedThreshold: onEndReachedThreshold,
+      isLoading: false,
+      animeListIsEmpty: false,
+      contentOffset: { x: 1, y: 400 },
+      waitForEndReached: true,
     });
+
+    const mockedEventData = mockEventData({ contentOffset: { x: 1, y: 400 } });
+    const animeList = getByTestId('anime_list_id');
+    fireEvent.scroll(animeList, mockedEventData);
+    const endReached = mockedOnReached();
+    expect(endReached).toEqual(false);
   });
 
   test('should show loading animation if isLoading true', () => {
@@ -151,6 +198,8 @@ describe('UI: Animes', () => {
       onEndReachedThreshold: 0,
       isLoading: true,
       animeListIsEmpty: false,
+      contentOffset: { x: 1, y: 400 },
+      waitForEndReached: false,
     });
     const loading = getByTestId('loading_id');
     expect(loading).toBeTruthy();
@@ -204,6 +253,8 @@ type ParamsMakeSut = {
   onEndReachedThreshold: number;
   isLoading: boolean;
   animeListIsEmpty: boolean;
+  contentOffset: ContentOffset;
+  waitForEndReached: boolean;
 };
 
 const makeSut = ({
@@ -213,8 +264,15 @@ const makeSut = ({
   onEndReachedThreshold,
   isLoading,
   animeListIsEmpty,
+  contentOffset,
+  waitForEndReached,
 }: ParamsMakeSut) => {
-  const mockedOnReached = mockOnEndReached();
+  const mockedOnReached = mockOnEndReached({
+    contentOffset: contentOffset,
+    layoutMeasurement: layoutMeasurementStub,
+    contentSize: contentSizeStub,
+    waitForEndReached,
+  });
   const onPressAnimeDetailMock = jest.fn();
   const getMoreAnimeMock = jest.fn();
   let mockAnimeList: Array<

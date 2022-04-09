@@ -38,7 +38,8 @@ type Props = {
   getMoreAnime: () => void;
   onEndReached: (
     onEndReachedThreshold: number,
-    nativeEvent: NativeScrollEvent,
+    waitForEndReached: boolean,
+    { layoutMeasurement, contentOffset, contentSize }: NativeScrollEvent,
   ) => boolean;
   onEndReachedThreshold: number;
   isLoading: boolean;
@@ -139,7 +140,13 @@ const Animes: React.FC<Props> = ({
           }}
           testID="anime_list_id"
           onScroll={({ nativeEvent }) => {
-            if (onEndReached(onEndReachedThreshold, nativeEvent)) {
+            if (
+              onEndReached(
+                onEndReachedThreshold,
+                waitForEndReached,
+                nativeEvent,
+              )
+            ) {
               getMoreAnime();
             }
           }}

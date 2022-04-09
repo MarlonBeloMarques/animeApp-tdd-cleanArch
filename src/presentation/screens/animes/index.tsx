@@ -32,11 +32,17 @@ const initialAnimeListResponse = (message: string) => {
 type Props = {
   remoteAnimeList: AnimeList;
   onEndReachedThreshold: number;
+  onEndReached: (
+    onEndReachedThreshold: number,
+    waitForEndReached: boolean,
+    { layoutMeasurement, contentOffset, contentSize }: NativeScrollEvent,
+  ) => boolean;
 };
 
 const AnimesContainer: React.FC<Props> = ({
   onEndReachedThreshold,
   remoteAnimeList,
+  onEndReached,
 }) => {
   const [anime, setAnime] = useState<AnimeModelImage.Model>(
     initialAnimeListResponse(''),
@@ -129,20 +135,6 @@ const AnimesContainer: React.FC<Props> = ({
       setWaitForEndReached(false);
       setLoading(false);
     }, 800);
-  };
-
-  const onEndReached = (
-    onEndReachedThreshold: number,
-    { layoutMeasurement, contentOffset, contentSize }: NativeScrollEvent,
-  ) => {
-    if (waitForEndReached) {
-      return false;
-    }
-
-    return (
-      layoutMeasurement.height + contentOffset.y >=
-      contentSize.height - onEndReachedThreshold
-    );
   };
 
   const onPressDetailAnime = (

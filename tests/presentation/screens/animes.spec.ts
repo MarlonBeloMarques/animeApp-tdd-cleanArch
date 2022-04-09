@@ -155,7 +155,7 @@ describe('Presentation: Animes', () => {
       .spyOn(RemoteAnimeList.prototype, 'completeUrlWithParam')
       .mockClear();
 
-    fireEvent.scroll(
+    await fireEvent.scroll(
       animeList,
       mockEventData({ contentOffset: { x: 1, y: 500 } }),
     );
@@ -191,7 +191,7 @@ describe('Presentation: Animes', () => {
 
     await waitFor(async () => {
       const animeList = getByTestId('anime_list_id');
-      fireEvent.scroll(
+      await fireEvent.scroll(
         animeList,
         mockEventData({ contentOffset: { x: 1, y: 500 } }),
       );
@@ -275,13 +275,13 @@ describe('Presentation: Animes', () => {
       .spyOn(AnimeDetailToNavigation.prototype, 'get')
       .mockClear();
 
-    await waitFor(() => {
+    await waitFor(async () => {
       const animesView = getByType(AnimesView);
       expect(animesView.props.animeList.length).toBeTruthy();
       const firstAnime = animesView.props.animeList[0];
       const animeButton = getByTestId(`anime_button_${firstAnime.id}`);
 
-      fireEvent.press(animeButton);
+      await fireEvent.press(animeButton);
       expect(spyGetAnimeDetail).toHaveBeenCalledTimes(1);
     });
   });
