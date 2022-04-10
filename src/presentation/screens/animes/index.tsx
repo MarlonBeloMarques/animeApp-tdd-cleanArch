@@ -91,8 +91,11 @@ const AnimesContainer: React.FC<Props> = ({
     setLoading(false);
   };
 
-  const getMoreAnime = async () => {
-    const { pageCurrent } = startGetMoreAnime();
+  const getMoreAnime = async (
+    startComplete: () => { pageCurrent: number },
+    finishComplete: () => void,
+  ) => {
+    const { pageCurrent } = startComplete();
     const listResponse = await requestAnimeList({
       locale: 'en',
       page: pageCurrent,
@@ -105,7 +108,7 @@ const AnimesContainer: React.FC<Props> = ({
     setAnime(animeModelImage);
     setAnimeList((animeListCurrent) => [...animeListCurrent, ...newAnimeList]);
 
-    finishGetMoreAnime();
+    finishComplete();
   };
 
   const startGetMoreAnime = () => {
@@ -168,6 +171,8 @@ const AnimesContainer: React.FC<Props> = ({
       onEndReached={onEndReached}
       isLoading={loading}
       animeListIsEmpty={animeListIsEmpty}
+      startGetMoreAnime={startGetMoreAnime}
+      finishGetMoreAnime={finishGetMoreAnime}
     />
   );
 };

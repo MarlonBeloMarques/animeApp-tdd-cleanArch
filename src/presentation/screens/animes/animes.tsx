@@ -35,12 +35,17 @@ type Props = {
   onPressDetailAnime: (
     modelDocumentImage: ModelDocumentImageList.ModelDocumentImage<AnimeModelDocument>,
   ) => void;
-  getMoreAnime: () => void;
+  getMoreAnime: (
+    startComplete: () => { pageCurrent: number },
+    finishComplete: () => void,
+  ) => void;
   onEndReached: (
     onEndReachedThreshold: number,
     waitForEndReached: boolean,
     { layoutMeasurement, contentOffset, contentSize }: NativeScrollEvent,
   ) => boolean;
+  startGetMoreAnime: () => { pageCurrent: number };
+  finishGetMoreAnime: () => void;
   onEndReachedThreshold: number;
   isLoading: boolean;
   waitForEndReached: boolean;
@@ -56,6 +61,8 @@ const Animes: React.FC<Props> = ({
   isLoading,
   waitForEndReached,
   animeListIsEmpty,
+  finishGetMoreAnime,
+  startGetMoreAnime,
 }) => {
   const AnimeCard = ({ anime }: AnimeCardProps) => {
     return (
@@ -147,7 +154,7 @@ const Animes: React.FC<Props> = ({
                 nativeEvent,
               )
             ) {
-              getMoreAnime();
+              getMoreAnime(startGetMoreAnime, finishGetMoreAnime);
             }
           }}
           scrollEventThrottle={1}
