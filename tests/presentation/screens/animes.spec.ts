@@ -313,6 +313,38 @@ describe('Presentation: Animes', () => {
       expect(animesView.props.waitForEndReached).toEqual(true);
     });
   });
+
+  test('should call finishGetMoreAnime with success when call getMoreAnime', async () => {
+    const { getByType, getByTestId } = makeSut(
+      {
+        mockResolvedValueOnce: false,
+        mockResolvedValue: true,
+        mockRejectedValueOnce: false,
+        mockRejectedValue: false,
+      },
+      50,
+    );
+
+    const animesView = getByType(AnimesView);
+
+    await expectStartAnimeList(animesView, 50);
+
+    await waitFor(async () => {
+      const animeList = getByTestId('anime_list_id');
+      await fireEvent.scroll(
+        animeList,
+        fakeEventData({ contentOffset: { x: 1, y: 500 } }),
+      );
+
+      expect(animesView.props.isLoading).toEqual(true);
+      expect(animesView.props.waitForEndReached).toEqual(true);
+
+      await new Promise((resolve) => setTimeout(resolve, 900));
+
+      expect(animesView.props.waitForEndReached).toEqual(false);
+      expect(animesView.props.isLoading).toEqual(false);
+    });
+  });
 });
 
 const expectStartAnimeList = async (
