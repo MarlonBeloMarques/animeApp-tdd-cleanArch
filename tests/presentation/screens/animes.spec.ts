@@ -285,6 +285,34 @@ describe('Presentation: Animes', () => {
       expect(spyGetAnimeDetail).toHaveBeenCalledTimes(1);
     });
   });
+
+  test('should call startGetMoreAnime with success when call getMoreAnime', async () => {
+    const { getByType, getByTestId } = makeSut(
+      {
+        mockResolvedValueOnce: false,
+        mockResolvedValue: true,
+        mockRejectedValueOnce: false,
+        mockRejectedValue: false,
+      },
+      50,
+    );
+
+    const animesView = getByType(AnimesView);
+
+    await expectStartAnimeList(animesView, 50);
+
+    await waitFor(async () => {
+      const animeList = getByTestId('anime_list_id');
+      await fireEvent.scroll(
+        animeList,
+        fakeEventData({ contentOffset: { x: 1, y: 500 } }),
+      );
+
+      expect(animesView.props.isLoading).toEqual(true);
+      expect(animesView.props.page).toEqual(2);
+      expect(animesView.props.waitForEndReached).toEqual(true);
+    });
+  });
 });
 
 const expectStartAnimeList = async (
