@@ -8,7 +8,7 @@ export const makeAnimeModel = (length = 5): Anime.Model => {
     data: {
       current_page: faker.datatype.number(),
       count: faker.datatype.number(),
-      documents: mockAnimeModelDocument(length),
+      documents: fakeAnimeModelDocument(length),
       last_page: faker.datatype.number(),
     },
   };
@@ -16,7 +16,7 @@ export const makeAnimeModel = (length = 5): Anime.Model => {
   return anime;
 };
 
-export const mockAnimeModelDocument = (
+export const fakeAnimeModelDocument = (
   length = 5,
 ): Array<Anime.ModelDocument> => {
   faker.locale = 'en';

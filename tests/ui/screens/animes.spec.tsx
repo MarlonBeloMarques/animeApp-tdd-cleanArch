@@ -6,7 +6,7 @@ import { generateContentForImage, processImages } from '~/presentation/helpers';
 import { AnimeModelDocument } from '~/domain/models';
 import { ModelDocumentImageList } from '~/presentation/protocols';
 import { renderWithParams } from '../helpers';
-import { mockAnimeModelDocument } from '../../data/helpers';
+import { fakeAnimeModelDocument } from '../../data/helpers';
 import {
   ContentOffset,
   contentSizeStub,
@@ -216,7 +216,7 @@ describe('UI: Animes', () => {
 
   test('should get anime list with new image size fields with processImage', () => {
     const modelDocumentList = new ModelDocumentListMapper(
-      mockAnimeModelDocument(),
+      fakeAnimeModelDocument(),
     );
     const sut = makeProcessImage(modelDocumentList);
     const firstAnime = sut[0];
@@ -226,7 +226,7 @@ describe('UI: Animes', () => {
 
   test('should get the same size anime list with processImage', () => {
     const modelDocumentList = new ModelDocumentListMapper(
-      mockAnimeModelDocument(),
+      fakeAnimeModelDocument(),
     );
     const sut = makeProcessImage(modelDocumentList);
     expect(sut.length).toEqual(
@@ -281,7 +281,7 @@ const makeSut = ({
 
   if (addAnimeList) {
     const modelDocumentList = new ModelDocumentListMapper(
-      mockAnimeModelDocument(),
+      fakeAnimeModelDocument(),
     );
     mockAnimeList = modelDocumentList.toModelDocumentImageList();
   }
