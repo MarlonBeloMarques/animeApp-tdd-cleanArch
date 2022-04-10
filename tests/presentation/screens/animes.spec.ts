@@ -162,15 +162,9 @@ describe('Presentation: Animes', () => {
 
     await waitFor(async () => {
       expect(spyCompleteUrlWithParam).toHaveBeenCalledTimes(1);
-      expect(animesView.props.page).toEqual(2);
-      expect(animesView.props.waitForEndReached).toEqual(true);
-
+      expectStartGetMoreAnimeIsSuccess(animesView);
       expect(animesView.props.animeList.length).toEqual(100);
-
-      await new Promise((resolve) => setTimeout(resolve, 900));
-
-      expect(animesView.props.waitForEndReached).toEqual(false);
-      expect(animesView.props.isLoading).toEqual(false);
+      expectFinishGetMoreAnimeIsSuccess(animesView);
     });
   });
 
@@ -195,12 +189,8 @@ describe('Presentation: Animes', () => {
         animeList,
         fakeEventData({ contentOffset: { x: 1, y: 500 } }),
       );
-      expect(animesView.props.waitForEndReached).toEqual(true);
-
-      await new Promise((resolve) => setTimeout(resolve, 900));
-
-      expect(animesView.props.waitForEndReached).toEqual(false);
-      expect(animesView.props.isLoading).toEqual(false);
+      expectStartGetMoreAnimeIsSuccess(animesView);
+      await expectFinishGetMoreAnimeIsSuccess(animesView);
     });
   });
 
@@ -308,9 +298,7 @@ describe('Presentation: Animes', () => {
         fakeEventData({ contentOffset: { x: 1, y: 500 } }),
       );
 
-      expect(animesView.props.isLoading).toEqual(true);
-      expect(animesView.props.page).toEqual(2);
-      expect(animesView.props.waitForEndReached).toEqual(true);
+      expectStartGetMoreAnimeIsSuccess(animesView);
     });
   });
 
@@ -336,16 +324,26 @@ describe('Presentation: Animes', () => {
         fakeEventData({ contentOffset: { x: 1, y: 500 } }),
       );
 
-      expect(animesView.props.isLoading).toEqual(true);
-      expect(animesView.props.waitForEndReached).toEqual(true);
-
-      await new Promise((resolve) => setTimeout(resolve, 900));
-
-      expect(animesView.props.waitForEndReached).toEqual(false);
-      expect(animesView.props.isLoading).toEqual(false);
+      expectStartGetMoreAnimeIsSuccess(animesView);
+      await expectFinishGetMoreAnimeIsSuccess(animesView);
     });
   });
 });
+
+const expectStartGetMoreAnimeIsSuccess = (animesView: ReactTestInstance) => {
+  expect(animesView.props.isLoading).toEqual(true);
+  expect(animesView.props.page).toEqual(2);
+  expect(animesView.props.waitForEndReached).toEqual(true);
+};
+
+const expectFinishGetMoreAnimeIsSuccess = async (
+  animesView: ReactTestInstance,
+) => {
+  await new Promise((resolve) => setTimeout(resolve, 900));
+
+  expect(animesView.props.waitForEndReached).toEqual(false);
+  expect(animesView.props.isLoading).toEqual(false);
+};
 
 const expectStartAnimeList = async (
   animesView: ReactTestInstance,
